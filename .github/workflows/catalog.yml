@@ -25,5 +25,11 @@ jobs:
         run: python3 scripts/verify_imported_models.py
       - name: Verify all official vehicles, stages and source-to-asset coverage
         run: python3 scripts/verify_official_asset_sources.py
+      - name: Validate exact original extracted vehicle meshes
+        run: python3 scripts/verify_extracted_geometry.py
+      - name: Validate 790 imported original textures and Unity GUIDs
+        run: python3 scripts/verify_legacy_textures.py
+      - name: Validate 18 real textured PS1 model previews
+        run: python3 scripts/verify_tmd_previews.py
       - name: Report real imported Unity prefab coverage
         run: python3 scripts/audit_content.py
