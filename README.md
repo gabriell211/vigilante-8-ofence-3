@@ -11,11 +11,11 @@
 | Catálogo unificado | **23 personagens, 31 veículos, 18 arenas**; IDs únicos e aliases |
 | Código de combate | Direção arcade, tiros, dano, câmera, inimigos IA, controles e seleção dinâmica |
 | Pipeline Windows | Gerador de cena, validação de prefabs e empacotamento IL2CPP/ZIP/SHA-256 |
-| Modelos, texturas e arenas reais | **2 FBX reais já importados** (Tsunami e Blue Burro Bus); ainda faltam materiais/texturas e a configuração dos prefabs. Demais veículos e arenas ainda pendentes |
+| Modelos, texturas e arenas reais | **Acervo Unity original importado** para `LegacySources/Vigilante2Unity/Assets`: veículos, prefabs, texturas, áudios e cenas do 2nd Offense. **Migração para prefabs ativos Unity 6.6 ainda pendente** |
 | Áudio, armas especiais e campanhas | Pendentes de implementação e homologação |
 | Build executável | **Ainda não compilado/homologado no Unity** |
 
-**2 modelos 3D realmente importados, 0 prefabs jogáveis homologados.** Os modelos FBX foram copiados do repositório Unity original e seu hash Git foi conferido. Os arquivos possuem referências a BMP externos que não foram localizados nos caminhos consultados. **Catálogo ≠ asset integrado.** Os nomes e relações de veículos estão cadastrados; isso ainda não coloca suas malhas e texturas dentro do jogo. O script `python3 scripts/audit_content.py` informa exatamente quantos prefabs estão materialmente presentes. Não será publicada uma release com modelos fictícios ou arquivos inexistentes.
+**Acervo original do Vigilante2Unity completo no repositório, 0 prefabs jogáveis Unity 6.6 homologados.** Além dos dois FBX de referência, agora há a árvore original completa do projeto Unity 2020 (scripts, texturas, armas, áudio, cenas e prefabs). Os arquivos foram preservados fora da pasta ativa `Assets/` para não introduzir erros de compilação no projeto Unity 6.6. Os recursos referenciados por caminhos legados devem ser associados na migração. **Catálogo ≠ asset integrado.** Os nomes e relações de veículos estão cadastrados; isso ainda não coloca suas malhas e texturas dentro do jogo. O script `python3 scripts/audit_content.py` informa exatamente quantos prefabs estão materialmente presentes. Não será publicada uma release com modelos fictícios ou arquivos inexistentes.
 
 ## Conteúdo dos dois jogos
 
@@ -29,7 +29,7 @@
 - Unity **6000.6.7f1**, URP, Input System e IL2CPP.
 - `python3 scripts/validate_catalog.py` — integridade de personagens, carros e arenas.
 - `python3 -m unittest discover -s tests -v` — regressões estruturais.
-- `python3 scripts/verify_imported_models.py` — valida os dois arquivos FBX reais contra o hash Git e checa sua geometria.\n- `python3 scripts/audit_content.py` — auditoria honesta da presença dos prefabs.
+- `python3 scripts/audit_upstream_snapshot.py` — verifica os scripts, armas, modelos, texturas, sons e cenas originais que já estão no repositório.\n- `python3 scripts/verify_imported_models.py` — valida os dois arquivos FBX reais contra o hash Git e checa sua geometria.\n- `python3 scripts/audit_content.py` — auditoria honesta da presença dos prefabs.
 - `python3 scripts/audit_content.py --strict` — bloqueia a etapa de release se faltar um só prefab.
 - `python3 scripts/verify_pc_contract.py` — verifica o contrato do código de PC; não substitui execução no Editor.
 
@@ -40,3 +40,11 @@ Leia [pipeline de conteúdo](docs/IMPORT_PIPELINE.md) e [distribuição nativa](
 ## Material efetivamente aproveitado do GitHub
 
 Os FBX **Tsunami** e **Blue Burro Bus** foram versionados em `Assets/GameContent/SourceModels/Vigilante2Unity/`. O inventário com origem, hashes e limitações está em `Assets/GameContent/imported-sources.json`. São meshes reais, não carros genéricos ou prefabs prontos. O upstream [Vigilante2Unity](https://github.com/stefanvranjes/Vigilante2Unity) usa Unity 2020.3.3f1; seus shaders/materiais precisam de conversão para a URP moderna. A recompilação [Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp) deliberadamente não versiona as mídias comerciais base. A integração das demais mídias depende da sua presença real nas fontes, não só de nomes de arquivo no código.
+
+## Acervo original importado em massa
+
+O workflow [Import complete Vigilante2Unity source archive](.github/workflows/import-v82-source.yml) executou e copiou a árvore original do projeto [stefanvranjes/Vigilante2Unity](https://github.com/stefanvranjes/Vigilante2Unity) para [LegacySources/Vigilante2Unity/Assets](LegacySources/Vigilante2Unity/Assets), com revisão de origem fixada em `d20883df0d5da3ba517142fb4d486db1f5e673fb`.
+
+A árvore contém **scripts C# de veículos e armas** (incluindo MGun, Missile, Rocket, Mortar, Mine, FlameThrower, Cannon e armas especiais), **prefabs originais**, materiais, milhares de texturas, WAV e cenas de arena. Os arquivos permanecem preservados sob seus nomes e hierarquia originais, com metadados `.meta`; não são representações geradas ou placeholders.
+
+**Próxima etapa técnica:** converter os scripts de 2020, materiais PSX e prefabs de origem para sistemas compiláveis na Unity 6.6, sem colidir com o código nativo do jogo. O catálogo do primeiro Vigilante 8 continua cadastrando todos os veículos, mas materiais comerciais desse jogo não são automaticamente incluídos no repositório [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp), que os ignora no Git. Portanto, a importação de fonte do segundo título não prova que **31 veículos e 18 arenas** já sejam jogáveis no projeto final.
