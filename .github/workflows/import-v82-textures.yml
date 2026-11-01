@@ -1,0 +1,44 @@
+name: Import original sequel car texture bank
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-v82-textures.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: port-original-v82-textures
+  cancel-in-progress: false
+
+jobs:
+  import-real-bmp-textures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - name: Test original Unity texture GUID migration
+        run: python3 -m unittest discover -s tests -p 'test_legacy_textures.py' -v
+      - name: Copy every original car bitmap and Unity GUID without duplication
+        run: python3 scripts/port_legacy_textures.py
+      - name: Prove bitmap hash, original GUID and material association are unchanged
+        run: python3 scripts/verify_legacy_textures.py
+      - name: Commit faithful source textures to the main branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all Assets/GameContent/LegacyTextureBank docs/legacy-v82-textures.json
+          if git diff --cached --quiet; then
+            echo "Source texture bank already matches."
+            exit 0
+          fi
+          git commit -m "assets(v82): import authentic textures by original Unity GUID"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
