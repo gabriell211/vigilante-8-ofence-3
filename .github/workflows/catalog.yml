@@ -33,5 +33,7 @@ jobs:
         run: python3 scripts/verify_tmd_previews.py
       - name: Verify all original 235 WAV files, GUIDs and Unity audio bank mappings
         run: python3 scripts/verify_legacy_audio.py
+      - name: Validate Unity 6 direct mesh import contract against all source OBJ and MTL
+        run: python3 scripts/verify_unity_mesh_sources.py
       - name: Report real imported Unity prefab coverage
         run: python3 scripts/audit_content.py
