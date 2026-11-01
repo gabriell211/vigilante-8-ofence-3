@@ -1,4 +1,4 @@
-# Unity-generated directories
+# Unity generated output
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -14,16 +14,15 @@
 *.tmp
 .DS_Store
 
-# Local private content: never upload game disc dumps or derivative assets
+# Only temporary unprocessed local content is private
 /Assets/GameContent/Private/
-/Assets/Resources/Vehicles/
-/Assets/Resources/Arenas/
-*.bin
-*.cue
+/Assets/ContentImportStaging/
 *.iso
 *.chd
 *.cdi
 *.gdi
-*.sav
-*.ogg
-*.wav
+*.bin
+*.cue
+
+# Final authorized Resources/Vehicles and Resources/Arenas assets are
+# intentionally tracked and compiled into the standalone Windows release.
