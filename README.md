@@ -63,3 +63,24 @@ O acervo público do [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum
 
 
 **Cobertura oficial entre versões:** 13 veículos do primeiro jogo, 18 do segundo, 23 identidades sem repetição e 19 fases ao incluir Super Dreamland 64 (bônus exclusivo N64). O elenco é verificado por nomes, personagens e plataformas em `tests/fixtures/official_content.json`, não apenas por contagem. A presença no catálogo não implica prefab jogável ou build homologado.
+
+
+## Mapeamento de modelos oficiais e bloqueio de duplicatas
+
+O inventário [official-asset-sources.json](docs/official-asset-sources.json) associa
+os **18 veículos do 2nd Offense** aos respectivos prefabs legados, as **8 arenas**
+às cenas Unity originais e **20 scripts de armas** às fontes importadas. O validador
+`scripts/verify_official_asset_sources.py` confirma que os arquivos físicos
+existem e informa a cobertura real no Unity 6.
+
+O bloqueio de build também exige `OfficialAssetIdentity` em cada prefab final,
+verifica se o ID corresponde ao veículo/arena correto e rejeita reutilizar a
+mesma malha principal para representar carros ou fases oficiais diferentes.
+Para identificar um prefab autorado já pronto, selecione-o no Unity e use
+**Vigilante 8 > Vincular identidade oficial ao prefab selecionado**.
+
+**Importante:** importar um arquivo do Unity 2020 ou vinculá-lo pelo nome não
+conclui sua migração. Ainda será preciso adaptar física, materiais, armamentos
+especiais, scripts, campanhas, animações e testar em Windows antes de produzir
+uma versão jogável. O CI testa integridade e cobertura do acervo, não a
+compilação ou o funcionamento do jogo.
