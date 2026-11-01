@@ -85,6 +85,12 @@ namespace Vigilante8.Editor
             if (AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelPath) == null)
                 throw new BuildFailedException("Saved UI Toolkit PanelSettings asset missing.");
 
+            string[] enabledScenes = EditorBuildSettings.scenes
+                .Where(s => s.enabled).Select(s => s.path).ToArray();
+            if (enabledScenes.Length != 1 || enabledScenes[0] != ScenePath)
+                throw new BuildFailedException("Only the official Bootstrap scene may enter the Windows build. " +
+                    "Remove vehicle test scenes and other developer previews from Build Settings.");
+
             GameCatalog catalog = CatalogRepository.Load();
             if (catalog.characters.Length != 23 || catalog.vehicles.Length != 31 ||
                 catalog.arenas.Length != 19)
@@ -97,6 +103,9 @@ namespace Vigilante8.Editor
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab == null)
                     throw new BuildFailedException("Missing official vehicle: " + vehicle.assetId);
+
+                if (prefab.GetComponent<LegacyVehiclePlaytest>() != null)
+                    throw new BuildFailedException("Development-only TMD physics prototype cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(vehicle.id, vehicle.game))
@@ -132,6 +141,9 @@ namespace Vigilante8.Editor
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab == null)
                     throw new BuildFailedException("Missing official arena: " + arena.assetId);
+
+                if (prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null)
+                    throw new BuildFailedException("Developer test content embedded in an official arena: " + arena.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(arena.id, arena.game))
