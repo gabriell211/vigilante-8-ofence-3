@@ -48,3 +48,11 @@ O workflow [Import complete Vigilante2Unity source archive](.github/workflows/im
 A árvore contém **scripts C# de veículos e armas** (incluindo MGun, Missile, Rocket, Mortar, Mine, FlameThrower, Cannon e armas especiais), **prefabs originais**, materiais, milhares de texturas, WAV e cenas de arena. Os arquivos permanecem preservados sob seus nomes e hierarquia originais, com metadados `.meta`; não são representações geradas ou placeholders.
 
 **Próxima etapa técnica:** converter os scripts de 2020, materiais PSX e prefabs de origem para sistemas compiláveis na Unity 6.6, sem colidir com o código nativo do jogo. O catálogo do primeiro Vigilante 8 continua cadastrando todos os veículos, mas materiais comerciais desse jogo não são automaticamente incluídos no repositório [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp), que os ignora no Git. Portanto, a importação de fonte do segundo título não prova que **31 veículos e 18 arenas** já sejam jogáveis no projeto final.
+
+## Vigilante 8 Classic — fontes gráficas e ferramentas incluídas
+
+O acervo público do [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp) foi integralmente arquivado em [LegacySources/Vigilante8ClassicRecomp](LegacySources/Vigilante8ClassicRecomp), fixado na revisão `54805112186f970b05777540627ab5bdd084ddb7`. Essa árvore complementa o Unity 2020 com código de renderização, conversores, bibliotecas, referências de geometria, mods e texturas de interface.
+
+**Duas auditorias** são obrigatórias no CI: `python3 scripts/audit_upstream_snapshot.py` (Unity original do segundo jogo) e `python3 scripts/audit_recomp_snapshot.py` (recompilação Classic dos dois jogos).
+
+**O que NÃO deve ser confundido:** os repositórios públicos não incluem todos os arquivos comerciais base que a recompilação utiliza. Os dois acervos têm scripts, texturas e outros recursos reais, mas ainda é preciso migrar componentes para prefabs modernos da Unity 6.6 e homologar as armas, cenários e veículos. **Nenhum ZIP ou EXE do jogo completo foi gerado nesta etapa.**
