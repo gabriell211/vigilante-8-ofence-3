@@ -1,0 +1,397 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+  "vehicles": [
+    {
+      "vehicleId": "v82_blue_burro_bus",
+      "tmdParts": 15,
+      "triangles": 980,
+      "materials": 58,
+      "mappedOriginalBitmapMaterials": 47,
+      "polygonModes": {
+        "0x00": 65,
+        "0x10": 12,
+        "0x14": 60,
+        "0x20": 45,
+        "0x24": 633,
+        "0x30": 163,
+        "0x34": 2
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "b309d20b76488fdc2e4eb2b54f5945a944757d7d01e6d9abc49e6bdb98707b0b",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_blue_burro_bus.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_blue_burro_bus.mtl"
+    },
+    {
+      "vehicleId": "v82_chrono_stinger",
+      "tmdParts": 24,
+      "triangles": 992,
+      "materials": 57,
+      "mappedOriginalBitmapMaterials": 42,
+      "polygonModes": {
+        "0x00": 61,
+        "0x0c": 36,
+        "0x10": 4,
+        "0x14": 28,
+        "0x20": 191,
+        "0x24": 381,
+        "0x2c": 23,
+        "0x30": 134,
+        "0x34": 2,
+        "0x3c": 132
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "53d4b2bcedee51dfa19c5a1b58fb9a857249224fa8692429078c6a985e1c16c2",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_chrono_stinger.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_chrono_stinger.mtl"
+    },
+    {
+      "vehicleId": "v82_dakota_stunt_cycle",
+      "tmdParts": 23,
+      "triangles": 626,
+      "materials": 29,
+      "mappedOriginalBitmapMaterials": 20,
+      "polygonModes": {
+        "0x00": 106,
+        "0x10": 4,
+        "0x14": 21,
+        "0x20": 167,
+        "0x24": 326,
+        "0x34": 2
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "72e459411cd20f253cde6c5ec38cfcb703669161efd9c77a6aab9d58771f7c79",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_dakota_stunt_cycle.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_dakota_stunt_cycle.mtl"
+    },
+    {
+      "vehicleId": "v82_el_guerrero",
+      "tmdParts": 20,
+      "triangles": 967,
+      "materials": 47,
+      "mappedOriginalBitmapMaterials": 35,
+      "polygonModes": {
+        "0x00": 56,
+        "0x0c": 34,
+        "0x10": 6,
+        "0x14": 32,
+        "0x20": 100,
+        "0x24": 520,
+        "0x30": 187,
+        "0x34": 2,
+        "0x3c": 30
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "8c5fa7a56f00669526a6298142b204fc7dd099226fc5f5b56fb6938583a85698",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_el_guerrero.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_el_guerrero.mtl"
+    },
+    {
+      "vehicleId": "v82_excelsior_stretch",
+      "tmdParts": 18,
+      "triangles": 1022,
+      "materials": 42,
+      "mappedOriginalBitmapMaterials": 33,
+      "polygonModes": {
+        "0x00": 66,
+        "0x10": 6,
+        "0x14": 66,
+        "0x20": 163,
+        "0x24": 393,
+        "0x2c": 42,
+        "0x30": 228,
+        "0x34": 2,
+        "0x3c": 56
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "30261f3004fa6aa13ed7d5e3e84d9b815c2815b955482c080ba74033ed836ee0",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_excelsior_stretch.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_excelsior_stretch.mtl"
+    },
+    {
+      "vehicleId": "v82_goliath_halftrack",
+      "tmdParts": 35,
+      "triangles": 1024,
+      "materials": 44,
+      "mappedOriginalBitmapMaterials": 39,
+      "polygonModes": {
+        "0x00": 69,
+        "0x10": 9,
+        "0x14": 261,
+        "0x20": 9,
+        "0x24": 421,
+        "0x2c": 144,
+        "0x30": 28,
+        "0x34": 35,
+        "0x3c": 48
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "f0448592266280443094d4b2c6400320a0b82ce9b98c73aca5c17e75798c2f4a",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_goliath_halftrack.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_goliath_halftrack.mtl"
+    },
+    {
+      "vehicleId": "v82_grubb_dual_loader",
+      "tmdParts": 21,
+      "triangles": 811,
+      "materials": 36,
+      "mappedOriginalBitmapMaterials": 29,
+      "polygonModes": {
+        "0x00": 75,
+        "0x10": 3,
+        "0x14": 116,
+        "0x20": 19,
+        "0x24": 554,
+        "0x30": 42,
+        "0x34": 2
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "c92d9268cc76e88c705405883bcb5a5aefafd5bb5b9df5029ca951c9a69ab18d",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_grubb_dual_loader.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_grubb_dual_loader.mtl"
+    },
+    {
+      "vehicleId": "v82_livingston_truck",
+      "tmdParts": 32,
+      "triangles": 1219,
+      "materials": 48,
+      "mappedOriginalBitmapMaterials": 38,
+      "polygonModes": {
+        "0x00": 76,
+        "0x10": 70,
+        "0x14": 191,
+        "0x20": 225,
+        "0x24": 421,
+        "0x30": 186,
+        "0x34": 2,
+        "0x3c": 48
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "12bbd1da9d5aa83d46fc164e4c007a2bb821a55e426e724bb300f714bc8b6f75",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_livingston_truck.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_livingston_truck.mtl"
+    },
+    {
+      "vehicleId": "v82_marathon",
+      "tmdParts": 31,
+      "triangles": 1010,
+      "materials": 47,
+      "mappedOriginalBitmapMaterials": 37,
+      "polygonModes": {
+        "0x00": 66,
+        "0x10": 2,
+        "0x14": 58,
+        "0x20": 45,
+        "0x24": 518,
+        "0x30": 305,
+        "0x34": 16
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "cf918b212754e3f542e184ce5580a2f2e40bf2586a184421438393d40090ade0",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_marathon.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_marathon.mtl"
+    },
+    {
+      "vehicleId": "v82_moon_trekker",
+      "tmdParts": 46,
+      "triangles": 1262,
+      "materials": 54,
+      "mappedOriginalBitmapMaterials": 45,
+      "polygonModes": {
+        "0x00": 58,
+        "0x14": 185,
+        "0x20": 35,
+        "0x24": 810,
+        "0x30": 116,
+        "0x34": 2,
+        "0x3c": 56
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "0803fd5552bb52d48a48cda3d7bf3d50311a79149a60bce2bed42e0d3a7ea175",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_moon_trekker.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_moon_trekker.mtl"
+    },
+    {
+      "vehicleId": "v82_palomino_xiii",
+      "tmdParts": 28,
+      "triangles": 884,
+      "materials": 40,
+      "mappedOriginalBitmapMaterials": 26,
+      "polygonModes": {
+        "0x00": 63,
+        "0x0c": 40,
+        "0x10": 18,
+        "0x14": 21,
+        "0x20": 93,
+        "0x24": 353,
+        "0x2c": 33,
+        "0x30": 200,
+        "0x34": 2,
+        "0x3c": 61
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "bc4a5625bd9534d5f3f773e8157a719ec16976396bd64695365bd2b03c1b2a9e",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_palomino_xiii.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_palomino_xiii.mtl"
+    },
+    {
+      "vehicleId": "v82_samson_tow_truck",
+      "tmdParts": 23,
+      "triangles": 800,
+      "materials": 58,
+      "mappedOriginalBitmapMaterials": 49,
+      "polygonModes": {
+        "0x00": 68,
+        "0x10": 7,
+        "0x14": 51,
+        "0x20": 48,
+        "0x24": 564,
+        "0x30": 60,
+        "0x34": 2
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "941c9e9545824ed7326870910232a43f3908f6bd73186fb7f4f45d02d7789f92",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_samson_tow_truck.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_samson_tow_truck.mtl"
+    },
+    {
+      "vehicleId": "v82_thunderbolt",
+      "tmdParts": 32,
+      "triangles": 880,
+      "materials": 48,
+      "mappedOriginalBitmapMaterials": 37,
+      "polygonModes": {
+        "0x00": 65,
+        "0x04": 12,
+        "0x10": 30,
+        "0x14": 30,
+        "0x20": 122,
+        "0x24": 359,
+        "0x30": 236,
+        "0x34": 26
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "e6c7666a47381396f19bd20688b47877ba70c4072af9f1538c0871fcc03740be",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_thunderbolt.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_thunderbolt.mtl"
+    },
+    {
+      "vehicleId": "v82_tsunami",
+      "tmdParts": 30,
+      "triangles": 1093,
+      "materials": 55,
+      "mappedOriginalBitmapMaterials": 40,
+      "polygonModes": {
+        "0x00": 60,
+        "0x0c": 48,
+        "0x10": 32,
+        "0x14": 60,
+        "0x20": 136,
+        "0x24": 590,
+        "0x2c": 24,
+        "0x30": 119,
+        "0x34": 2,
+        "0x3c": 22
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "f941dc41983f387ba1661e2872d7440ef322a09598d8cca3fdb60363439d25d9",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_tsunami.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_tsunami.mtl"
+    },
+    {
+      "vehicleId": "v82_vertigo",
+      "tmdParts": 20,
+      "triangles": 945,
+      "materials": 54,
+      "mappedOriginalBitmapMaterials": 39,
+      "polygonModes": {
+        "0x00": 76,
+        "0x0c": 5,
+        "0x10": 28,
+        "0x14": 57,
+        "0x20": 80,
+        "0x24": 430,
+        "0x30": 186,
+        "0x34": 10,
+        "0x3c": 73
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "b56d4e8d77da934aff70fa31f08fc5cdffdc15e53b82ef235cbd6d35a7c02a31",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_vertigo.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_vertigo.mtl"
+    },
+    {
+      "vehicleId": "v82_wapiti_4wd",
+      "tmdParts": 25,
+      "triangles": 1162,
+      "materials": 48,
+      "mappedOriginalBitmapMaterials": 34,
+      "polygonModes": {
+        "0x00": 66,
+        "0x04": 96,
+        "0x10": 6,
+        "0x14": 48,
+        "0x20": 151,
+        "0x24": 426,
+        "0x30": 249,
+        "0x34": 98,
+        "0x3c": 22
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "726bd07072477197f2a6d7027179efe6e5024b917569dfd433399e57390b5270",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_wapiti_4wd.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_wapiti_4wd.mtl"
+    },
+    {
+      "vehicleId": "v82_wonderwagon",
+      "tmdParts": 19,
+      "triangles": 810,
+      "materials": 61,
+      "mappedOriginalBitmapMaterials": 50,
+      "polygonModes": {
+        "0x00": 62,
+        "0x10": 8,
+        "0x14": 47,
+        "0x20": 104,
+        "0x24": 494,
+        "0x30": 85,
+        "0x34": 10
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "97ab098d46581e48c09fea3fc71d8289b7cce87e06a6c8016da20ce71aae1374",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_wonderwagon.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_wonderwagon.mtl"
+    },
+    {
+      "vehicleId": "v82_xanadu_rv",
+      "tmdParts": 28,
+      "triangles": 1041,
+      "materials": 47,
+      "mappedOriginalBitmapMaterials": 37,
+      "polygonModes": {
+        "0x00": 72,
+        "0x10": 11,
+        "0x14": 155,
+        "0x20": 155,
+        "0x24": 546,
+        "0x30": 40,
+        "0x34": 54,
+        "0x3c": 8
+      },
+      "status": "textured_preview_not_verified_game_asset",
+      "sourceSha256": "c3b4098829486e5b71acbaad33b2cfb26447a1952cbfc945d245171d3a6c5c00",
+      "obj": "Assets/GameContent/TexturedPreviewV82/v82_xanadu_rv.obj",
+      "mtl": "Assets/GameContent/TexturedPreviewV82/v82_xanadu_rv.mtl"
+    }
+  ],
+  "completeOriginalGeometryPreview": true,
+  "notYetCertified": [
+    "legacy part transforms",
+    "opaque PSX polygon modes",
+    "vertex lighting",
+    "rendered Unity 6.6 appearance",
+    "damage animation",
+    "weapon attachment",
+    "player physics"
+  ]
+}

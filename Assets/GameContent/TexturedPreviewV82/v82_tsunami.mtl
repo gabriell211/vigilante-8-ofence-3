@@ -1,0 +1,206 @@
+# Original PS1 source bitmap links and RGB colours
+newmtl rgb_000000
+Kd 0.000000 0.000000 0.000000
+illum 1
+newmtl rgb_10110e
+Kd 0.062745 0.066667 0.054902
+illum 1
+newmtl rgb_141414
+Kd 0.078431 0.078431 0.078431
+illum 1
+newmtl rgb_393939
+Kd 0.223529 0.223529 0.223529
+illum 1
+newmtl rgb_404050
+Kd 0.250980 0.250980 0.313725
+illum 1
+newmtl rgb_505050
+Kd 0.313725 0.313725 0.313725
+illum 1
+newmtl rgb_520000
+Kd 0.321569 0.000000 0.000000
+illum 1
+newmtl rgb_5c5c5c
+Kd 0.360784 0.360784 0.360784
+illum 1
+newmtl rgb_804444
+Kd 0.501961 0.266667 0.266667
+illum 1
+newmtl rgb_806060
+Kd 0.501961 0.376471 0.376471
+illum 1
+newmtl rgb_806868
+Kd 0.501961 0.407843 0.407843
+illum 1
+newmtl rgb_808080
+Kd 0.501961 0.501961 0.501961
+illum 1
+newmtl rgb_8b0a0a
+Kd 0.545098 0.039216 0.039216
+illum 1
+newmtl rgb_8c0808
+Kd 0.549020 0.031373 0.031373
+illum 1
+newmtl rgb_b8b8ff
+Kd 0.721569 0.721569 1.000000
+illum 1
+newmtl texture_000
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0000.bmp
+illum 1
+newmtl texture_001
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0001.bmp
+illum 1
+newmtl texture_002
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0002.bmp
+illum 1
+newmtl texture_003
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0003.bmp
+illum 1
+newmtl texture_004
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0004.bmp
+illum 1
+newmtl texture_005
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0005.bmp
+illum 1
+newmtl texture_006
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0006.bmp
+illum 1
+newmtl texture_007
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0007.bmp
+illum 1
+newmtl texture_008
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0008.bmp
+illum 1
+newmtl texture_009
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0009.bmp
+illum 1
+newmtl texture_010
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0010.bmp
+illum 1
+newmtl texture_011
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0011.bmp
+illum 1
+newmtl texture_012
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0012.bmp
+illum 1
+newmtl texture_013
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0013.bmp
+illum 1
+newmtl texture_014
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0014.bmp
+illum 1
+newmtl texture_015
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0015.bmp
+illum 1
+newmtl texture_016
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0016.bmp
+illum 1
+newmtl texture_017
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0017.bmp
+illum 1
+newmtl texture_018
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0018.bmp
+illum 1
+newmtl texture_019
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0019.bmp
+illum 1
+newmtl texture_020
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0020.bmp
+illum 1
+newmtl texture_021
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0021.bmp
+illum 1
+newmtl texture_022
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0022.bmp
+illum 1
+newmtl texture_023
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0023.bmp
+illum 1
+newmtl texture_024
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0024.bmp
+illum 1
+newmtl texture_025
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0025.bmp
+illum 1
+newmtl texture_026
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0026.bmp
+illum 1
+newmtl texture_031
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0031.bmp
+illum 1
+newmtl texture_032
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0032.bmp
+illum 1
+newmtl texture_033
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0033.bmp
+illum 1
+newmtl texture_034
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0034.bmp
+illum 1
+newmtl texture_040
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0040.bmp
+illum 1
+newmtl texture_041
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0041.bmp
+illum 1
+newmtl texture_042
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0042.bmp
+illum 1
+newmtl texture_043
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0043.bmp
+illum 1
+newmtl texture_044
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0044.bmp
+illum 1
+newmtl texture_045
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0045.bmp
+illum 1
+newmtl texture_046
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0046.bmp
+illum 1
+newmtl texture_047
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0047.bmp
+illum 1
+newmtl texture_048
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TSUNAMI_0048.bmp
+illum 1

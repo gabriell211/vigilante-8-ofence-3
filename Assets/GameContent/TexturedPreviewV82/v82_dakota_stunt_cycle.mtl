@@ -1,0 +1,108 @@
+# Original PS1 source bitmap links and RGB colours
+newmtl rgb_000000
+Kd 0.000000 0.000000 0.000000
+illum 1
+newmtl rgb_0e0e0e
+Kd 0.054902 0.054902 0.054902
+illum 1
+newmtl rgb_1a1a1a
+Kd 0.101961 0.101961 0.101961
+illum 1
+newmtl rgb_1d1d1d
+Kd 0.113725 0.113725 0.113725
+illum 1
+newmtl rgb_1f4867
+Kd 0.121569 0.282353 0.403922
+illum 1
+newmtl rgb_505050
+Kd 0.313725 0.313725 0.313725
+illum 1
+newmtl rgb_808080
+Kd 0.501961 0.501961 0.501961
+illum 1
+newmtl rgb_924646
+Kd 0.572549 0.274510 0.274510
+illum 1
+newmtl rgb_f3f2ef
+Kd 0.952941 0.949020 0.937255
+illum 1
+newmtl texture_000
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0000.bmp
+illum 1
+newmtl texture_001
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0001.bmp
+illum 1
+newmtl texture_002
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0002.bmp
+illum 1
+newmtl texture_003
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0003.bmp
+illum 1
+newmtl texture_004
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0004.bmp
+illum 1
+newmtl texture_005
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0005.bmp
+illum 1
+newmtl texture_006
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0006.bmp
+illum 1
+newmtl texture_007
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0007.bmp
+illum 1
+newmtl texture_008
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0008.bmp
+illum 1
+newmtl texture_009
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0009.bmp
+illum 1
+newmtl texture_010
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0010.bmp
+illum 1
+newmtl texture_011
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0011.bmp
+illum 1
+newmtl texture_012
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0012.bmp
+illum 1
+newmtl texture_013
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0013.bmp
+illum 1
+newmtl texture_014
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0014.bmp
+illum 1
+newmtl texture_015
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0015.bmp
+illum 1
+newmtl texture_016
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0016.bmp
+illum 1
+newmtl texture_017
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0017.bmp
+illum 1
+newmtl texture_018
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0018.bmp
+illum 1
+newmtl texture_019
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/STNTBIKE_0019.bmp
+illum 1

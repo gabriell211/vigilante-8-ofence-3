@@ -1,0 +1,208 @@
+# Original PS1 source bitmap links and RGB colours
+newmtl rgb_000000
+Kd 0.000000 0.000000 0.000000
+illum 1
+newmtl rgb_202020
+Kd 0.125490 0.125490 0.125490
+illum 1
+newmtl rgb_393939
+Kd 0.223529 0.223529 0.223529
+illum 1
+newmtl rgb_454545
+Kd 0.270588 0.270588 0.270588
+illum 1
+newmtl rgb_606060
+Kd 0.376471 0.376471 0.376471
+illum 1
+newmtl rgb_646060
+Kd 0.392157 0.376471 0.376471
+illum 1
+newmtl rgb_808080
+Kd 0.501961 0.501961 0.501961
+illum 1
+newmtl rgb_fff7e7
+Kd 1.000000 0.968627 0.905882
+illum 1
+newmtl rgb_fffae6
+Kd 1.000000 0.980392 0.901961
+illum 1
+newmtl texture_000
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0000.bmp
+illum 1
+newmtl texture_001
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0001.bmp
+illum 1
+newmtl texture_002
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0002.bmp
+illum 1
+newmtl texture_003
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0003.bmp
+illum 1
+newmtl texture_004
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0004.bmp
+illum 1
+newmtl texture_005
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0005.bmp
+illum 1
+newmtl texture_006
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0006.bmp
+illum 1
+newmtl texture_007
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0007.bmp
+illum 1
+newmtl texture_008
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0008.bmp
+illum 1
+newmtl texture_009
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0009.bmp
+illum 1
+newmtl texture_010
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0010.bmp
+illum 1
+newmtl texture_011
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0011.bmp
+illum 1
+newmtl texture_012
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0012.bmp
+illum 1
+newmtl texture_013
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0013.bmp
+illum 1
+newmtl texture_014
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0014.bmp
+illum 1
+newmtl texture_015
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0015.bmp
+illum 1
+newmtl texture_016
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0016.bmp
+illum 1
+newmtl texture_017
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0017.bmp
+illum 1
+newmtl texture_018
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0018.bmp
+illum 1
+newmtl texture_019
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0019.bmp
+illum 1
+newmtl texture_020
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0020.bmp
+illum 1
+newmtl texture_021
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0021.bmp
+illum 1
+newmtl texture_022
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0022.bmp
+illum 1
+newmtl texture_023
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0023.bmp
+illum 1
+newmtl texture_024
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0024.bmp
+illum 1
+newmtl texture_025
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0025.bmp
+illum 1
+newmtl texture_026
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0026.bmp
+illum 1
+newmtl texture_027
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0027.bmp
+illum 1
+newmtl texture_028
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0028.bmp
+illum 1
+newmtl texture_029
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0029.bmp
+illum 1
+newmtl texture_030
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0030.bmp
+illum 1
+newmtl texture_031
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0031.bmp
+illum 1
+newmtl texture_032
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0032.bmp
+illum 1
+newmtl texture_033
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0033.bmp
+illum 1
+newmtl texture_034
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0034.bmp
+illum 1
+newmtl texture_035
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0035.bmp
+illum 1
+newmtl texture_036
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0036.bmp
+illum 1
+newmtl texture_037
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0037.bmp
+illum 1
+newmtl texture_038
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0038.bmp
+illum 1
+newmtl texture_039
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0039.bmp
+illum 1
+newmtl texture_040
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0040.bmp
+illum 1
+newmtl texture_041
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0041.bmp
+illum 1
+newmtl texture_042
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0042.bmp
+illum 1
+newmtl texture_043
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0043.bmp
+illum 1
+newmtl texture_044
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/LUNAR_0044.bmp
+illum 1

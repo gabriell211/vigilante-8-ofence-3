@@ -1,0 +1,183 @@
+# Original PS1 source bitmap links and RGB colours
+newmtl rgb_000000
+Kd 0.000000 0.000000 0.000000
+illum 1
+newmtl rgb_2d2d2d
+Kd 0.176471 0.176471 0.176471
+illum 1
+newmtl rgb_2e2e2e
+Kd 0.180392 0.180392 0.180392
+illum 1
+newmtl rgb_393939
+Kd 0.223529 0.223529 0.223529
+illum 1
+newmtl rgb_473f36
+Kd 0.278431 0.247059 0.211765
+illum 1
+newmtl rgb_505050
+Kd 0.313725 0.313725 0.313725
+illum 1
+newmtl rgb_594233
+Kd 0.349020 0.258824 0.200000
+illum 1
+newmtl rgb_808080
+Kd 0.501961 0.501961 0.501961
+illum 1
+newmtl rgb_f0d004
+Kd 0.941176 0.815686 0.015686
+illum 1
+newmtl rgb_fada04
+Kd 0.980392 0.854902 0.015686
+illum 1
+newmtl texture_000
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0000.bmp
+illum 1
+newmtl texture_001
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0001.bmp
+illum 1
+newmtl texture_002
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0002.bmp
+illum 1
+newmtl texture_003
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0003.bmp
+illum 1
+newmtl texture_004
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0004.bmp
+illum 1
+newmtl texture_005
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0005.bmp
+illum 1
+newmtl texture_006
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0006.bmp
+illum 1
+newmtl texture_007
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0007.bmp
+illum 1
+newmtl texture_008
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0008.bmp
+illum 1
+newmtl texture_009
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0009.bmp
+illum 1
+newmtl texture_010
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0010.bmp
+illum 1
+newmtl texture_011
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0011.bmp
+illum 1
+newmtl texture_012
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0012.bmp
+illum 1
+newmtl texture_013
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0013.bmp
+illum 1
+newmtl texture_014
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0014.bmp
+illum 1
+newmtl texture_015
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0015.bmp
+illum 1
+newmtl texture_016
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0016.bmp
+illum 1
+newmtl texture_017
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0017.bmp
+illum 1
+newmtl texture_018
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0018.bmp
+illum 1
+newmtl texture_019
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0019.bmp
+illum 1
+newmtl texture_020
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0020.bmp
+illum 1
+newmtl texture_021
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0021.bmp
+illum 1
+newmtl texture_022
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0022.bmp
+illum 1
+newmtl texture_023
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0023.bmp
+illum 1
+newmtl texture_024
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0024.bmp
+illum 1
+newmtl texture_025
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0025.bmp
+illum 1
+newmtl texture_026
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0026.bmp
+illum 1
+newmtl texture_027
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0027.bmp
+illum 1
+newmtl texture_028
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0028.bmp
+illum 1
+newmtl texture_029
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0029.bmp
+illum 1
+newmtl texture_030
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0030.bmp
+illum 1
+newmtl texture_031
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0031.bmp
+illum 1
+newmtl texture_032
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0032.bmp
+illum 1
+newmtl texture_033
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0033.bmp
+illum 1
+newmtl texture_034
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0034.bmp
+illum 1
+newmtl texture_035
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0035.bmp
+illum 1
+newmtl texture_036
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0036.bmp
+illum 1
+newmtl texture_040
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TRUCK_0040.bmp
+illum 1

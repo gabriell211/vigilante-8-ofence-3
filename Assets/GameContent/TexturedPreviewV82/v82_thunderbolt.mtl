@@ -1,0 +1,182 @@
+# Original PS1 source bitmap links and RGB colours
+newmtl rgb_000000
+Kd 0.000000 0.000000 0.000000
+illum 1
+newmtl rgb_0a0a14
+Kd 0.039216 0.039216 0.078431
+illum 1
+newmtl rgb_0a0a19
+Kd 0.039216 0.039216 0.098039
+illum 1
+newmtl rgb_101010
+Kd 0.062745 0.062745 0.062745
+illum 1
+newmtl rgb_171717
+Kd 0.090196 0.090196 0.090196
+illum 1
+newmtl rgb_282830
+Kd 0.156863 0.156863 0.188235
+illum 1
+newmtl rgb_2a2a2a
+Kd 0.164706 0.164706 0.164706
+illum 1
+newmtl rgb_303030
+Kd 0.188235 0.188235 0.188235
+illum 1
+newmtl rgb_393939
+Kd 0.223529 0.223529 0.223529
+illum 1
+newmtl rgb_545a61
+Kd 0.329412 0.352941 0.380392
+illum 1
+newmtl rgb_5d461b
+Kd 0.364706 0.274510 0.105882
+illum 1
+newmtl texture_000
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0000.bmp
+illum 1
+newmtl texture_001
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0001.bmp
+illum 1
+newmtl texture_002
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0002.bmp
+illum 1
+newmtl texture_003
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0003.bmp
+illum 1
+newmtl texture_004
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0004.bmp
+illum 1
+newmtl texture_005
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0005.bmp
+illum 1
+newmtl texture_006
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0006.bmp
+illum 1
+newmtl texture_007
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0007.bmp
+illum 1
+newmtl texture_008
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0008.bmp
+illum 1
+newmtl texture_009
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0009.bmp
+illum 1
+newmtl texture_010
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0010.bmp
+illum 1
+newmtl texture_011
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0011.bmp
+illum 1
+newmtl texture_012
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0012.bmp
+illum 1
+newmtl texture_013
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0013.bmp
+illum 1
+newmtl texture_014
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0014.bmp
+illum 1
+newmtl texture_015
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0015.bmp
+illum 1
+newmtl texture_016
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0016.bmp
+illum 1
+newmtl texture_017
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0017.bmp
+illum 1
+newmtl texture_018
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0018.bmp
+illum 1
+newmtl texture_019
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0019.bmp
+illum 1
+newmtl texture_020
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0020.bmp
+illum 1
+newmtl texture_021
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0021.bmp
+illum 1
+newmtl texture_022
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0022.bmp
+illum 1
+newmtl texture_023
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0023.bmp
+illum 1
+newmtl texture_024
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0024.bmp
+illum 1
+newmtl texture_025
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0025.bmp
+illum 1
+newmtl texture_026
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0026.bmp
+illum 1
+newmtl texture_027
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0027.bmp
+illum 1
+newmtl texture_028
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0028.bmp
+illum 1
+newmtl texture_029
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0029.bmp
+illum 1
+newmtl texture_030
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0030.bmp
+illum 1
+newmtl texture_031
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0031.bmp
+illum 1
+newmtl texture_032
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0032.bmp
+illum 1
+newmtl texture_033
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0033.bmp
+illum 1
+newmtl texture_034
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0034.bmp
+illum 1
+newmtl texture_035
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0035.bmp
+illum 1
+newmtl texture_036
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/TBOLT_0036.bmp
+illum 1

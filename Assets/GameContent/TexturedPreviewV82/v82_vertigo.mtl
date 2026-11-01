@@ -1,0 +1,202 @@
+# Original PS1 source bitmap links and RGB colours
+newmtl rgb_000000
+Kd 0.000000 0.000000 0.000000
+illum 1
+newmtl rgb_00000c
+Kd 0.000000 0.000000 0.047059
+illum 1
+newmtl rgb_060606
+Kd 0.023529 0.023529 0.023529
+illum 1
+newmtl rgb_262626
+Kd 0.149020 0.149020 0.149020
+illum 1
+newmtl rgb_26262a
+Kd 0.149020 0.149020 0.164706
+illum 1
+newmtl rgb_262630
+Kd 0.149020 0.149020 0.188235
+illum 1
+newmtl rgb_282830
+Kd 0.156863 0.156863 0.188235
+illum 1
+newmtl rgb_393939
+Kd 0.223529 0.223529 0.223529
+illum 1
+newmtl rgb_535353
+Kd 0.325490 0.325490 0.325490
+illum 1
+newmtl rgb_550000
+Kd 0.333333 0.000000 0.000000
+illum 1
+newmtl rgb_633131
+Kd 0.388235 0.192157 0.192157
+illum 1
+newmtl rgb_777780
+Kd 0.466667 0.466667 0.501961
+illum 1
+newmtl rgb_800000
+Kd 0.501961 0.000000 0.000000
+illum 1
+newmtl rgb_808080
+Kd 0.501961 0.501961 0.501961
+illum 1
+newmtl rgb_9696a0
+Kd 0.588235 0.588235 0.627451
+illum 1
+newmtl texture_000
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0000.bmp
+illum 1
+newmtl texture_001
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0001.bmp
+illum 1
+newmtl texture_002
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0002.bmp
+illum 1
+newmtl texture_003
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0003.bmp
+illum 1
+newmtl texture_004
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0004.bmp
+illum 1
+newmtl texture_005
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0005.bmp
+illum 1
+newmtl texture_006
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0006.bmp
+illum 1
+newmtl texture_007
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0007.bmp
+illum 1
+newmtl texture_008
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0008.bmp
+illum 1
+newmtl texture_009
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0009.bmp
+illum 1
+newmtl texture_010
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0010.bmp
+illum 1
+newmtl texture_011
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0011.bmp
+illum 1
+newmtl texture_012
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0012.bmp
+illum 1
+newmtl texture_013
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0013.bmp
+illum 1
+newmtl texture_014
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0014.bmp
+illum 1
+newmtl texture_015
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0015.bmp
+illum 1
+newmtl texture_016
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0016.bmp
+illum 1
+newmtl texture_017
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0017.bmp
+illum 1
+newmtl texture_018
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0018.bmp
+illum 1
+newmtl texture_019
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0019.bmp
+illum 1
+newmtl texture_020
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0020.bmp
+illum 1
+newmtl texture_021
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0021.bmp
+illum 1
+newmtl texture_022
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0022.bmp
+illum 1
+newmtl texture_023
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0023.bmp
+illum 1
+newmtl texture_024
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0024.bmp
+illum 1
+newmtl texture_025
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0025.bmp
+illum 1
+newmtl texture_026
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0026.bmp
+illum 1
+newmtl texture_027
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0027.bmp
+illum 1
+newmtl texture_028
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0028.bmp
+illum 1
+newmtl texture_029
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0029.bmp
+illum 1
+newmtl texture_030
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0030.bmp
+illum 1
+newmtl texture_031
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0031.bmp
+illum 1
+newmtl texture_032
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0032.bmp
+illum 1
+newmtl texture_033
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0033.bmp
+illum 1
+newmtl texture_034
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0034.bmp
+illum 1
+newmtl texture_035
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0035.bmp
+illum 1
+newmtl texture_036
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0036.bmp
+illum 1
+newmtl texture_037
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0037.bmp
+illum 1
+newmtl texture_038
+Kd 1.000000 1.000000 1.000000
+map_Kd ../LegacyTextureBank/SHARED/COMMON/Textures/VERTIGO_0038.bmp
+illum 1
