@@ -1,31 +1,28 @@
-# Importação dos dois jogos — sem assets genéricos
+# Conteúdo real dos dois jogos — importação Unity
 
-O catálogo registra nomes, relações e IDs **sem copiar mídia protegida**.
+**Separação de ambientes:** arquivos originais e ferramentas de importação são trabalho de desenvolvimento. A versão distribuída ao jogador é inteiramente nativa: inclui meshes, materiais, sons, scripts e arenas dentro dos dados compilados do Unity. O usuário não fornece nenhum arquivo externo.
 
-## Contrato dos arquivos externos
+## Identidade e deduplicação
 
-Diretório local (fora do Git):
+A lista canônica está em `Assets/Resources/Catalog/roster.json`. O mesmo personagem só aparece uma vez no menu, mas dois carros distintos pertencentes a ele permanecem selecionáveis. O jogo jamais cria veículos proceduralmente como substitutos dos originais.
 
-```text
-ConteudoLocal/
-  Vehicles/v8_rattler.fbx
-  Vehicles/v82_thunderbolt.fbx
-  ... [todos os 31 nomes definidos pelo JSON]
-  Arenas/v8_canyonlands.fbx
-  Arenas/v82_meteor_crater.fbx
-  ... [todas as 18 arenas]
-  Textures/ ... imagens PNG/TGA/JPG/EXR da sua fonte autorizada
-```
+## Organização
 
-O importador detecta **todos** os IDs exigidos e rejeita ausência antes de escrever. Arquivos privados são copiados somente para diretórios ignorados pelo Git. Os modelos precisam chegar **já convertidos para FBX**, sem engenharia reversa feita nesta etapa.
+- `Assets/Resources/Vehicles/<assetId>.prefab`: um por veículo, modelo e materiais reais, Collider, Rigidbody e VehicleDrive com ponto de disparo e prefab de projétil.
+- `Assets/Resources/Arenas/<assetId>.prefab`: uma por arena, geometrias reais com Collider e ArenaSpawnPoints com quatro Transform configurados.
+- `Assets/Resources/Catalog/roster.json`: relacionamento de personagens, carros e arenas.
 
-## Homologação que ainda precisa acontecer
+A ferramenta do Unity Editor **Vigilante 8 > Importar modelos locais FBX (somente desenvolvimento)** é opcional. Ela prepara prefabs a partir de FBX já autorizados e convertidos; não substitui a necessidade de materiais, armamento, física e spawns reais.
 
-1. Importação dos arquivos reais de cópias legítimas e identificação de todos os materiais/UV.
-2. Revisão individual da topologia, pivôs, rodas, armas, normais, rigs, animações e colisores.
-3. Verificação das arenas com colisão, destruição, física e lógica de missão.
-4. Compatibilidade de hotrod, transformação, habilidades especiais, sons, músicas e missões.
-5. Sistemas de combate, menus, salvamentos, IA, multiplayer, otimização de renderização e testes Windows.
-6. Revisão legal dos assets, do código-fonte usado e do eventual pacote distribuível.
+Se tiver os arquivos originais sob sua licença, podem ser convertidos em assets compatíveis com Unity na fase de desenvolvimento. Os arquivos de origem e arquivos de disco não fazem parte do produto e não são necessários pelo usuário.
 
-Nenhum modelo comercial, áudio, cinema ou textura é baixado automaticamente. A recompilação .NET de terceiros **não** se converte diretamente em projeto Unity. CI aqui valida a integridade do catálogo, **não** certifica que o jogo completo funciona.
+## Requisitos para uma release válida
+
+- Todos os 31 modelos e 18 arenas presentes, com geometria, colisão e materiais aprovados.
+- Cada carro com controle, armas, dano e física testados.
+- Cada arena com pelo menos quatro pontos de spawn, limites e colisores.
+- UI dinâmica com todos os personagens e veículos corretos.
+- Testes de performance, estabilidade, áudio, missões e menus no Windows.
+- Build Unity IL2CPP bem-sucedido e smoke test com ZIP instalado em máquina limpa.
+
+O build gate verifica a existência e estrutura mínima dos assets. Ele **não** prova qualidade artística, completude das campanhas ou ausência de bugs. Nunca marcar o projeto como homologado sem executar testes no Unity.
