@@ -43,6 +43,10 @@ Os FBX **Tsunami** e **Blue Burro Bus** foram versionados em `Assets/GameContent
 
 ## Acervo original importado em massa
 
+**Acervo realmente versionado:** 7.937 arquivos no snapshot Unity do 2nd Offense (191.352.015 bytes) e 4.549 arquivos no snapshot de referência Classic (incluindo o manifesto de origem). A importação preserva os projetos legados, inclusive arquivos `.csproj` antes ignorados; nenhuma dessas árvores é compilada diretamente pela Unity 6.6.
+
+
+
 O workflow [Import complete Vigilante2Unity source archive](.github/workflows/import-v82-source.yml) executou e copiou a árvore original do projeto [stefanvranjes/Vigilante2Unity](https://github.com/stefanvranjes/Vigilante2Unity) para [LegacySources/Vigilante2Unity/Assets](LegacySources/Vigilante2Unity/Assets), com revisão de origem fixada em `d20883df0d5da3ba517142fb4d486db1f5e673fb`.
 
 A árvore contém **scripts C# de veículos e armas** (incluindo MGun, Missile, Rocket, Mortar, Mine, FlameThrower, Cannon e armas especiais), **prefabs originais**, materiais, milhares de texturas, WAV e cenas de arena. Os arquivos permanecem preservados sob seus nomes e hierarquia originais, com metadados `.meta`; não são representações geradas ou placeholders.
