@@ -1,45 +1,43 @@
-# Vigilante 8 Offence 3 — Unity PC project
+# Vigilante 8 Offence 3 — Windows PC (Unity 6.6)
 
-Unificação orientada a dados do conteúdo de **Vigilante 8 (1998)** e **Vigilante 8: 2nd Offense (1999)** para um projeto de Windows em **Unity 6.6 (6000.6.7f1)**, **URP 17.6** e **Input System 1.20.1**.
+Projeto Unity para gerar um **jogo nativo Windows x64**. O jogador instala/extrai o pacote do jogo e executa `Vigilante8Offence3.exe`. **O jogo não pede BIN, CUE, disco de PS1, emulador, launcher externo nem o Editor Unity.**
 
-## Estado honesto da implementação
+O projeto unifica os dados dos dois títulos: **23 personagens/identidades únicos**, **31 veículos distintos** e **18 arenas PlayStation**. Aparições repetidas mantêm uma identidade e seus veículos diferentes continuam selecionáveis.
 
-- ✅ Catálogo **23 identidades**, **31 veículos distintos**, **18 arenas PlayStation**; sem duplicatas no seletor.
-- ✅ Relação entre personagem e os veículos de cada jogo, incluindo identidades compartilhadas e nomes alternativos.
-- ✅ Validação automática contra duplicatas, aliases conflitantes e referências inválidas.
-- ✅ Ferramenta Unity para importar **modelos FBX** de uma fonte local autorizada, gerar prefabs nomeados e impedir build se faltar conteúdo.
-- ⛔ Não inclui os modelos, texturas, sons, campanhas ou jogabilidade completa dos jogos comerciais. Não existe build jogável nem homologação Unity até que os dados legítimos sejam importados e testados.
+## Código implementado
 
-## Abrir no Unity
+- Menu de seleção gerado dinamicamente a partir de `Assets/Resources/Catalog/roster.json`.
+- Direção arcade por Rigidbody, ajustes próprios de cada carro, teclado e gamepad.
+- Disparo de projéteis com colisão e dano, saúde, câmera e três oponentes IA.
+- Preparação automática da cena inicial no Unity Editor.
+- Validador que **impede a release** se algum dos 31 carros ou 18 cenários estiver ausente, sem geometria, colisão, armas ou spawns.
+- Build Windows IL2CPP, ZIP, manifesto e SHA-256.
 
-1. Use **Unity Hub > Add project from disk** neste diretório.
-2. Instale o Editor `6000.6.7f1` e o módulo **Windows Build Support (IL2CPP)**.
-3. Forneça seus próprios modelos preparados para Unity em um diretório **fora do repositório**:
-   - `Vehicles/<assetId>.fbx`
-   - `Arenas/<assetId>.fbx`
-   - `Textures/` (opcional; ajuste os materiais URP depois da importação)
-4. No Unity, execute **Vigilante 8 > Importar conteúdo local (FBX)** e escolha esse diretório.
-5. Inspecione meshes, materiais, colisores, pivôs, escala e licenças antes de ativar qualquer build. O validador de build bloqueia conteúdo ausente.
+## Conteúdo real ainda necessário
 
-Os nomes `assetId` estão em [roster.json](Assets/Resources/Catalog/roster.json). **Não** comite os arquivos extraídos ou conteúdo protegido de jogos comerciais no GitHub.
+**Os modelos, texturas, sons, músicas e arenas licenciados ainda não estão anexados ao repositório.** O projeto não inclui assets inventados nem substitutos genéricos. A estrutura e o código foram adicionados, mas **não existe EXE compilado ou jogabilidade homologada** nesta fase.
 
-## Política de duplicatas
+O dono do projeto declarou possuir os direitos/autorização sobre os jogos. O conteúdo precisa estar acessível na pasta do projeto para entrar no pacote: arquivos originais de mídia não são obtidos automaticamente a partir dessa declaração.
 
-Cada pessoa possui **um único id**. `Slick Clyde` = `Lord Clyde`; `Houston 3` = `Houston`. **Dave** e **Dave's Cultsmen** são entradas diferentes: o segundo representa outro grupo, não uma skin do primeiro. Quem aparece nos dois jogos pode ter **dois veículos**, sempre com nomes e IDs únicos. Evoluções/Hotrod são estados e skins dos veículos, não carros duplicados.
+## Build
 
-## Mapas
+1. Abra no **Unity 6000.6.7f1**, com **Windows Build Support IL2CPP**.
+2. Configure um URP Asset (with Universal Renderer) no Project Settings > Graphics.
+3. No menu do Editor, execute **Vigilante 8 > Preparar cena PC nativa**.
+4. Configure os prefabs reais em `Assets/Resources/Vehicles/<assetId>.prefab` e `Assets/Resources/Arenas/<assetId>.prefab`.
+5. Use **Vigilante 8 > Validar conteúdo real e pronto para build**.
+6. Use **Vigilante 8 > Build Windows x64 IL2CPP com assets**.
 
-Inclui 10 arenas do primeiro jogo no PlayStation e 8 do segundo. `Super Dreamland 64`, exclusiva do Nintendo 64, fica fora deste primeiro catálogo PlayStation para não prometer dados não incluídos.
+A ação de build gera `Builds/Windows-x64/Vigilante8Offence3.exe`, a pasta Unity `Vigilante8Offence3_Data/`, um manifesto, um ZIP e o arquivo `.sha256`. O EXE depende da pasta `_Data` e bibliotecas do runtime Unity, mas de **nenhum arquivo dos jogos clássicos**.
 
-## Verificação automática
+Validação de catálogo sem o Unity:
 
-```bash
+```sh
 python3 scripts/validate_catalog.py
 python3 -m unittest discover -s tests -v
+python3 scripts/verify_pc_contract.py
 ```
 
-## Referências e direitos
+Leia também [Pipeline de assets](docs/IMPORT_PIPELINE.md) e [Contrato de distribuição](docs/PC_STANDALONE.md).
 
-Fontes de referência: [Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp) (recompilação PC, **não** é um conversor Unity), [releases](https://github.com/GTTeancum/Vigilante-8-recomp/releases/tag/v1.0). O projeto original depende de dados fornecidos pelo dono do jogo.
-
-**Vigilante 8** e **2nd Offense**, personagens, assets e marcas pertencem a seus respectivos titulares. Este repositório não redistribui material comercial de terceiros nem incorpora automaticamente código de licenças desconhecidas.
+**Ainda não homologado:** texturas HD definitivas, física de cada carro, armas especiais, missões, salvamento, multiplayer e APK. O foco é Windows.
