@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "description": "Source 3D meshes physically copied from upstream Unity repository, not yet finished vehicle prefabs",
+  "upstream": {
+    "repository": "stefanvranjes/Vigilante2Unity",
+    "commit": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+    "editor": "2020.3.3f1"
+  },
+  "models": [
+    {
+      "assetId": "v82_tsunami",
+      "name": "Tsunami",
+      "source": "Assets/Tsunami.fbx",
+      "local": "Assets/GameContent/SourceModels/Vigilante2Unity/v82_tsunami.fbx",
+      "gitBlobSha": "71a62b4ad975ffe732b74c0a68e4287d688e263f",
+      "geometryMeshes": 5,
+      "referencedTextures": 16,
+      "status": "source_geometry_only"
+    },
+    {
+      "assetId": "v82_blue_burro_bus",
+      "name": "Blue Burro Bus",
+      "source": "Assets/Blue Burro Bus.fbx",
+      "local": "Assets/GameContent/SourceModels/Vigilante2Unity/v82_blue_burro_bus.fbx",
+      "gitBlobSha": "60e45346aa06b5ddac2c87c2d8eb365b22e43436",
+      "geometryMeshes": 8,
+      "referencedTextures": 19,
+      "status": "source_geometry_only"
+    }
+  ],
+  "limitations": [
+    "Both FBX files contain real geometry but their external BMP texture references were not found at the referenced locations in the upstream checkout.",
+    "These are source meshes, not configured Unity vehicle prefabs and not proof of a playable build.",
+    "Legacy Unity 2020 materials require URP migration on Unity 6.6."
+  ]
+}
