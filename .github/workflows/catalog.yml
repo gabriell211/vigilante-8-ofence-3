@@ -15,6 +15,12 @@ jobs:
         run: python3 scripts/validate_catalog.py
       - name: Test data invariants and asset audit
         run: python3 -m unittest discover -s tests -v
+      - name: Install .NET 8 for offline Roslyn C# syntax validation
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Validate all active Unity C# scripts for syntax errors
+        run: dotnet run --project Tools/UnitySyntaxCheck/UnitySyntaxCheck.csproj -- .
       - name: Verify native Windows source contract
         run: python3 scripts/verify_pc_contract.py
       - name: Verify complete upstream V8 Second Offense Unity content archive
