@@ -1,0 +1,89 @@
+name: Import complete Vigilante2Unity source archive
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-v82-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-v82-unity-assets
+  cancel-in-progress: false
+
+jobs:
+  stage-original-assets:
+    name: Copy actual vehicles, weapons, scenes, textures and audio
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout game repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Checkout complete upstream Unity project at pinned revision
+        uses: actions/checkout@v4
+        with:
+          repository: stefanvranjes/Vigilante2Unity
+          ref: d20883df0d5da3ba517142fb4d486db1f5e673fb
+          path: _upstream_v82
+          persist-credentials: false
+          lfs: true
+
+      - name: Verify source revision and stage original assets outside active Unity scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _upstream_v82 rev-parse HEAD)" = "d20883df0d5da3ba517142fb4d486db1f5e673fb"
+          mkdir -p LegacySources/Vigilante2Unity/Assets LegacySources/Vigilante2Unity/ProjectSettings
+          rsync -a --delete             --exclude='*.DS_Store'             _upstream_v82/Assets/ LegacySources/Vigilante2Unity/Assets/
+          cp _upstream_v82/ProjectSettings/ProjectVersion.txt LegacySources/Vigilante2Unity/ProjectSettings/ProjectVersion.txt
+          cp _upstream_v82/ProjectSettings/EditorBuildSettings.asset LegacySources/Vigilante2Unity/ProjectSettings/EditorBuildSettings.asset
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          record = {
+              "source": "https://github.com/stefanvranjes/Vigilante2Unity",
+              "commit": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+              "editor": "2020.3.3f1",
+              "status": "legacy_references_for_porting",
+              "note": "All source project resources staged outside active Assets; not automatically Unity 6.6 compatible.",
+          }
+          Path("LegacySources/Vigilante2Unity/source.json").write_text(
+              json.dumps(record, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Verify cars, special weapons, gameplay scripts and textures
+        run: |
+          python3 scripts/audit_upstream_snapshot.py
+          python3 scripts/validate_catalog.py
+          python3 scripts/verify_imported_models.py
+          python3 -m unittest discover -s tests -v
+
+      - name: Preserve all source files in main as an auditable snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A LegacySources/Vigilante2Unity
+          if git diff --cached --quiet; then
+            echo "Upstream revision already staged; no duplicate commits."
+            exit 0
+          fi
+          git commit -m "assets(v82): stage original Unity vehicles, weapons, levels, textures and sounds"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Summarize actual integration stage
+        if: always()
+        run: |
+          echo "## Importação do acervo Unity original" >> "$GITHUB_STEP_SUMMARY"
+          echo "Fonte: stefanvranjes/Vigilante2Unity @ d20883df0d5da3ba517142fb4d486db1f5e673fb" >> "$GITHUB_STEP_SUMMARY"
+          echo "Conteúdo completo armazenado em LegacySources/Vigilante2Unity/Assets." >> "$GITHUB_STEP_SUMMARY"
+          echo "Isto é uma cópia dos assets e scripts originais; port para Unity 6.6, ajustes URP e validações de gameplay ainda necessários." >> "$GITHUB_STEP_SUMMARY"
