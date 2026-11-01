@@ -1,0 +1,102 @@
+# Build outputs
+build/
+build-*/
+out/
+
+# Generated data (extracted CD files)
+data/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local agent/process files -- useful for active automation, not needed to build.
+/AGENTS.md
+/CLAUDE.md
+/HANDOFF.md
+/STATUS.md
+/TO-DO.MD
+/progress.log
+/decisions.log
+
+# Ghidra install + project files -- regenerable, 1GB+. analysis/ exports ARE checked in.
+ghidra/
+
+# Game asset originals -- DO NOT commit copyrighted material.
+# Original PSX disc contents and extracted assets stay LOCAL ONLY.
+/bin-cue/*.bin
+/bin-cue/*.cue
+/BINCUE/
+/V8_2_BINCUE/
+/V8_2_LOOSE/
+/V8_2_WORK/
+/V8_ARCADE_WORK/
+/I76_ZFS/
+/I76/
+/I76_NITRO_DISC/
+/I76_NITRO_ZFS/
+/*.bin
+/*.cue
+/*.n64
+/*.rar
+/.sentry-native/
+/.tmp/
+/PS1 game/
+/input/
+/reference/assets/
+/reference/generated/
+/reference/traces/
+/reference-v8-2/generated/
+/reference-v8-2/traces/
+/card*.sav
+/interface.ini
+/settings.json
+# Note: analysis/ contains Ghidra decomp output (derived work, used as
+# audit ground truth for cleaned src/ files) and IS tracked.
+
+# Smoke-test artifacts
+/artifacts/
+/*Dreamcast.zip
+*.png
+!mods/v8_classic_menu/source/options_left.png
+*.ppm
+*.wav
+*.log
+v8_previous_*.log
+tools/smoke/captures/
+__pycache__/
+*.pyc
+/tools/n64_reference/bin/
+/tools/n64_reference/state/
+/tools/n64_reference/vendor/
+/tools/recompone-v8-2/reference-host/bin/
+/tools/recompone-v8-2/tests/*/bin/
+
+# Compiled objects
+**/obj/
+*.o
+*.obj
+*.exe
+*.dll
+!tools/recompone-v8-2/reference-host/runtime/win-x64/vcruntime140.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.pdb
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+.claude/
+
+# Drop SDL2 documentation (~5MB) -- libs and headers are tracked.
+third_party/SDL2/docs/
+*.dis.s

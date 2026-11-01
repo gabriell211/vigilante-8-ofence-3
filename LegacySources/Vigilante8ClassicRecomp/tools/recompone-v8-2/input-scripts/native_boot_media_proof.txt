@@ -1,0 +1,8 @@
+# LEFT is ignored by the movie player.  The first checkpoint starts a
+# five-second presentation burst spanning the authored opening streams; the
+# later checkpoint keeps a settled late-FMV frame for composition checks.
+1+2=LEFT
+480+2=LEFT
+540+3=START
+900+3=START
+1020+2=SELECT

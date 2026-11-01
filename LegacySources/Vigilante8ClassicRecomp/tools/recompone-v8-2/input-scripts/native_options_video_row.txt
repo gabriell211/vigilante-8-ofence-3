@@ -1,0 +1,61 @@
+# Deterministic walk onto the appended VIDEO row and through its page.
+#
+# The boot prefix and the per-page DOWN presses are the discovery fixture's:
+# each retail Options sub-page signals a stage as its title is drawn, so the
+# cursor is stepped one row per stage rather than on absolute frames. Video
+# sits under Audio, so the fifth DOWN reaches it; the widened cursor bound and
+# the remapped jump table are then exercised by walking on down to Credits.
+540+3=START
+900+3=START
+960+3=DOWN
+1020+3=DOWN
+1080+3=CROSS
+
+[v82_options_game_status]
+40+3=DOWN
+
+[v82_options_memory_card]
+80+3=DOWN
+
+[v82_options_difficulty]
+40+3=DOWN
+
+[v82_options_controller]
+120+3=DOWN
+
+# Video sits directly under Audio, so this DOWN lands on it and Back Story and
+# Credits are the two rows below.
+[v82_options_audio]
+80+3=DOWN
+
+# Browsing shows the settings read-only and leaves the row cursor with the
+# outer loop. CROSS takes the page into editing, the DOWN run walks its own
+# list far enough to scroll the window, and TRIANGLE returns to browsing
+# without also leaving Options. The DOWN after that hands the row cursor on to
+# Back Story, whose title redraw fires the next stage -- that is the evidence
+# the remapped jump table sends index six to the right page. (Nothing is safe
+# as an inert filler here: LEFT is part of the shell's leave-Options mask and
+# drops out to the main menu.)
+[v82_options_native_video]
+60+3=CROSS
+120+3=DOWN
+180+3=DOWN
+240+3=DOWN
+300+3=DOWN
+360+3=DOWN
+420+3=DOWN
+480+3=DOWN
+540+3=TRIANGLE
+# DOWN hands the row cursor on to Back Story, whose title redraw fires the next
+# stage -- evidence the remapped jump table sends index six to the right page.
+660+3=DOWN
+
+# Index seven, the row the window scrolls for. Reaching Credits proves the
+# widened bound and the remap; UP then walks back up through the list. Both of
+# these pages are the shared func_8010E854 body, so they also exercise
+# V82NativeTextPageInput.
+[v82_options_back_story]
+120+3=DOWN
+
+[v82_options_credits]
+140+3=UP

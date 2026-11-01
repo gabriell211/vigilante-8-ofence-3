@@ -1,0 +1,285 @@
+/* math_helpers.c -- small 4.12 trig / linear-algebra helpers.
+ *
+ * Source: SLUS_005.10
+ *   FUN_80016c54  -- Math_Atan2FromField(+10,+0x10)
+ *   FUN_80016c88  -- Math_Atan2FromField(+4, +0x10)
+ *   FUN_80016cb8  -- Math_MatrixRollAngle(mat)            (~5 instr)
+ *   FUN_80016dfc  -- Matrix_InverseRigid
+ *   FUN_80016e64  -- Math_NormalizeXZAndReorthogonalize
+ *   FUN_800170c8  -- Math_Sqrt64(lo, hi)                  (~16 instr)
+ *
+ * ratan2 (PSY-Q) returns an angle in 4.12 format (4096 = 360 deg).
+ *
+ * HIGH-MED confidence: control flow and math operations match standard
+ * idioms; the per-struct field offsets (+4, +10, +0x10) are inferred
+ * from the call sites in this binary -- pass 2 should retype the
+ * argument to the actual struct.
+ */
+#include <stdint.h>
+#include "structs.h"
+
+extern long ratan2(int y, int x);
+extern long SquareRoot0(int n);
+extern MATRIX *TransposeMatrix(const MATRIX *src, MATRIX *dst);
+extern int32_t *GTE_RotateLongMat(const uint32_t *m, const uint32_t *src, int32_t *dst);
+
+/* HIGH: read atan2 of two i16 fields in `obj` and return -angle as i16. */
+int16_t Math_Atan2_PosNeg(const uint8_t *obj)
+{
+    int16_t y = *(int16_t *)(obj + 0x0a);
+    int16_t x = *(int16_t *)(obj + 0x10);
+    return (int16_t)-ratan2(y, x);
+}
+
+/* HIGH: companion -- positive sign. */
+int16_t Math_Atan2_Pos(const uint8_t *obj)
+{
+    int16_t y = *(int16_t *)(obj + 0x04);
+    int16_t x = *(int16_t *)(obj + 0x10);
+    return (int16_t)ratan2(y, x);
+}
+
+int FUN_80016c54(int param_1)
+{
+    return (int)Math_Atan2_PosNeg((const uint8_t *)(uintptr_t)(uint32_t)param_1);
+}
+
+int FUN_80016c88(int param_1)
+{
+    return (int)Math_Atan2_Pos((const uint8_t *)(uintptr_t)(uint32_t)param_1);
+}
+
+/* HIGH: inverse of a rigid-body matrix = transpose(R) | -R^T * t.
+ * Implementation: transpose, then rotate the original translation
+ * through the (now-transposed) rotation, then negate. */
+void Matrix_InverseRigid(const MATRIX *src, MATRIX *dst)
+{
+    TransposeMatrix(src, dst);
+    GTE_RotateLongMat((const uint32_t *)dst, (const uint32_t *)src->t, dst->t);
+    dst->t[0] = -dst->t[0];
+    dst->t[1] = -dst->t[1];
+    dst->t[2] = -dst->t[2];
+}
+
+/* HIGH-MED: re-orthogonalise an XZ basis. `v` is interpreted as a
+ * compact 9-i16 structure containing two row vectors and a magnitude
+ * slot. After this returns:
+ *   v[0],v[6] are the X/Z components of the new normalised X axis.
+ *   v[8]      is the magnitude of (v[0], v[6]).
+ *   v[3],v[5] are the rotated old Y/Z axis (Y row).
+ *   v[2]      is reset to zero (so the basis is purely planar in XZ).
+ *
+ * Used by vehicle / camera basis maintenance to keep the heading
+ * vector unit length and orthogonal to the up axis.
+ *
+ * Bit-exact: the (n*0x1000000/len) divisions and 0xfff round-up biases
+ * are preserved as in the binary. They implement a fixed-point reciprocal
+ * normalisation that rounds toward positive infinity for negative
+ * numerators (the classic 4.12 trick).
+ */
+void Math_NormalizeXZ(int16_t *v)
+{
+    long len = SquareRoot0((int)v[0] * v[0] + (int)v[6] * v[6]);
+    int32_t inv = (len != 0) ? (0x1000000 / (int32_t)len) : 0;
+
+    int32_t cx = (int32_t)v[0] * inv;
+    int32_t cz = (int32_t)v[6] * inv;
+    if (cx < 0) cx += 0xfff;
+    if (cz < 0) cz += 0xfff;
+    cx >>= 12;
+    cz >>= 12;
+
+    v[8] = (int16_t)len;
+    v[6] = 0;
+    int32_t r3 = cx * v[3] - cz * v[5];   if (r3 < 0) r3 += 0xfff;
+    int32_t r4 = cz * v[3] + cx * v[5];   if (r4 < 0) r4 += 0xfff;
+    v[3] = (int16_t)(r3 >> 12);
+    v[5] = (int16_t)(r4 >> 12);
+    int32_t r5 = cx * v[0] - cz * v[2];   if (r5 < 0) r5 += 0xfff;
+    v[0] = (int16_t)(r5 >> 12);
+    v[2] = 0;
+}
+
+/* ================================================================
+ * FUN_80016cb8 -- Math_MatrixRollAngle
+ *
+ * Extracts the roll angle from a MATRIX (or any int16_t[] where
+ * element[0]=m[0][0], element[3]=m[1][0]).
+ * Returns -(int16_t)ratan2(m[1][0], m[0][0]).
+ * ================================================================ */
+int16_t FUN_80016cb8(int16_t *param_1)
+{
+    long lVar1 = ratan2((int)param_1[3], (int)param_1[0]);
+    return (int16_t)(-(int16_t)lVar1);
+}
+
+/* ================================================================
+ * FUN_800170c8 -- Math_Sqrt64
+ *
+ * 64-bit integer square root via GTE leading-zero-count normalization.
+ *   param_1 = low 32 bits of the value
+ *   param_2 = high 32 bits of the value
+ *
+ * Uses GTE LZCS/LZCR to find the normalization shift uVar3, shifts
+ * the 64-bit value right by 2*uVar3 (discarding the low bits), then
+ * takes the 32-bit sqrt and scales the result back up by uVar3.
+ *
+ * Bit-exact: preserves the branch on (uVar3 << 0x1b) sign to choose
+ * whether to take the shifted high or low word as sqrt input.
+ * ================================================================ */
+int FUN_800170c8(uint32_t param_1, int param_2)
+{
+    int      iVar1;
+    long     lVar2;
+    uint32_t uVar3;
+
+    gte_ldLZCS(param_2);
+    iVar1 = gte_stLZCR();
+    uVar3 = (uint32_t)(0x23 - iVar1) >> 1;
+    if ((int)(uVar3 << 0x1b) < 0) {
+        param_1 = (uint32_t)(param_2 >> (int)(uVar3 * 2u & 0x1fu));
+    } else {
+        param_1 = param_1 >> (uVar3 * 2u & 0x1fu);
+        if ((uVar3 << 0x1b) != 0) {
+            param_1 = param_1 | (uint32_t)(param_2 << (int)(uVar3 * (uint32_t)(-2) & 0x1fu));
+        }
+    }
+    lVar2 = SquareRoot0((int)param_1);
+    return (int)(lVar2 << (int)(uVar3 & 0x1fu));
+}
+
+/* ============================================================
+ * // GHIDRA REF (audit ground truth — DO NOT EDIT MANUALLY)
+ *
+ * These are the raw Ghidra pseudo-C exports for the function(s)
+ * this file cleans up. Use them to audit any MED-confidence
+ * rewrite line-by-line. Regenerated by tools/restore_ghidra_refs.py.
+ * ============================================================ */
+#if 0
+
+/* --- SLUS_005.10 FUN_80016c54  (from analysis/SLUS_005.10/decomp/80016c54.c) --- */
+// addr: 0x80016c54  name: FUN_80016c54
+
+int FUN_80016c54(int param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = ratan2((int)*(short *)(param_1 + 10),(int)*(short *)(param_1 + 0x10));
+  return (int)(short)-(short)lVar1;
+}
+
+/* --- SLUS_005.10 FUN_80016c88  (from analysis/SLUS_005.10/decomp/80016c88.c) --- */
+// addr: 0x80016c88  name: FUN_80016c88
+
+int FUN_80016c88(int param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = ratan2((int)*(short *)(param_1 + 4),(int)*(short *)(param_1 + 0x10));
+  return (int)(short)lVar1;
+}
+
+/* --- SLUS_005.10 FUN_80016dfc  (from analysis/SLUS_005.10/decomp/80016dfc.c) --- */
+// addr: 0x80016dfc  name: FUN_80016dfc
+
+void FUN_80016dfc(MATRIX *param_1,MATRIX *param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  TransposeMatrix(param_1,param_2);
+  FUN_80043358(param_2,param_1->t,param_2->t);
+  iVar1 = param_2->t[1];
+  iVar2 = param_2->t[2];
+  param_2->t[0] = -param_2->t[0];
+  param_2->t[1] = -iVar1;
+  param_2->t[2] = -iVar2;
+  return;
+}
+
+/* --- SLUS_005.10 FUN_80016e64  (from analysis/SLUS_005.10/decomp/80016e64.c) --- */
+// addr: 0x80016e64  name: FUN_80016e64
+
+void FUN_80016e64(short *param_1)
+
+{
+  long lVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  
+  lVar1 = SquareRoot0((int)*param_1 * (int)*param_1 + (int)param_1[6] * (int)param_1[6]);
+  iVar2 = (int)*param_1 * (0x1000000 / lVar1);
+  if (iVar2 < 0) {
+    iVar2 = iVar2 + 0xfff;
+  }
+  iVar5 = (int)param_1[6] * (0x1000000 / lVar1);
+  iVar2 = iVar2 >> 0xc;
+  if (iVar5 < 0) {
+    iVar5 = iVar5 + 0xfff;
+  }
+  param_1[8] = (short)lVar1;
+  iVar5 = iVar5 >> 0xc;
+  iVar3 = iVar2 * param_1[3] - iVar5 * param_1[5];
+  param_1[6] = 0;
+  if (iVar3 < 0) {
+    iVar3 = iVar3 + 0xfff;
+  }
+  iVar4 = iVar5 * param_1[3] + iVar2 * param_1[5];
+  param_1[3] = (short)(iVar3 >> 0xc);
+  if (iVar4 < 0) {
+    iVar4 = iVar4 + 0xfff;
+  }
+  iVar2 = iVar2 * *param_1 - iVar5 * param_1[2];
+  param_1[5] = (short)(iVar4 >> 0xc);
+  if (iVar2 < 0) {
+    iVar2 = iVar2 + 0xfff;
+  }
+  *param_1 = (short)(iVar2 >> 0xc);
+  param_1[2] = 0;
+  return;
+}
+
+/* --- SLUS_005.10 FUN_80016cb8  (from analysis/SLUS_005.10/decomp/80016cb8.c) --- */
+// addr: 0x80016cb8  name: FUN_80016cb8
+
+int FUN_80016cb8(short *param_1)
+
+{
+  long lVar1;
+
+  lVar1 = ratan2((int)param_1[3],(int)*param_1);
+  return (int)(short)-(short)lVar1;
+}
+
+/* --- SLUS_005.10 FUN_800170c8  (from analysis/SLUS_005.10/decomp/800170c8.c) --- */
+// addr: 0x800170c8  name: FUN_800170c8
+
+int FUN_800170c8(uint param_1,int param_2)
+
+{
+  int iVar1;
+  long lVar2;
+  uint uVar3;
+
+  gte_ldLZCS(param_2);
+  iVar1 = gte_stLZCR();
+  uVar3 = 0x23 - iVar1 >> 1;
+  if ((int)(uVar3 << 0x1b) < 0) {
+    param_1 = param_2 >> (uVar3 * 2 & 0x1f);
+  }
+  else {
+    param_1 = param_1 >> (uVar3 * 2 & 0x1f);
+    if (uVar3 << 0x1b != 0) {
+      param_1 = param_1 | param_2 << (uVar3 * -2 & 0x1f);
+    }
+  }
+  lVar2 = SquareRoot0(param_1);
+  return lVar2 << (uVar3 & 0x1f);
+}
+
+#endif  /* GHIDRA REF */

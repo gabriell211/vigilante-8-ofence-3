@@ -1,0 +1,1703 @@
+#!/usr/bin/env python3
+"""Prepare the first RecompOne configuration for Vigilante 8: 2nd Offense.
+
+The bootstrap configuration deliberately relies on RecompOne's call discovery
+and linear sweep.  Ghidra-derived function maps can replace that discovery as
+the sequel analysis matures, without changing the generated-project layout.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+from pathlib import Path
+
+
+REPO = Path(__file__).resolve().parents[2]
+DEFAULT_CUE = (
+    REPO
+    / "V8_2_BINCUE"
+    / "Vigilante 8 - 2nd Offensive [U] [SLUS-00868].cue"
+)
+DEFAULT_DISC = REPO / "V8_2_WORK" / "disc"
+DEFAULT_OUTPUT = REPO / "reference-v8-2" / "generated"
+
+# Original-binary callback or call targets proven at runtime but omitted by the
+# bootstrap scanner. Keep this list address-only until Ghidra supplies names.
+EXTRA_MAIN_FUNCTIONS = [
+    "0x8004282C",
+    "0x80014FD8",
+    "0x80019EB8",
+    "0x80019EF0",
+    "0x80019F00",
+    "0x80019F10",
+    "0x80019F8C",
+    "0x80019FAC",
+    "0x80019FC0",
+    "0x80019FD0",
+    "0x80019FE4",
+    "0x80019ABC",
+    "0x80019AF0",
+    "0x80019B0C",
+    "0x8001A00C",
+    "0x8001A014",
+    "0x8001A064",
+    "0x8001A078",
+    "0x8001A084",
+    "0x8001A0A0",
+    "0x8001A0A8",
+    "0x8001A0C8",
+    "0x8001A0E0",
+    "0x8001F76C",
+    "0x8001F6F8",
+    "0x8001F7DC",
+    "0x8001F84C",
+    "0x8001F8A4",
+    "0x8001F924",
+    "0x8001F9A8",
+    "0x8001FA54",
+    "0x8001FA8C",
+    "0x8001FADC",
+    "0x8001FB2C",
+    "0x8001FB40",
+    "0x8001FBA4",
+    "0x8001E9B8",
+    "0x8001EA0C",
+    "0x8001EAA0",
+    "0x8001EAAC",
+    "0x8001EAB8",
+    "0x8001EACC",
+    "0x8001EAD0",
+    "0x8001EAF8",
+    "0x8001EB08",
+    "0x80020AD4",
+    "0x80020B04",
+    "0x80020CB8",
+    "0x80020CD4",
+    "0x80020D00",
+    "0x80020D50",
+    "0x80021FA8",
+    "0x8002215C",
+    "0x80022164",
+    "0x800221CC",
+    "0x800221DC",
+    "0x8002224C",
+    "0x80022280",
+    "0x800222E4",
+    "0x80022330",
+    "0x800223D4",
+    "0x800223F0",
+    "0x8002246C",
+    "0x800224A0",
+    "0x800224E8",
+    "0x80022504",
+    "0x80022580",
+    "0x800225AC",
+    "0x8002260C",
+    "0x80022640",
+    "0x80022674",
+    "0x8002271C",
+    "0x800227AC",
+    "0x80022828",
+    "0x80022870",
+    "0x80022910",
+    "0x800229A0",
+    "0x80022A1C",
+    "0x80022A4C",
+    "0x80022B04",
+    "0x80022B44",
+    "0x80022B7C",
+    "0x80022C54",
+    "0x80022DA8",
+    "0x80022E2C",
+    "0x80022E78",
+    "0x80022FBC",
+    "0x8002313C",
+    # Remaining direct targets in the secondary geometry dispatcher table at
+    # 0x80021F04, including paths reached by terrain events and weapon effects.
+    "0x8002356C",
+    "0x80023658",
+    "0x80023758",
+    "0x80023880",
+    # Full 16-way geometry primitive dispatcher table at 0x80021E8C.
+    # Complex weapon effects use entries that normal arena rendering does not.
+    "0x800239BC",
+    "0x80023A70",
+    # Shared projected-vertex continuation tail-called by the 0x23B3C,
+    # 0x23C2C and 0x23D34 primitive handlers.
+    "0x80023AD0",
+    "0x80023B3C",
+    "0x80023C2C",
+    "0x80023D34",
+    "0x800564F0",
+    "0x800565F0",
+    "0x8005663C",
+    "0x800566BC",
+    "0x8005673C",
+    # DrawPrim/DMA ordering-table helper continuation reached by Pacific
+    # Harbor's first arena callback through func_800598D8.
+    "0x80059928",
+    "0x8005F12C",
+    "0x8005F158",
+    "0x8005F188",
+    "0x8005F198",
+    "0x8005F1A0",
+    "0x8005F1BC",
+    "0x8005F1C4",
+    "0x8005F1CC",
+    "0x8005F254",
+    "0x8005F25C",
+    "0x8005F2B8",
+    "0x8005F2C0",
+    "0x8005F2C8",
+    "0x8005F2D0",
+    "0x8005F2EC",
+    "0x8005F2F0",
+    "0x8005F334",
+    "0x8005F370",
+    "0x8005F374",
+    "0x8005F3A8",
+    "0x8005F3B8",
+    "0x8005F418",
+    "0x8005F41C",
+    "0x8005F450",
+    "0x8005F45C",
+    "0x8005F70C",
+    "0x8005F720",
+    # Internal continuations selected by the retail sprintf formatter table at
+    # 0x80011458. RecompOne must retain every target because SHELL uses %c and
+    # numeric formats while constructing the character-selection labels.
+    "0x8005FAFC",
+    "0x8005FD5C",
+    "0x8005FD68",
+    "0x8005FD74",
+    "0x8005FDA0",
+    "0x8005FDF8",
+    "0x8005FF18",
+    "0x80060018",
+    "0x8006002C",
+    "0x80060038",
+    "0x80060144",
+    "0x80060164",
+    "0x800601F0",
+    "0x80060224",
+]
+
+EXTRA_OVERLAY_FUNCTIONS = {
+    # Bayou schedules this internal arena-event continuation directly as an
+    # object callback after its opening simulation frames.
+    "LEVELS_BAYOU": [
+        "0x801001A0",
+    ],
+    # Steel Mill installs this event handler into spawned map objects.
+    "LEVELS_STEELMIL": [
+        "0x80100370",
+    ],
+    # Alaska/Oil Fields damage event handler stored directly in map objects.
+    "LEVELS_OILFIELD": [
+        "0x80100190",
+        "0x80100348",
+    ],
+    # Secret Base registry predicate reached by its scripted event tree.
+    "LEVELS_V8_SCRTBASE": [
+        "0x801001D0",
+    ],
+    # SHELL's hand-written VLC/MDEC decoder uses tail jumps between internal
+    # continuations. These are runtime-proven dispatch targets, including when
+    # the shell is relocated by the retail loader.
+    "SHELL_SHELL": [
+        "0x80110E20",
+        "0x80110EB0",
+        "0x8011107C",
+        "0x8011117C",
+        "0x80111198",
+        "0x801111C4",
+    ],
+    # LOAD's hand-written VLC decoder likewise tail-jumps among internal
+    # continuations that do not look like ordinary ABI function entries.
+    "SHELL_LOAD": [
+        "0x80109810",
+        "0x801098A0",
+        "0x80109A6C",
+        "0x80109B6C",
+        "0x80109B88",
+        "0x80109BB4",
+    ],
+}
+
+PROVEN_PATCHES = [
+    # Both retail XTIN layouts populate the same 256-entry runtime material
+    # table. Arena scripts are allowed to reuse those descriptors as mutable
+    # animation state (Hoover Dam does this for materials 50-53), so preserve
+    # the authored average colors immediately after either loader completes.
+    # Enhanced terrain-distance shading consumes this immutable snapshot,
+    # matching the Dreamcast loader rather than later overlay scratch writes.
+    {
+        "overlay": "SHELL_LOAD",
+        "address": "80108338",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.CaptureAuthoredTerrainMaterialAverages",
+        "mode": "post",
+    },
+    {
+        "overlay": "SHELL_LOAD",
+        "address": "801085F4",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.CaptureAuthoredTerrainMaterialAverages",
+        "mode": "post",
+    },
+    # A VIDEO row added to the retail Options list. The row count in
+    # func_80108B48 is a compiled constant and the seven row plates behind the
+    # text are panel geometry, so an eighth row cannot simply be drawn on the
+    # end. The loop renders seven rows from wherever S2 points, though, so the
+    # hook points it into an eight-entry table and slides the window by one
+    # when the cursor reaches the appended row. 0x80108C1C is the instruction
+    # that loads the retail table, with the selected index live in S4.
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80108C1C",
+        "target": "V82NativeVideoOption.AdjustLayout",
+        "mode": "inline",
+        "position": "after",
+    },
+    # Selecting the appended row. func_8010EA88 is the Options frame loop: it
+    # redraws the list, dispatches the selected index through a seven-entry
+    # jump table at 0x80101180, then reads the pad to move the cursor. Two
+    # compiled constants confine that to seven rows.
+    #
+    # 0x8010ED18 is the `and` whose result decides whether the next-row input
+    # is down; stepping the cursor onto row seven there leaves the following
+    # `slti v0, s1, 6` to decline a second step.
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010ED18",
+        "target": "V82NativeVideoOption.ExtendCursorRange",
+        "mode": "inline",
+        "position": "after",
+    },
+    # 0x8010EC58 is `sltiu v0, s1, 7`, the jump table's bound check. The
+    # appended row has no table entry, so the hook claims the frame and
+    # branches to the loop's common continuation instead of letting the
+    # dispatch run.
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010EC58",
+        "target": "V82NativeVideoPage.Dispatch",
+        "mode": "inline",
+        "position": "before",
+        "branchTo": "8010ECE0",
+    },
+    # 0x8010E9D4 is the instruction after `jal func_800117C0` in func_8010E854,
+    # the body shared by Back Story and Credits, with the pad word those pages
+    # test against 0x50900000 live in V0. It stops being answered once a
+    # hook-owned page has held the frame; the hook supplies it from the
+    # runtime's pad, and only when the retail read came back empty.
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010E9D4",
+        "target": "V82NativeTextPageInput.SupplyPad",
+        "mode": "inline",
+        "position": "before",
+    },
+    # After the same instruction, and before S3 is added to the scaled index:
+    # admit the eighth index, or Credits never dispatches, and repoint S3 at a
+    # remapped table, because Video sits at five and pushes Back Story and
+    # Credits onto the retail entries five and six.
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010EC58",
+        "target": "V82NativeVideoOption.WidenDispatch",
+        "mode": "inline",
+        "position": "after",
+    },
+    # Widescreen and modern-detail terrain traversal. Seven calls stack at the entry of
+    # func_8001BECC; "pre" cannot express that because PreHookTarget is a
+    # single field and each would clobber the last, so they are inline seams
+    # on the first instruction and emit in declaration order.
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ScaleTerrainTraversalRange",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # The native texture/detail plane is nearer than the terrain far
+        # plane, creating a jagged cell-by-cell texture pop line in the modern
+        # renderer. Keep every visible terrain cell detailed under Maximum LOD.
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExtendTerrainTextureDetail",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainTraversalWideFit",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainTraversalAspect",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainTraversalOmnidirectional",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainTraversalLateral",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainTraversalPolygon",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80106800",
+        # The wrapper, not the resolver: an inline patch emits a bare call, so
+        # declaring the value-returning resolver here dropped the slot it
+        # computed and left the carousel seam doing nothing.
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.ApplyNativeSelectorSlot",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # Extend the carousel only after SHELL has accepted a left/right step,
+        # completed its modulo-18 wrap, and skipped unavailable retail slots.
+        # This is the authoritative navigation seam; the 80106800 hook only
+        # projects an already-selected guest through fixed retail tables.
+        "overlay": "SHELL_SHELL",
+        "address": "80107938",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "ApplyNativeSelectorNavigation"
+        ),
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # The enemy editor keeps four retail type bytes and indexes fixed
+        # sequel tables with them. Extend each row through registered guests
+        # after native left/right handling while retaining a safe proxy byte.
+        "overlay": "SHELL_SHELL",
+        "address": "80105C94",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "ApplyNativeEnemySelectorSlot"
+        ),
+        "mode": "inline",
+        "position": "before",
+    },
+    # Render-pass brackets and the object-visibility record. These were hand
+    # edits to generated output, which is rebuilt from the disc and therefore
+    # dropped them; each sits at a function boundary and is an ordinary
+    # pre/post hook, except the visibility record which is genuinely
+    # mid-routine and uses an inline seam.
+    {
+        "overlay": "main",
+        "address": "8001C910",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginLatePass",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001C910",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndLatePass",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "8001D414",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.LinkExpandedEdgePool",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001D484",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ProcessExpandedEdgePool",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8003150C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginSkyPass",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8003150C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndSkyPass",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80050B38",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginSceneryPass",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80050B38",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndSceneryPass",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "8002E2E0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RecordObjectVisibility",
+        "mode": "inline",
+        "position": "after",
+    },
+    # The PC controls page lives inside the retail Options routine
+    # (func_8010A5BC), which draws the page and services its input in one long
+    # body. There is no function boundary to hang a pre/post hook on, so these
+    # two seams are spliced in by instruction address. Without them the page
+    # exists only as hand edits to generated output, which is rebuilt from the
+    # disc and would silently drop the feature.
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010AE8C",
+        "target": "V82NativeControlOptions.TryDraw",
+        "mode": "inline",
+        "position": "before",
+        # Taking over the draw means skipping the retail page body.
+        "branchTo": "8010B1EC",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010B210",
+        "target": "V82NativeControlOptions.UpdateState",
+        "mode": "inline",
+        "position": "before",
+    },
+    # Retail PsyQ SDK routines identified by instruction-exact comparison
+    # against the symbolized Vigilante 8 executable.
+    {
+        "overlay": "main",
+        "address": "80054C4C",
+        "target": "RecompOne.Runtime.Sdk.LibEtc.VSync",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005BF88",
+        "target": "RecompOne.Runtime.Sdk.LibGpu.DrawSync",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005C57C",
+        "target": "RecompOne.Runtime.Sdk.LibGpu.DrawOTag",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005C2F4",
+        "target": "RecompOne.Runtime.Sdk.LibGpu.MoveImage",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005C5EC",
+        "target": "RecompOne.Runtime.Sdk.LibGpu.PutDrawEnv",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005C7B8",
+        "target": "RecompOne.Runtime.Sdk.LibGpu.PutDispEnv",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80062B4C",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadInitDirect",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8006066C",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadChkVsync",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8006068C",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadStartCom",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800606AC",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadStopCom",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80060718",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadGetState",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800606CC",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadChkMtap",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800607E4",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadInfoMode",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800608DC",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadInfoAct",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800609B0",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadInfoComb",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80060A58",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadSetActAlign",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80060A90",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadSetMainMode",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80060AD8",
+        "target": "RecompOne.Runtime.Sdk.LibPad.PadSetAct",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80052060",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PcMalloc",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800520D8",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PcFree",
+        "mode": "replace",
+    },
+    {
+        # The retail shape streams support record kinds 0, 1 and 2. A damaged
+        # or legacy arena record otherwise loops forever in func_8002E998.
+        "overlay": "main",
+        "address": "8002E998",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.SafeShapeCollision",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80052188",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PcRealloc",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80052020",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExtendHeapPost",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80020A80",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TrackVramAllocationPre",
+        "mode": "pre",
+    },
+    {
+        # The Arcade result builder uses the retail formatter and strlen
+        # helpers.  Keep their behavior unchanged, but retain the native
+        # caller and arguments so a corrupt result pointer is attributable to
+        # the exact branch instead of surfacing only as an unmapped read.
+        "overlay": "main",
+        "address": "8005EFDC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceResultStringLength",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8005FA9C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceResultFormat",
+        "mode": "pre",
+    },
+    {
+        # Expanded overrides and append-only mod files live beyond the retail
+        # lead-out. Resolve their generic loose-file extent to V8:2's native
+        # descriptor layout, then leave every caller's loader lifecycle intact.
+        "overlay": "main",
+        "address": "80018210",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ResolveVirtualLooseFile",
+        "mode": "pre",
+    },
+    {
+        # Keep the V8:2 XA player, callbacks, filtering, and SPU path. Original
+        # V8 result banks store one driver per channel instead of one file per
+        # driver, so translate only the native result player's channel.
+        "overlay": "main",
+        "address": "8001DA14",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.OverrideResultVoiceChannel",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80020A80",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TrackVramAllocationPost",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80020DF0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.IgnoreSyntheticVramFree",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8002091C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.MarkOriginalMatchVramReset",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80014D00",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceGameplayOrderingTable",
+        "mode": "pre",
+    },
+    {
+        # Maximum LOD can exceed the retail 128 KiB primitive buffers. Preserve
+        # old-buffer accounting before func_80014B3C flips packet arenas.
+        "overlay": "main",
+        "address": "80014B3C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PrepareExpandedPrimitiveBuffer",
+        "mode": "pre",
+    },
+    {
+        # Retain the retail OT/object retirement, then redirect the new frame's
+        # packet cursor into a reserved devkit-RAM arena.
+        "overlay": "main",
+        "address": "80014B3C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ActivateExpandedPrimitiveBuffer",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80015D9C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RecoverMatchVramFailure",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80031DDC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceObjectFactorySource",
+        "mode": "pre",
+    },
+    {
+        # Arena event DLLs pass linked key addresses to the global object
+        # registry. Relocate the register value as well as memory reads so the
+        # registry's pointer-identity lookup can match the active arena key.
+        "overlay": "main",
+        "address": "80031994",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RelocateLookupKey",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80031DDC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceObjectFactoryResult",
+        "mode": "post",
+    },
+    {
+        # Model/object nodes allocated from relocated vehicle or arena DLLs
+        # retain linked callbacks and hierarchy pointers. Record their owning
+        # image and reject packed/corrupt non-RAM values before a later weapon
+        # callback traverses them as child/sibling links.
+        "overlay": "main",
+        "address": "8002C17C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ValidateConstructedObject",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "8001B750",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RepairTerrainQuery",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001B944",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RepairTerrainQuery",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001B998",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RepairTerrainQuery",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8002D9E0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RepairObjectTerrainQuery",
+        "mode": "pre",
+    },
+    # The six widescreen terrain-traversal hooks on func_8001BECC used to be
+    # declared here as "pre" as well. Each silently replaced the last, so only
+    # the trace below survived; they are inline seams at the top of this file
+    # now and the duplicates are gone. Extended draw distance moving the object
+    # limit, the pitched-camera lateral refit and the rest are all documented
+    # there.
+    {
+        "overlay": "main",
+        "address": "8001BECC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceTerrainTraversalPolygon",
+        "mode": "pre",
+    },
+    {
+        # func_8001BE68 receives the inclusive/exclusive X-cell span selected
+        # for one terrain row. Diagnostic widescreen padding at this exact
+        # layer distinguishes insufficient row coverage from packet clipping.
+        "overlay": "main",
+        "address": "8001BE68",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainRowSpan",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main", "address": "800507DC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeJunctionPacketWrites", "mode": "pre",
+    },
+    {
+        "overlay": "main", "address": "800507DC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeRoadPacketWrites", "mode": "post",
+    },
+    {
+        "overlay": "main", "address": "8004F804",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeRoadPacketWrites", "mode": "pre",
+    },
+    {
+        "overlay": "main", "address": "8004F804",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeRoadPacketWrites", "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "800288E0",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "BeginTerrainRoutePacketWrites"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "800288E0",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "EndTerrainRoutePacketWrites"
+        ),
+        "mode": "post",
+    },
+    {
+        # Shared native water base pass. Capture packet provenance at the
+        # exact renderer boundary so Dreamcast material translation never
+        # depends on a map, texture, CLUT, or relocated object address.
+        "overlay": "main",
+        "address": "80015F28",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeWaterBaseRender",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80015F28",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeWaterBaseRender",
+        "mode": "post",
+    },
+    {
+        # Shared near-water detail/surface pass. It is conditionally called
+        # by func_80017EB8 and is kept distinct from the base water geometry.
+        "overlay": "main",
+        "address": "80016664",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeWaterSurfaceRender",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80016664",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeWaterSurfaceRender",
+        "mode": "post",
+    },
+    {
+        # Trace-only coordinate-seam probe. The SDK hook is a no-op outside
+        # the native water-surface scope and never mutates emulated state.
+        "overlay": "main",
+        "address": "80024008",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeWaterTransform",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80024008",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeWaterTransform",
+        "mode": "post",
+    },
+    {
+        # The outer terrain walker subdivides mixed-distance 4x4 cells into
+        # four 2x2 calls here. Capture each inner packet range independently
+        # so a coarse subcell can receive its native four texture descriptors
+        # even when neighboring subcells emitted detailed textured packets.
+        "overlay": "main",
+        "address": "800290A8",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "BeginTerrainDetailPacketWrites"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "800290A8",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "EndTerrainDetailPacketWrites"
+        ),
+        "mode": "post",
+    },
+    {
+        # Both terrain LOD walkers use this helper for the mixed case where
+        # only part of a 4x4 or 2x2 cell crosses the detail threshold. It emits
+        # Gouraud-only transition triangles; preserve their source grid so the
+        # enhanced backend can apply the authored tile textures.
+        "overlay": "main",
+        "address": "800297E8",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "BeginTerrainTransitionPacketWrites"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "800297E8",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "EndTerrainTransitionPacketWrites"
+        ),
+        "mode": "post",
+    },
+    {
+        # The outer terrain walker independently culls either half of a coarse
+        # 4x4 cell. Tag each completed packet at its exact emission site so a
+        # surviving single triangle still receives its authored texture grid.
+        "overlay": "main",
+        "address": "80028B54",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "TagFirstCoarseTerrainPacket"
+        ),
+        "mode": "inline",
+        "position": "after",
+    },
+    {
+        "overlay": "main",
+        "address": "80028BB4",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "TagSecondCoarseTerrainPacket"
+        ),
+        "mode": "inline",
+        "position": "after",
+    },
+    {
+        # func_800290A8 applies the same independent half-cull to each 2x2
+        # subcell, so tag those two packet sites as well.
+        "overlay": "main",
+        "address": "80029160",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "TagFirstCoarseTerrainPacket"
+        ),
+        "mode": "inline",
+        "position": "after",
+    },
+    {
+        "overlay": "main",
+        "address": "800291A8",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "TagSecondCoarseTerrainPacket"
+        ),
+        "mode": "inline",
+        "position": "after",
+    },
+    {
+        # func_8001C158 constructs the native terrain traversal polygon from
+        # gp+0xEDC (horizontal extent) and gp+0xF20 (vertical extent). Expand
+        # only the horizontal source while Enhanced true widescreen is active,
+        # then restore it immediately after the traversal completes.
+        "overlay": "main",
+        "address": "8001C134",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandTerrainFrustum",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        # Restore the authored 320-pixel packet clip before func_8001C158
+        # copies gp+0xEDC into scratchpad+0x94. The expanded value is only a
+        # world-space traversal input; carrying it into the packet clip makes
+        # terrain clipping asymmetric after the GTE widescreen projection.
+        "address": "8001C89C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RestoreTerrainFrustum",
+        "mode": "pre",
+    },
+    {
+        # func_8002DFF0 builds the object/scenery frustum planes from the
+        # authored 320-wide clip width, and func_8002E22C tests every object
+        # and every backdrop quad against them. Widen the width across the
+        # build so the planes cover the widescreen view, then restore it.
+        "overlay": "main",
+        "address": "8002DFF0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExpandObjectFrustum",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8002DFF0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RestoreObjectFrustum",
+        "mode": "post",
+    },
+    {
+        # Capture the native object renderer's exact packet-buffer interval so
+        # Enhanced receives vehicle/material ownership before GPU decoding.
+        #
+        # An inline seam, not "pre": RepairObjectTerrainQuery above already
+        # holds this function's single PreHookTarget, and declaring a second
+        # pre patch here silently replaced it -- which also took out the
+        # ApplyLevelOfDetail call it makes, so the level-of-detail setting had
+        # stopped reaching objects entirely. Both hooks are void, so the
+        # function still runs either way; this only fixes which ones run.
+        "overlay": "main",
+        "address": "8002D9E0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginObjectRender",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        "overlay": "main",
+        "address": "8002D9E0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndObjectRender",
+        "mode": "post",
+    },
+    {
+        # The retail object renderer has completed its camera-distance query
+        # here and is about to choose object+0x40 (high mesh) or object+0x68
+        # (low mesh) using object+0x6C.  Trace the actual shared decision so a
+        # proximity-dependent building change cannot be mistaken for a mip or
+        # HD-texture replacement problem.
+        "overlay": "main",
+        # RecompOne emits the JAL delay-slot load after the managed call, so
+        # the first seam that observes object+0x6C in V1 is the following
+        # branch instruction rather than the architectural return address.
+        "address": "8002DBA0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceObjectLodDecision",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # Resolve each native model descriptor to its authored imported bank
+        # and group before it emits packets.  This differentiates body/LOD/
+        # wheel geometry without texture, palette, colour, or screen heuristics.
+        "overlay": "main",
+        "address": "80021F70",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginImportedRenderGroup",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80021F70",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndImportedRenderGroup",
+        "mode": "post",
+    },
+    {
+        # V8:2 dispatches authored environment/reflection faces through the
+        # kind-12 handler at 0x80022C54.  Tag its output packet while any
+        # native vehicle hierarchy is rendering; converted V8 and retail
+        # V8:2 banks therefore use the exact same material path.
+        "overlay": "main",
+        "address": "80022C54",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ObserveVehicleReflectionPacket",
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # Every primitive handler converges on 0x80022F1C before it links the
+        # emitted packet into the active ordering table. Enhanced keeps some
+        # near-plane geometry that retail GTE flags rejected, so normalize an
+        # underflowed target into the native 0x80-byte near guard before the
+        # first linked primitive and every continuation entry execute it.
+        "overlay": "main",
+        "address": "80022F20",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "GuardGeometryOrderingTarget"
+        ),
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # The terminal primitive takes the shorter 0x80022F9C path and links
+        # through the same computed A3 target without visiting 0x80022F20.
+        "overlay": "main",
+        "address": "80022FA4",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82Compat."
+            "GuardGeometryOrderingTarget"
+        ),
+        "mode": "inline",
+        "position": "before",
+    },
+    {
+        # func_8002E22C is the per-object frustum test. Its three planes are
+        # built for the authored 4:3 view, so widescreen culls objects that are
+        # still on screen at the left and right edges.
+        "overlay": "main",
+        "address": "8002E22C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.WidenObjectVisibilityTest",
+        "mode": "pre",
+    },
+    {
+        # func_8002D9E0 compares this transform's distance output against
+        # 0x003FFFFF immediately after return.
+        "overlay": "main",
+        "address": "80059AFC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ExtendObjectDrawDistance",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80033234",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceCommonObjectLoadPre",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80033234",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceCommonObjectLoadPost",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80036B64",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.ResolveVehicleCallback",
+        "mode": "pre",
+    },
+    {
+        # Enemy-selection previews normally resolve a retail type through the
+        # fixed COMMON table. Guest rows instead use their independent native
+        # selector bank while preserving the original preview lifecycle.
+        "overlay": "main",
+        "address": "80036BE0",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "BuildNativeEnemySelectorPreview"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80036C2C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceVehicleCreateRequest",
+        "mode": "pre",
+    },
+    {
+        # Reject hover/float/ski at the pickup callback boundary for any
+        # vehicle whose authored capability says transformations are absent.
+        "overlay": "main",
+        "address": "80049D54",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "RejectUnsupportedTransformationPickup"
+        ),
+        "mode": "pre",
+    },
+    {
+        # Cover script/debug transformation requests which bypass pickups.
+        "overlay": "main",
+        "address": "8003E32C",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "RejectUnsupportedTransformationActivation"
+        ),
+        "mode": "pre",
+    },
+    {
+        # Preserve V8:2-native input, AI, weapons, damage and action handling.
+        # This is the shared action handler, so a capability-selected flying
+        # movement step runs before it and never replaces the handler itself.
+        "overlay": "main",
+        "address": "8003AC84",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "BeginControllerPhysics"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "800117C0",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ServiceMatchStartPadWait",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "800313C8",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RunObjectScheduler",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80024E40",
+        "target": "RecompOne.Runtime.Sdk.V82MeshClipCompat.SubmitTriangle",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "800259C8",
+        "target": "RecompOne.Runtime.Sdk.V82MeshClipCompat.SubmitTriangle",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80026694",
+        "target": "RecompOne.Runtime.Sdk.V82MeshClipCompat.SubmitTriangle",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8002737C",
+        "target": "RecompOne.Runtime.Sdk.V82MeshClipCompat.SubmitTriangle",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80022164",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EnterGeometry22164",
+        "mode": "pre",
+    },
+    {
+        # A damaged textured primitive can index a packed vertex word as a
+        # texture pointer. Skip that primitive and continue the retail stream.
+        "overlay": "main",
+        "address": "80022E78",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.GuardGeometry22E78",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80022164",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.LeaveGeometryContinuation",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80022910",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EnterGeometry22910",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80022910",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.LeaveGeometryContinuation",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80052F9C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.SpuMallocPre",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80052F9C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.SpuMallocPost",
+        "mode": "post",
+    },
+    {
+        "overlay": "main",
+        "address": "80018110",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.WaitForSector",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80014D94",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ServiceDrawSyncWait",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80021C24",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.ServiceDisplayTransitionWait",
+        "mode": "pre",
+    },
+    {
+        # Selector text/preview probes are completely dormant unless
+        # RECOMPONE_TRACE_V82_SELECTOR=1. Keeping the hooks scoped to the
+        # native SHELL selector lets us identify the exact retail draw calls
+        # without a wrapper UI or framebuffer guesswork.
+        "overlay": "main",
+        "address": "8001A3B0",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.OverrideNativeSelectorText",
+        "mode": "pre",
+    },
+    {
+        # Selector landing impacts are chosen from suspension compression.
+        # Registry-authored flying controllers have no suspension, so skip
+        # only those native player/NPC contact calls while retaining the
+        # general preview cue and every selection voice.
+        "overlay": "main",
+        "address": "8001E28C",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "AllowNativeSelectorSuspensionSound"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001E188",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.PlayNativeSelectorAcceptance",
+        "mode": "pre",
+    },
+    # The retail SHELL text renderer is observed too, rather than introducing a
+    # host-side menu, which supplies deterministic stage/capture points for the
+    # unmodified V8:2 Options pages and the native PC extensions. That second
+    # pre-hook on func_8001A3B0 is NOT declared here: PreHookTarget is a single
+    # field, so a second "pre" entry on the same address silently replaces the
+    # first and the selector override above is lost. apply_native_options_
+    # patches.py appends it to the generated source instead.
+    {
+        # Gameplay pause/objective prompts use the sibling formatted-text
+        # renderer. Observe that stock seam as well so context-sensitive PC
+        # bindings can retain ordinary face-button navigation in overlays.
+        "overlay": "main",
+        "address": "8001A6BC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceNativeOptionsText",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80011BB8",
+        "target": "RecompOne.Runtime.Sdk.V82ModalStyle.DrawPanel",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001ADF8",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceNativeSelectorCall",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80019564",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceNativeSelectorCall",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80019614",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.TraceNativeSelectorCall",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8001EF34",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "PrepareNativeSelectorBank"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8003C464",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.BuildNativeSelectorPreview",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8003C464",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.FinalizeNativeSelectorPreview",
+        "mode": "post",
+    },
+    {
+        # Retain the sequel's native camera object/lifecycle while imported
+        # vehicles use the first game's exact follow distance.
+        "overlay": "main",
+        "address": "8004B898",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "BeginOriginalV8CameraValues"
+        ),
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "8004B898",
+        "target": (
+            "RecompOne.Runtime.Sdk.V82VehicleRegistry."
+            "FinishOriginalV8CameraValues"
+        ),
+        "mode": "post",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010536C",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.ZoomNativeSelectorPreview",
+        "mode": "pre",
+    },
+    {
+        # The native selector calls this once per inner-frame update. Guest
+        # proof capture waits here until the rotating model and stat bars have
+        # settled, so an interpolation frame cannot be mistaken for a result.
+        "overlay": "main",
+        "address": "800149AC",
+        "target": "RecompOne.Runtime.Sdk.V82VehicleRegistry.TickNativeSelector",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80018148",
+        "target": "RecompOne.Runtime.Sdk.LibCd.BeginV82FileRead",
+        "mode": "pre",
+    },
+    {
+        "overlay": "main",
+        "address": "80018478",
+        "target": "RecompOne.Runtime.Sdk.LibCd.ReadV82FileBytes",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80018644",
+        "target": "RecompOne.Runtime.Sdk.LibCd.SeekV82File",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80055E00",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdSyncCallback",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80055E14",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdReadyCallback",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80055E28",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdControl",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80055F64",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdControlF",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80056098",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdControlB",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80056204",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdGetSector",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800580FC",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdRead",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "80058298",
+        "target": "RecompOne.Runtime.Sdk.LibCd.CdReadSync",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005881C",
+        "target": "RecompOne.Runtime.Sdk.LibCdStream.StSetRing",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "8005884C",
+        "target": "RecompOne.Runtime.Sdk.LibCdStream.StClearRing",
+        "mode": "replace",
+    },
+    {
+        "overlay": "main",
+        "address": "800588AC",
+        "target": "RecompOne.Runtime.Sdk.LibCdStream.StSetStream",
+        "mode": "replace",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80111330",
+        "target": "RecompOne.Runtime.Sdk.LibCdStream.StFreeRing",
+        "mode": "replace",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010669C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeGuestSelector",
+        "mode": "pre",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "8010669C",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeGuestSelector",
+        "mode": "post",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80107AD4",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.BeginNativeGuestSelector",
+        "mode": "pre",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80107AD4",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.EndNativeGuestSelector",
+        "mode": "post",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "801113E0",
+        "target": "RecompOne.Runtime.Sdk.LibCdStream.StGetNext",
+        "mode": "replace",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80111AE4",
+        "target": "RecompOne.Runtime.Sdk.V8Compat.TranslateOverlayDmaSource",
+        "mode": "pre",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "801109FC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PreserveShellDecodeCallerPre",
+        "mode": "pre",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "801109FC",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PreserveShellDecodeCallerPost",
+        "mode": "post",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "801105D4",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PreserveShellImageDecodePre",
+        "mode": "pre",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "801105D4",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.PreserveShellImageDecodePost",
+        "mode": "post",
+    },
+    {
+        "overlay": "SHELL_LOAD",
+        "address": "80109704",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RunLoadVlc",
+        "mode": "replace",
+    },
+    {
+        # Test-only deterministic loading-tip selection.  The runtime helper
+        # is a strict no-op unless the explicit test environment variable is
+        # present, so ordinary builds retain LOAD.DLL's native RNG choice.
+        "overlay": "SHELL_LOAD",
+        "address": "80103F68",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.OverrideLoadingTipRandom",
+        "mode": "inline",
+        "position": "after",
+    },
+    {
+        # SHELL uses the same hand-written, tail-entered VLC decoder shape as
+        # LOAD. Recompiling its internal labels as independent C# functions
+        # loses native RA/delay-slot flow and leaves menu/FMVs with the gray
+        # 32-pixel strip in place of their decoded background.
+        "overlay": "SHELL_SHELL",
+        "address": "80110D14",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.RunShellVlc",
+        "mode": "replace",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80114E48",
+        "target": "RecompOne.Runtime.Sdk.V8Compat.WaitCardEvent",
+        "mode": "replace",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80114F20",
+        "target": "RecompOne.Runtime.Sdk.V8Compat.WaitCardEvent",
+        "mode": "replace",
+    },
+    {
+        "overlay": "SHELL_SHELL",
+        "address": "80113C18",
+        "target": "RecompOne.Runtime.Sdk.V82Compat.WaitCardOperation",
+        "mode": "replace",
+    },
+]
+
+
+def relative_posix(path: Path, start: Path) -> str:
+    return Path(os.path.relpath(path.resolve(), start.resolve())).as_posix()
+
+
+def overlay_name(relative_path: Path) -> str:
+    parts = [part.upper().replace("-", "_") for part in relative_path.with_suffix("").parts]
+    return "_".join(parts)
+
+
+def discover_overlays(disc_root: Path) -> list[dict[str, object]]:
+    preferred = [
+        disc_root / "SHELL" / "SHELL.DLL",
+        disc_root / "SHELL" / "LOAD.DLL",
+    ]
+    remaining = sorted(
+        (
+            path
+            for path in disc_root.rglob("*.DLL")
+            if path not in preferred
+        ),
+        key=lambda path: path.relative_to(disc_root).as_posix().upper(),
+    )
+
+    overlays: list[dict[str, object]] = []
+    seen_names: set[str] = set()
+    for path in [*preferred, *remaining]:
+        if not path.is_file():
+            raise FileNotFoundError(f"required overlay is missing: {path}")
+        relative = path.relative_to(disc_root)
+        name = overlay_name(relative)
+        if name in seen_names:
+            raise ValueError(f"duplicate generated overlay name: {name}")
+        seen_names.add(name)
+        overlay = {
+            "name": name,
+            "base": "0x80100000",
+            "file": str(relative).replace("/", "\\"),
+            "v8Relocate": True,
+            "linearSweep": True,
+        }
+        if name in EXTRA_OVERLAY_FUNCTIONS:
+            overlay["functions"] = [
+                {"address": address}
+                for address in EXTRA_OVERLAY_FUNCTIONS[name]
+            ]
+        overlays.append(overlay)
+    return overlays
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--cue", type=Path, default=DEFAULT_CUE)
+    parser.add_argument(
+        "--loose-disc",
+        type=Path,
+        default=None,
+        help="use an extracted disc directory instead of the CUE/BIN image",
+    )
+    parser.add_argument("--disc-root", type=Path, default=DEFAULT_DISC)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    args = parser.parse_args()
+
+    cue = args.cue.resolve()
+    disc_root = args.disc_root.resolve()
+    output = args.output.resolve()
+    # The extracted disc directory is a complete stand-in for the image; the
+    # recompiler only reads files out of it. Projects that no longer have the
+    # original CUE/BIN can still regenerate from what was extracted.
+    loose_disc = args.loose_disc.resolve() if args.loose_disc else None
+    if loose_disc is not None and not loose_disc.is_dir():
+        raise FileNotFoundError(f"extracted disc directory is missing: {loose_disc}")
+    if loose_disc is None and not cue.is_file():
+        raise FileNotFoundError(f"retail CUE is missing: {cue}")
+    if not (disc_root / "SYSTEM.CNF").is_file():
+        raise FileNotFoundError(f"extracted disc root is missing SYSTEM.CNF: {disc_root}")
+    if not (disc_root / "SLUS_008.68").is_file():
+        raise FileNotFoundError(f"extracted main executable is missing: {disc_root / 'SLUS_008.68'}")
+
+    output.mkdir(parents=True, exist_ok=True)
+    config = {
+        "game": {
+            "id": "SLUS-00868",
+            "name": "Vigilante82PC",
+            "title": "Vigilante 8: 2nd Offense PC",
+            "output": "recompiled",
+        },
+        **(
+            {"loose": relative_posix(loose_disc, output)}
+            if loose_disc is not None
+            else {"cue": relative_posix(cue, output)}
+        ),
+        "debug": False,
+        "linearSweep": True,
+        "functions": [{"address": address} for address in EXTRA_MAIN_FUNCTIONS],
+        "overlays": discover_overlays(disc_root),
+        "stubs": [],
+        "ignored": [],
+        "patches": PROVEN_PATCHES,
+    }
+
+    config_path = output / "v82.recompone.json"
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+    host_source = Path(__file__).resolve().parent / "reference-host"
+    generated_project = output / "recompiled"
+    generated_project.mkdir(parents=True, exist_ok=True)
+    for host_file in ("Program.cs", "Vigilante82PC.csproj"):
+        shutil.copy2(host_source / host_file, generated_project / host_file)
+    print(f"Wrote {config_path}")
+    print(f"Configured {len(config['overlays'])} sequel overlays")
+    print(f"Refreshed host project in {generated_project}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

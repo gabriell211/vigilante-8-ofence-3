@@ -1,0 +1,184 @@
+/* conveyor_grab.c -- Sand Factory conveyor "grab vehicle" event.
+ *
+ * Source: SANDFACT.DLL  FUN_80100e54.
+ *
+ * When a vehicle drives over an active conveyor segment with the
+ * "snag" flag (impactor.flags[+0]==1 && impactor.flags[+2]!=0), the
+ * conveyor takes ownership of the vehicle: rebinds its tick to the
+ * conveyor's drag callback (FUN_80100c6c), zeros its X velocity,
+ * forces Y velocity to 0x1c980 (downward into rollers), zeros Z.
+ * If the vehicle has a sub-model, also forces its yaw spin (+0x86)
+ * and Y velocity (+0x22) to fixed scary-rotation values.
+ *
+ * Position-snap: target the midpoint of the conveyor segment bounds
+ * (avg of psVar6[2..6] and [8..0xc] for X,Z; psVar6[10] for Y),
+ * rotate into the conveyor's local frame, then set velocity to 2x
+ * the delta needed to reach it (snap-arrives in two frames).
+ *
+ * Plays the snare FX, schedules a 64-frame damage event.
+ *
+ * mode dispatch:
+ *   3, 8  -- impact event with kind==2 (vehicle) -> snare
+ *   kind==7 (shrapnel) -> forward to standard damage
+ *
+ * MED.
+ */
+#include <stdint.h>
+
+extern void Object_SetCallbackPsxSlot(void *obj, uintptr_t callback);
+extern int  Conveyor_FindGrabSlot(int self, int radius);                /* FUN_8001b038 */
+extern uint32_t Pool_AllocSnare(void);                                   /* FUN_8004410c */
+extern void Pool_BindSnareToObject(uint32_t h, uint32_t bin, int slot,
+                                   uint32_t *spawnXyz);                  /* FUN_800447e8 */
+extern void SFX_Update(int handle, int posVoxel);                        /* FUN_80044574 */
+extern void GTE_RotateLongMatTrans(uint32_t *mat, int *src, int *dst);   /* FUN_80043408 */
+extern void Conveyor_RebuildLocalFrame(uint8_t out[20], int self, int slot); /* FUN_8001d68c */
+extern void Damage_Apply_AgainstSelf(void *self, void *param);           /* FUN_80020890 */
+extern void Damage_StandardVehicle(int self, int *imp);                  /* func_0x80022320 */
+extern uint32_t FUN_80100c6c(uint32_t *obj, int mode);  /* per-segment drag tick */
+
+static int32_t mips_addu_i32(int32_t a, int32_t b)
+{
+    return (int32_t)((uint32_t)a + (uint32_t)b);
+}
+
+static int32_t mips_subu_i32(int32_t a, int32_t b)
+{
+    return (int32_t)((uint32_t)a - (uint32_t)b);
+}
+
+static int32_t mips_sll_i32(int32_t v, unsigned sh)
+{
+    return (int32_t)((uint32_t)v << sh);
+}
+
+static int32_t avg2_i32(int32_t a, int32_t b)
+{
+    int32_t sum = mips_addu_i32(a, b);
+    if (sum < 0) sum = mips_addu_i32(sum, 1);
+    return sum >> 1;
+}
+
+uint32_t SF_ConveyorGrab(int self, int mode, int *arg)
+{
+    if (mode != 8) {
+        int16_t *flags = (int16_t *)(uintptr_t)arg[1];
+        uint32_t *imp  = (uint32_t *)(uintptr_t)*arg;
+        if (flags[0] == 1 && flags[1] != 0 && *(uint8_t *)((uint8_t *)imp + 4) == 2) {
+            uint32_t *sub = (uint32_t *)(uintptr_t)imp[0x38];
+            int slot   = Conveyor_FindGrabSlot(self, 0x8000);
+            uint32_t h = Pool_AllocSnare();
+            Pool_BindSnareToObject(h, *(uint32_t *)(*(int *)(self + 0x58) + 8), 5, imp + 9);
+            SFX_Update((int)*((char *)imp + 5), 0);
+            Object_SetCallbackPsxSlot(imp, (uintptr_t)&FUN_80100c6c);
+            imp[0x20] = 0;
+            *imp |= 0x3000022u;
+            imp[0x21] = 0x1c980;
+            imp[0x22] = 0;
+            if (sub != NULL) {
+                *(uint16_t *)(sub + 0x21) = 0;
+                *sub |= 0xc0000u;
+                *(uint16_t *)((char *)sub + 0x86) = 0xfe37u;
+                *(uint16_t *)(sub + 0x22)         = 0xf415u;
+            }
+            int mid[3];
+            mid[0] = avg2_i32(*(int32_t *)(flags + 2), *(int32_t *)(flags + 8));
+            mid[1] = *(int32_t *)(flags + 10);
+            mid[2] = avg2_i32(*(int32_t *)(flags + 6), *(int32_t *)(flags + 0xc));
+            GTE_RotateLongMatTrans((uint32_t *)(uintptr_t)(self + 0x10), mid, mid);
+            imp[0x20] = (uint32_t)mips_sll_i32(mips_subu_i32(mid[0], (int32_t)imp[9]), 1);
+            imp[0x21] = (uint32_t)mips_sll_i32(mips_subu_i32(mid[1], (int32_t)imp[10]), 1);
+            imp[0x22] = (uint32_t)mips_sll_i32(mips_subu_i32(mid[2], (int32_t)imp[0xb]), 1);
+            uint8_t localFrame[64];
+            Conveyor_RebuildLocalFrame(localFrame, self, slot);
+            imp[0x12] = *(uint32_t *)(localFrame + 20);
+            imp[0x13] = *(uint32_t *)(localFrame + 24);
+            imp[0x14] = *(uint32_t *)(localFrame + 28);
+            imp[0x10] = *(uint32_t *)(uintptr_t)(slot + 0x10);
+            *(uint16_t *)(imp + 0x11) = *(uint16_t *)(uintptr_t)(slot + 0x14);
+            Damage_Apply_AgainstSelf(imp, (void *)(intptr_t)0x40);
+            arg = (int *)1;
+        }
+        if (*(uint8_t *)(uintptr_t)(*arg + 4) != 7) return 0;
+        arg = (int *)(uintptr_t)*(uint16_t *)(uintptr_t)(*arg + 0xc);
+    }
+    Damage_StandardVehicle(self, arg);
+    return 0;
+}
+
+/* ============================================================
+ * // GHIDRA REF (audit ground truth — DO NOT EDIT MANUALLY)
+ *
+ * These are the raw Ghidra pseudo-C exports for the function(s)
+ * this file cleans up. Use them to audit any MED-confidence
+ * rewrite line-by-line. Regenerated by tools/restore_ghidra_refs.py.
+ * ============================================================ */
+#if 0
+
+/* --- SANDFACT.DLL FUN_80100e54  (from analysis/dll/SANDFACT/decomp/80100e54.c) --- */
+// addr: 0x80100e54  name: FUN_80100e54
+
+undefined4 FUN_80100e54(int param_1,int param_2,int *param_3)
+
+{
+  undefined2 uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  uint *puVar4;
+  uint *puVar5;
+  short *psVar6;
+  int local_50;
+  int local_4c;
+  int local_48;
+  undefined1 auStack_40 [20];
+  uint local_2c;
+  uint local_28;
+  uint local_24;
+  
+  if ((param_2 == 3) || (param_2 != 8)) {
+    psVar6 = (short *)param_3[1];
+    if ((*psVar6 == 1) &&
+       ((psVar6[1] != 0 && (puVar4 = (uint *)*param_3, (char)puVar4[1] == '\x02')))) {
+      puVar5 = (uint *)puVar4[0x38];
+      iVar2 = FUN_8001b038/*0x8001b038*/(param_1,0x8000);
+      uVar3 = FUN_8004410c/*0x8004410c*/();
+      FUN_800447e8/*0x800447e8*/(uVar3,*(undefined4 *)(*(int *)(param_1 + 0x58) + 8),5,puVar4 + 9);
+      FUN_80044574/*0x80044574*/((int)*(char *)((int)puVar4 + 5),0);
+      puVar4[0x19] = (uint)FUN_80100c6c;
+      puVar4[0x20] = 0;
+      *puVar4 = *puVar4 | 0x3000022;
+      puVar4[0x21] = 0x1c980;
+      puVar4[0x22] = 0;
+      if (puVar5 != (uint *)0x0) {
+        *(undefined2 *)(puVar5 + 0x21) = 0;
+        *puVar5 = *puVar5 | 0xc0000;
+        *(undefined2 *)((int)puVar5 + 0x86) = 0xfe37;
+        *(undefined2 *)(puVar5 + 0x22) = 0xf415;
+      }
+      local_50 = (*(int *)(psVar6 + 2) + *(int *)(psVar6 + 8)) / 2;
+      local_4c = *(int *)(psVar6 + 10);
+      local_48 = (*(int *)(psVar6 + 6) + *(int *)(psVar6 + 0xc)) / 2;
+      GTE_RotateLongMatTrans/*0x80043408*/(param_1 + 0x10,&local_50,&local_50);
+      puVar4[0x20] = (local_50 - puVar4[9]) * 2;
+      puVar4[0x21] = (local_4c - puVar4[10]) * 2;
+      puVar4[0x22] = (local_48 - puVar4[0xb]) * 2;
+      FUN_8001d68c/*0x8001d68c*/(auStack_40,param_1,iVar2);
+      puVar4[0x12] = local_2c;
+      puVar4[0x13] = local_28;
+      puVar4[0x14] = local_24;
+      uVar1 = *(undefined2 *)(iVar2 + 0x14);
+      puVar4[0x10] = *(uint *)(iVar2 + 0x10);
+      *(undefined2 *)(puVar4 + 0x11) = uVar1;
+      FUN_80020890/*0x80020890*/(puVar4,0x40);
+      param_3 = (int *)0x1;
+    }
+    if (*(char *)(*param_3 + 4) != '\a') {
+      return 0;
+    }
+    param_3 = (int *)(uint)*(ushort *)(*param_3 + 0xc);
+  }
+  FUN_80022320/*0x80022320*/(param_1,param_3);
+  return 0;
+}
+
+#endif  /* GHIDRA REF */
