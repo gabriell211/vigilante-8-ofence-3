@@ -17,5 +17,7 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Verify native Windows source contract
         run: python3 scripts/verify_pc_contract.py
+      - name: Verify imported genuine FBX vehicle geometry against upstream Git blobs
+        run: python3 scripts/verify_imported_models.py
       - name: Report real imported Unity prefab coverage
         run: python3 scripts/audit_content.py
