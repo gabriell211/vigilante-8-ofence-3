@@ -1,0 +1,872 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+  "banks": [
+    {
+      "id": "v82_blue_burro_bus",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/BUS_0000.wav",
+          "guid": "81addc95d3b4e4a4fadfe392087173d5"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/BUS_0001.wav",
+          "guid": "f680d8390a9d90841ab5b96d6b0acf02"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/BUS_0002.wav",
+          "guid": "9cb1264f606782a4090d55f9fbc9b104"
+        }
+      ]
+    },
+    {
+      "id": "v82_chrono_stinger",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STINGER_0000.wav",
+          "guid": "ead272645a0e79e47b0f15b787cdaba6"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STINGER_0001.wav",
+          "guid": "0d6205735afcb28408a002ed44eaade5"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STINGER_0002.wav",
+          "guid": "cc6ecbbeb9a254c4fb2b00e79eb24eb2"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STINGER_0003.wav",
+          "guid": "35811d9cb1195d74aa351a8068b71d40"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STINGER_0004.wav",
+          "guid": "34f1036cf7d7ee04a99fb0fb78133fe0"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STINGER_0005.wav",
+          "guid": "e253d480437dd444c8a490a7cd015631"
+        }
+      ]
+    },
+    {
+      "id": "v82_dakota_stunt_cycle",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STNTBIKE_0000.wav",
+          "guid": "258286c047a249643891dc94846995aa"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STNTBIKE_0001.wav",
+          "guid": "24a7f1167a9e54e49b9aa8e2b82c87c9"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STNTBIKE_0002.wav",
+          "guid": "edef2b18858b5ac4c98c70c2d3d34a32"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STNTBIKE_0003.wav",
+          "guid": "95cec0ee487665442a34d5b1c3e2bbe6"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/STNTBIKE_0004.wav",
+          "guid": "0baf9457f1966124baef0009a15effd9"
+        }
+      ]
+    },
+    {
+      "id": "v82_el_guerrero",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/ELGUERRO_0000.wav",
+          "guid": "c984b40f5a5a5764a987df8f61e0d7c0"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/ELGUERRO_0001.wav",
+          "guid": "f1dd5c450b9adfe4a9bce53346a68cec"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/ELGUERRO_0002.wav",
+          "guid": "7dd2deb5a9e001a43b73718827b2af0b"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/ELGUERRO_0003.wav",
+          "guid": "ca99b8bee4edebb4696b95e0b33b43f1"
+        }
+      ]
+    },
+    {
+      "id": "v82_excelsior_stretch",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/EXCELSR_0000.wav",
+          "guid": "1855f9bdc5b7e4e48a3bee9635e5008c"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/EXCELSR_0001.wav",
+          "guid": "3d974ba7d5dea3e4abdbee84f662120b"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/EXCELSR_0002.wav",
+          "guid": "ce662b77abe21924fb97d94efbab9fe2"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/EXCELSR_0003.wav",
+          "guid": "06c3dd1dd9219424da3327e20c8339f5"
+        }
+      ]
+    },
+    {
+      "id": "v82_goliath_halftrack",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/HALFTRAK_0000.wav",
+          "guid": "d79fe40ae311931499c7927ac0ae6ef1"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/HALFTRAK_0001.wav",
+          "guid": "80b18fe6e77e2f74d8c6721f5f2056ac"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/HALFTRAK_0002.wav",
+          "guid": "eaa84b9cc16aaf248bf4516d66981972"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/HALFTRAK_0003.wav",
+          "guid": "aa35d3c435357a94082e9e187d082603"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/HALFTRAK_0004.wav",
+          "guid": "b3b5f1d5aef85aa4a92cfe79443090af"
+        }
+      ]
+    },
+    {
+      "id": "v82_grubb_dual_loader",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0000.wav",
+          "guid": "fc336016d0d56f1418e79e124632f3a3"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0001.wav",
+          "guid": "66e93c676b6d53342a507759b25810b4"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0002.wav",
+          "guid": "6185335deefccd842934a12ba48fa14a"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0003.wav",
+          "guid": "d690c3a0aea7361458c60dbc8d96127e"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0004.wav",
+          "guid": "c618695bb54c20e4c9cffefa49a0ef4d"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0005.wav",
+          "guid": "b40e076977fdbfc4984faf931c2b34f8"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/GRBLDER_0006.wav",
+          "guid": "49a8bec24f4e2f344ab896209f2bf4c5"
+        }
+      ]
+    },
+    {
+      "id": "v82_livingston_truck",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TRUCK_0000.wav",
+          "guid": "62744db5c52771944831e75ba44306ff"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TRUCK_0001.wav",
+          "guid": "a5d58c044d336cd4d8909715fdb5b2b0"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TRUCK_0002.wav",
+          "guid": "e460fb8cb5bc8004ea2eb60bc32db8b9"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TRUCK_0003.wav",
+          "guid": "ad20bb6e29abee24cb06b0b5a9d1ff28"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TRUCK_0004.wav",
+          "guid": "980a809dcd5972d4f95b033817a90ee2"
+        }
+      ]
+    },
+    {
+      "id": "v82_marathon",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/MARATHON_0000.wav",
+          "guid": "198d0ff2b9e25344fa0cba155ad95d4c"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/MARATHON_0001.wav",
+          "guid": "1084ba276cee446468db41e6eb6fafa8"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/MARATHON_0002.wav",
+          "guid": "e69d8b373fa072f41b75466bda001e31"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/MARATHON_0003.wav",
+          "guid": "11394b4cd1289f34aa8e5fca21aa4390"
+        }
+      ]
+    },
+    {
+      "id": "v82_moon_trekker",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/LUNAR_0000.wav",
+          "guid": "a9dc6d2bb5fc585418df54d174f202c3"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/LUNAR_0001.wav",
+          "guid": "46c698d99a74d4e4c84610650c366d83"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/LUNAR_0002.wav",
+          "guid": "ec7809bfc5032b94ca5584a8efc21e5f"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/LUNAR_0003.wav",
+          "guid": "357c9c4e702cb33428afbb15225db5e0"
+        }
+      ]
+    },
+    {
+      "id": "v82_palomino_xiii",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CORSAIR_0000.wav",
+          "guid": "0000845eedbb20246b9aa31cfb1c5941"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CORSAIR_0001.wav",
+          "guid": "d1bcbf1364c41e947bd7d8d7f1e9ead9"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CORSAIR_0002.wav",
+          "guid": "73325b06e85db854ca79ed979561ff7b"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CORSAIR_0003.wav",
+          "guid": "3178dab3b02de2f41869cc337d047bb9"
+        }
+      ]
+    },
+    {
+      "id": "v82_samson_tow_truck",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TOWTRUCK_0000.wav",
+          "guid": "cb2235394711a37418f995b63f9f1fcc"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TOWTRUCK_0001.wav",
+          "guid": "1221b6fbb85ebac4296b410c893dd77b"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TOWTRUCK_0002.wav",
+          "guid": "9b5d93ac955dfac48aa3ed1ed46d2805"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TOWTRUCK_0003.wav",
+          "guid": "c4c70cf7625aa4c4ea5a96fa35204dad"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TOWTRUCK_0004.wav",
+          "guid": "6a8fb88360e761a4aaffe712be46af03"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TOWTRUCK_0005.wav",
+          "guid": "2a2102ab479c00543bce58af85f52d6c"
+        }
+      ]
+    },
+    {
+      "id": "v82_thunderbolt",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TBOLT_0000.wav",
+          "guid": "da8ff046be962fd4f9fad5ed5efa03bc"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TBOLT_0001.wav",
+          "guid": "e2bdf41bafc2fb04dad97660e04257b2"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TBOLT_0002.wav",
+          "guid": "b0c32abe99a6fe241b0f41e8fe924033"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TBOLT_0003.wav",
+          "guid": "b512709502113064992bba5849700a9c"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TBOLT_0004.wav",
+          "guid": "0a62e1b2dc04dc94497653db7145bd8d"
+        }
+      ]
+    },
+    {
+      "id": "v82_tsunami",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TSUNAMI_0000.wav",
+          "guid": "51b881a978fcb3440917f99da6feb8ea"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TSUNAMI_0001.wav",
+          "guid": "58c9576cb94f69641b276c903220c829"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TSUNAMI_0002.wav",
+          "guid": "cd5b87d4f5920ae4e89b30e1f3e4c9be"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TSUNAMI_0003.wav",
+          "guid": "a556efd5493953246a2b03949a031908"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/TSUNAMI_0004.wav",
+          "guid": "251560ac66a0ad3419ac6bc2a4f157b1"
+        }
+      ]
+    },
+    {
+      "id": "v82_vertigo",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/VERTIGO_0000.wav",
+          "guid": "8038786dcb5d4bc43be121da07472ab1"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/VERTIGO_0001.wav",
+          "guid": "e0a2c26c9e8c62e4abc1556d863ad63c"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/VERTIGO_0002.wav",
+          "guid": "7664ecb2f5a947e49b59a14090667a1c"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/VERTIGO_0003.wav",
+          "guid": "15e27cb8476f2e946aef571eca832f49"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/VERTIGO_0004.wav",
+          "guid": "edd048e4fefa7c642b4581b27cb8d5c8"
+        }
+      ]
+    },
+    {
+      "id": "v82_wapiti_4wd",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/FRONTIER_0000.wav",
+          "guid": "fedec08b66086714c8ec2cc09bf4430e"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/FRONTIER_0001.wav",
+          "guid": "7017b8d001a8b714ea0a5661cc8be092"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/FRONTIER_0002.wav",
+          "guid": "23f458ed8e0e0fa459d392c4f31c2e2a"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/FRONTIER_0003.wav",
+          "guid": "e7dd7eb6bc68f124583ca143f0e16c26"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/FRONTIER_0004.wav",
+          "guid": "81be9b1543e79204085d7382568aa1f6"
+        }
+      ]
+    },
+    {
+      "id": "v82_wonderwagon",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/WUNDER_0000.wav",
+          "guid": "8229749285241304cbaccd67cdc391f5"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/WUNDER_0001.wav",
+          "guid": "0bee5d5ca462b2948a5a73d28d3ad823"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/WUNDER_0002.wav",
+          "guid": "eafd5341854c3b8489dea9d4fad04914"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/WUNDER_0003.wav",
+          "guid": "4b027aeb9d2acf642b632a3e2bd12e46"
+        }
+      ]
+    },
+    {
+      "id": "v82_xanadu_rv",
+      "kind": "vehicle",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0000.wav",
+          "guid": "5c77d3ebe67074a4086937c8e928ac96"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0001.wav",
+          "guid": "dc128eaa8062e2a48949c8aea68ba760"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0002.wav",
+          "guid": "5e7c751bfeef39c4c80a1ad00537c5b9"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0003.wav",
+          "guid": "379e9255d374a884abf7e669ee43c53b"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0004.wav",
+          "guid": "fa7e951fb2bf3664682e7edae42c3aa2"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0005.wav",
+          "guid": "fd1c832654b8fe2499cc6281a12cab5d"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/SHARED/COMMON/Sounds/CARAVLLE_0006.wav",
+          "guid": "06ce832f8fb1adf488dbc815df602a4b"
+        }
+      ]
+    },
+    {
+      "id": "v82_alaskan_pipeline",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OILFIELD/Sounds/XOBF00_0000.wav",
+          "guid": "f2cf849d798c31a49a6b04f32c41b630"
+        }
+      ]
+    },
+    {
+      "id": "v82_ghastly_bayou",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0000.wav",
+          "guid": "b9f826eb84477aa40a804fc8119f3299"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0001.wav",
+          "guid": "173eed755220d15459cbaed78a6398b2"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0002.wav",
+          "guid": "0f12703dcfc04f142a2bfe86619884c3"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0003.wav",
+          "guid": "f8fa500112b2e2a4aa1da174bca49559"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0004.wav",
+          "guid": "f035821a355bf7144a0cd620b8a301f5"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0005.wav",
+          "guid": "089d1f8b4ee6eed439158cb6206b1cbe"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0006.wav",
+          "guid": "a74a4a87bfcef174c8ad8d4fe95629b5"
+        },
+        {
+          "originalIndex": 7,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0007.wav",
+          "guid": "5dab313eb85468945935ff66b51baf3b"
+        },
+        {
+          "originalIndex": 8,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0008.wav",
+          "guid": "0c02cf7b174edc544b8653e7c0351aa8"
+        },
+        {
+          "originalIndex": 9,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0009.wav",
+          "guid": "a275623c70d073244a0f638881e7b97b"
+        }
+      ]
+    },
+    {
+      "id": "v82_launch_site",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0000.wav",
+          "guid": "15e2e4a5979deeb46a8b13ad59f28076"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0001.wav",
+          "guid": "0891875ae36410c4faa60b7e6c19d7fe"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0002.wav",
+          "guid": "687e30da9769fcb47b9c33767bb26f59"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0003.wav",
+          "guid": "cc8d85f3b4f716e4892cae8d234a23f5"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0004.wav",
+          "guid": "25b8052745bc5ae45bbfc9de731c4377"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0005.wav",
+          "guid": "b1f1ef8a0af75b84dad9e4f5a9128b4b"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0006.wav",
+          "guid": "c33778b4cf3a0264194d41a40bf05dc4"
+        },
+        {
+          "originalIndex": 7,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/LAUNCH/Sounds/XOBF00_0007.wav",
+          "guid": "ae75dfbb504e20d4b96f51f05550b07f"
+        }
+      ]
+    },
+    {
+      "id": "v82_meteor_crater",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0000.wav",
+          "guid": "8735595ec89877c47b604a8727da4902"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0001.wav",
+          "guid": "20be71c1e9c62da4a8e95b748373354d"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0002.wav",
+          "guid": "804112a58b7a4e049bac657ed712d85c"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0003.wav",
+          "guid": "7b52c3d60b3b72c4f8d19881cf29a2a6"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0004.wav",
+          "guid": "2e15dc82805e53648910c5c8cb2ce6aa"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0005.wav",
+          "guid": "572ca2bdb8d3cd449b620fbcde391b53"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0006.wav",
+          "guid": "d42bbcc8ddcb1ed4aae358ecae48258f"
+        },
+        {
+          "originalIndex": 7,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/ROUTE66/Sounds/XOBF00_0007.wav",
+          "guid": "25b378aca61cbca47ad37f311e555301"
+        }
+      ]
+    },
+    {
+      "id": "v82_nuclear_plant",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0000.wav",
+          "guid": "762d803cd5fc28e488d51508077d6fc3"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0001.wav",
+          "guid": "001289a61e943454da9632b715750faa"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0002.wav",
+          "guid": "afd6ebd63571bcf4fbd784807abb748a"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0003.wav",
+          "guid": "abfb42578ecd4274cb5ca3114637c203"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0004.wav",
+          "guid": "d058b4962d42e94459534bffde2f3e7c"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0005.wav",
+          "guid": "a9b4eb9f7265d444fb7afcf66429fab1"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/NUCLEAR/Sounds/XOBF00_0006.wav",
+          "guid": "7c677c302e4b076498951a9ba7064b42"
+        }
+      ]
+    },
+    {
+      "id": "v82_pacific_harbor",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/HARBOR/Sounds/XOBF00_0000.wav",
+          "guid": "1e5d8659572cafd47bc32f741bc6a79e"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/HARBOR/Sounds/XOBF00_0001.wav",
+          "guid": "50fbd6b4d1e1b244798d8d3839d6c8c8"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/HARBOR/Sounds/XOBF00_0002.wav",
+          "guid": "e79608b2f2862e54f822e3ea0f24007e"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/HARBOR/Sounds/XOBF00_0003.wav",
+          "guid": "f042fd768f38286428cfda9fb0ba1f0e"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/HARBOR/Sounds/XOBF00_0004.wav",
+          "guid": "3914ec61bddaa764dbc25ca9081dc19d"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/HARBOR/Sounds/XOBF00_0005.wav",
+          "guid": "539bde68edefec442bd68d2ee017e572"
+        }
+      ]
+    },
+    {
+      "id": "v82_steel_mill",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0000.wav",
+          "guid": "77a88451bb578f440a99897db903633f"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0001.wav",
+          "guid": "962c94ef7b7998041a46cd08b36e825a"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0002.wav",
+          "guid": "db0270c59e487374bb037cb79ad5cfdf"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0003.wav",
+          "guid": "92658abddbac66548b5930027bb1252c"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0004.wav",
+          "guid": "7084c9eda22da874388fd6db643c8d14"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0005.wav",
+          "guid": "4715a747ad4ddaa4784e85e4db1fd7ad"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/STEELMIL/Sounds/XOBF00_0006.wav",
+          "guid": "c6b9c50b841f79f499a4e2ea690d9d5e"
+        }
+      ]
+    },
+    {
+      "id": "v82_winter_games",
+      "kind": "arena",
+      "samples": [
+        {
+          "originalIndex": 0,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0000.wav",
+          "guid": "38babbb356f9a764a8253977d569b049"
+        },
+        {
+          "originalIndex": 1,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0001.wav",
+          "guid": "8f766a59edd7564449eb997cbe928727"
+        },
+        {
+          "originalIndex": 2,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0002.wav",
+          "guid": "d9f51cdc9b97a8a4b85ec52c2fd89fc1"
+        },
+        {
+          "originalIndex": 3,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0003.wav",
+          "guid": "787e184445ed72143b6574798b7e40f4"
+        },
+        {
+          "originalIndex": 4,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0004.wav",
+          "guid": "965f31098774813448ad2302e95cd72b"
+        },
+        {
+          "originalIndex": 5,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0005.wav",
+          "guid": "36d324d5cc4bcc040a2a38acbca9a591"
+        },
+        {
+          "originalIndex": 6,
+          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/OLYMPIC/Sounds/XOBF00_0006.wav",
+          "guid": "115f6917a2bcce64994fe451e07e7f79"
+        }
+      ]
+    }
+  ]
+}
