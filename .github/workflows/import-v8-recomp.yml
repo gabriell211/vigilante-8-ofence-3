@@ -19,12 +19,12 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout PC Unity project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: true
 
       - name: Checkout upstream V8 Classic reference at pinned revision
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: GTTeancum/Vigilante-8-recomp
           ref: 54805112186f970b05777540627ab5bdd084ddb7
