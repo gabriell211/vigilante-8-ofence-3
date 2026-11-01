@@ -1,0 +1,24 @@
+{
+  "name": "Vigilante8.EditorTests",
+  "rootNamespace": "Vigilante8.EditorTests",
+  "references": [
+    "Vigilante8.Runtime",
+    "Vigilante8.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}
