@@ -1,0 +1,56 @@
+name: Unity 6.6 actual Editor compilation and EditMode tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: unity-66-editor-test
+  cancel-in-progress: false
+
+jobs:
+  unity-editmode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout original Unity project and real source assets
+        uses: actions/checkout@v7
+        with:
+          lfs: true
+
+      - name: Confirm Unity license credentials exist
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ] && [ -z "$UNITY_SERIAL" ]; then
+            echo "::error::A Unity license must be configured to run the real Editor compile/test suite."
+            exit 1
+          fi
+
+      - name: Compile Unity 6.6.7f1 project and run actual Editor NUnit tests
+        id: unity-tests
+        uses: game-ci/unity-test-runner@v4.4.0
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          unityVersion: 6000.6.7f1
+          testMode: editmode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          artifactsPath: unity-editmode-artifacts
+          checkName: Real Unity 6.6 EditMode tests
+
+      - name: Store actual Unity test logs (never a fabricated release)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-66-editor-test-results
+          path: unity-editmode-artifacts
+          if-no-files-found: ignore

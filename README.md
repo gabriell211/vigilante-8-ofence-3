@@ -119,3 +119,7 @@ de materiais diretamente dos arquivos originais, preservando os grupos
 de peças. O CI confirma essas relações nos 18 carros. Essa etapa evita
 erros causados pela interpretação automática de `.mtl` do Unity, mas
 ainda não substitui teste visual do motor e não libera o EXE.
+
+### Compilação real em Unity 6.6
+
+O workflow manual [Unity 6.6 Editor tests](.github/workflows/unity-editmode.yml) executa o Editor e testes EditMode com GameCI, quando houver licença Unity disponível. O CI automático atual verifica apenas contratos, origem e integridade dos assets. Leia [instruções de homologação do Editor](docs/UNITY_CI.md).
