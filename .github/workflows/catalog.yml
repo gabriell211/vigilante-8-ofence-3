@@ -31,5 +31,7 @@ jobs:
         run: python3 scripts/verify_legacy_textures.py
       - name: Validate 18 real textured PS1 model previews
         run: python3 scripts/verify_tmd_previews.py
+      - name: Verify all original 235 WAV files, GUIDs and Unity audio bank mappings
+        run: python3 scripts/verify_legacy_audio.py
       - name: Report real imported Unity prefab coverage
         run: python3 scripts/audit_content.py
