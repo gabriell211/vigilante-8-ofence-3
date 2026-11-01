@@ -114,6 +114,26 @@ def copy_audio(root: Path = ROOT) -> dict:
         "arenas": enrich(stage_audio),
         "note": "Original samples preserved, sample roles not assigned; not proof of gameplay audio",
     }
+    # Unity JsonUtility does not decode dictionaries: ship a derived and
+    # source-verified array catalog for the Editor (no hard-coded car mapping).
+    editor_banks = []
+    for kind, entries in (("vehicle", result["vehicles"]), ("arena", result["arenas"])):
+        for identifier, samples in sorted(entries.items()):
+            editor_banks.append({
+                "id": identifier, "kind": kind,
+                "samples": [
+                    {"originalIndex": sample["index"], "assetPath": sample["assetPath"],
+                     "guid": sample["guid"]} for sample in samples
+                ],
+            })
+    editor_catalog = {
+        "schemaVersion": 1, "sourceRevision": mapping["sourceUnityCommit"],
+        "banks": editor_banks,
+    }
+    (root / DEST / "catalog.json").write_text(
+        json.dumps(editor_catalog, indent=2, ensure_ascii=False) + "\\n",
+        encoding="utf-8")
+
     manifest = root / MANIFEST
     manifest.parent.mkdir(parents=True, exist_ok=True)
     manifest.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

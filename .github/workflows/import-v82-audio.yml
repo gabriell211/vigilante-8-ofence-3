@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/import-v82-audio.yml'
+      - 'scripts/migrate_legacy_audio.py'
+      - 'scripts/verify_legacy_audio.py'
   workflow_dispatch:
 
 permissions:

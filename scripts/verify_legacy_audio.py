@@ -49,6 +49,24 @@ def verify(root: Path = ROOT) -> dict:
                     raise ValueError("Audio bank references unknown WAV: " + identifier)
                 if by_path[sample["assetPath"]]["guid"] != sample["guid"]:
                     raise ValueError("Audio bank references mismatched GUID: " + identifier)
+    editor_manifest = json.loads(
+        (root / "Assets/GameContent/LegacyAudioV82/catalog.json").read_text("utf-8"))
+    banks = editor_manifest.get("banks", [])
+    if editor_manifest.get("schemaVersion") != 1 or len(banks) != 26:
+        raise ValueError("Unity Editor audio source manifest is incomplete")
+    expected_banks = {("vehicle", key): val for key, val in data["vehicles"].items()}
+    expected_banks.update({("arena", key): val for key, val in data["arenas"].items()})
+    observed = {}
+    for bank in banks:
+        key = (bank["kind"], bank["id"])
+        if key in observed or key not in expected_banks:
+            raise ValueError("Unknown or duplicate original Unity audio bank")
+        observed[key] = [{
+            "index": sample["originalIndex"], "assetPath": sample["assetPath"],
+            "guid": sample["guid"]
+        } for sample in bank["samples"]]
+    if observed != expected_banks:
+        raise ValueError("Unity Editor source audio banks differ from the original")
     return data
 
 
