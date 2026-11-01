@@ -164,7 +164,7 @@ namespace Vigilante8.Editor
                 "  \"version\": \"" + PlayerSettings.bundleVersion + "\",\n" +
                 "  \"platform\": \"win-x64\",\n" +
                 "  \"unity\": \"" + Application.unityVersion + "\",\n" +
-                "  \"assetCatalog\": {\"characters\": 23, \"vehicles\": 31, \"arenas\": 18}\n" +
+                "  \"assetCatalog\": {\"characters\": 23, \"vehicles\": 31, \"arenas\": 19}\n" +
                 "}\n";
             File.WriteAllText(Path.Combine(outputDir, "release-manifest.json"), manifest);
             string zip = Path.Combine(buildRoot,
