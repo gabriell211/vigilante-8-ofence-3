@@ -41,7 +41,7 @@ def verify(root: Path = ROOT) -> None:
     game_code = "\n".join((runtime / p).read_text(encoding="utf-8")
                           for p in REQUIRED_GAMEPLAY)
     forbidden = ("GameObject.CreatePrimitive", "AssetDatabase.", "System.IO.File.Read",
-                 "File.ReadAllBytes", "Process.Start(", ".bin\\"", ".cue\\"")
+                 "File.ReadAllBytes", "Process.Start(", ".bin", ".cue")
     for fragment in forbidden:
         if fragment in game_code:
             raise ValueError(f"Prohibited temporary/runtime dependency: {fragment}")
