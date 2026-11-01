@@ -1,0 +1,86 @@
+name: Import complete Vigilante 8 Classic recomp reference
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-v8-recomp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-v8-classic-sources
+  cancel-in-progress: false
+
+jobs:
+  snapshot-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout PC Unity project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Checkout upstream V8 Classic reference at pinned revision
+        uses: actions/checkout@v4
+        with:
+          repository: GTTeancum/Vigilante-8-recomp
+          ref: 54805112186f970b05777540627ab5bdd084ddb7
+          path: _upstream_recomp
+          persist-credentials: false
+          lfs: true
+
+      - name: Copy authentic code, original mods and tools without disturbing Unity 6.6
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _upstream_recomp rev-parse HEAD)" = "54805112186f970b05777540627ab5bdd084ddb7"
+          mkdir -p LegacySources/Vigilante8ClassicRecomp
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='*.DS_Store' \
+            _upstream_recomp/ LegacySources/Vigilante8ClassicRecomp/
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("LegacySources/Vigilante8ClassicRecomp/source.json")
+          payload = {
+              "source": "https://github.com/GTTeancum/Vigilante-8-recomp",
+              "commit": "54805112186f970b05777540627ab5bdd084ddb7",
+              "status": "recomp_reference_for_Unity6_port",
+              "warning": "Original retail media is not versioned here. This archive is not a full install of Vigilante 8."
+          }
+          path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Verify first-game source references and second-game archived material
+        run: |
+          python3 scripts/audit_recomp_snapshot.py
+          python3 scripts/audit_upstream_snapshot.py
+          python3 scripts/validate_catalog.py
+          python3 -m unittest discover -s tests -v
+
+      - name: Commit snapshot to main without creating loose PRs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A LegacySources/Vigilante8ClassicRecomp
+          if git diff --cached --quiet; then
+            echo "Already imported at pinned revision."
+            exit 0
+          fi
+          git commit -m "assets(v8): stage original Classic recomp source, graphics mods and tools"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Report scope accurately
+        if: always()
+        run: |
+          echo "## Classic V8 resources" >> "$GITHUB_STEP_SUMMARY"
+          echo "Archive: LegacySources/Vigilante8ClassicRecomp." >> "$GITHUB_STEP_SUMMARY"
+          echo "Contains GitHub-tracked reference, mods and scripts; not missing retail game data." >> "$GITHUB_STEP_SUMMARY"
