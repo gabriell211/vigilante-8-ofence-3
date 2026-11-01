@@ -1,0 +1,7 @@
+{
+  "source": "https://github.com/stefanvranjes/Vigilante2Unity",
+  "commit": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+  "editor": "2020.3.3f1",
+  "status": "legacy_references_for_porting",
+  "note": "All source project resources staged outside active Assets; not automatically Unity 6.6 compatible."
+}
