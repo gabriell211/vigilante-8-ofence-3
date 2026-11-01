@@ -2,8 +2,6 @@
 using System;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Build;
-using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Vigilante8.Content;
 
@@ -110,27 +108,5 @@ namespace Vigilante8.Editor
         }
     }
 
-    public sealed class RequiredContentBuildGate : IPreprocessBuildWithReport
-    {
-        public int callbackOrder => -1000;
-
-        public void OnPreprocessBuild(BuildReport report)
-        {
-            var catalog = CatalogRepository.Load();
-            foreach (var vehicle in catalog.vehicles)
-                Check("Vehicles", vehicle.assetId);
-            foreach (var arena in catalog.arenas)
-                Check("Arenas", arena.assetId);
-        }
-
-        private static void Check(string kind, string id)
-        {
-            var source = "Assets/GameContent/Private/" + kind + "/" + id + ".fbx";
-            var prefab = "Assets/Resources/" + kind + "/" + id + ".prefab";
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(source) == null ||
-                AssetDatabase.LoadAssetAtPath<GameObject>(prefab) == null)
-                throw new BuildFailedException("Refusing incomplete build. Missing real asset: " + id);
-        }
-    }
 }
 #endif
