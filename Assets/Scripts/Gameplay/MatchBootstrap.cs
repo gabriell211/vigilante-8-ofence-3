@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using Vigilante8.Content;
 
@@ -10,6 +11,20 @@ namespace Vigilante8.Gameplay
     [RequireComponent(typeof(UIDocument))]
     public sealed class MatchBootstrap : MonoBehaviour
     {
+        private enum ScreenPage { Home, Garage, Options, Controls, About, Playing, Pause, Results }
+        private ScreenPage activePage;
+        private ScreenPage optionsReturn = ScreenPage.Home;
+        private readonly GameMenuSettings preferences = new GameMenuSettings();
+        private VisualElement homePage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage;
+        private Label readinessLabel, resultsTitle, resultsDetails;
+        private Button startCombat;
+        private bool finished;
+        private string matchVehicle = "";
+        private string matchArena = "";
+        private static readonly Color Accent = new Color(0.98f, 0.39f, 0.15f);
+        private static readonly Color Ink = new Color(0.026f, 0.036f, 0.062f);
+        private static readonly Color Surface = new Color(0.066f, 0.086f, 0.13f);
+        private static readonly Color Muted = new Color(0.68f, 0.74f, 0.82f);
         private GameCatalog catalog;
         private VisualElement root;
         private VisualElement menu;
@@ -32,12 +47,20 @@ namespace Vigilante8.Gameplay
         private void Start()
         {
             catalog = CatalogRepository.Load();
+            preferences.Load();
             root = GetComponent<UIDocument>().rootVisualElement;
             if (root == null) throw new InvalidOperationException("Missing UI Toolkit panel");
             root.style.flexGrow = 1;
             root.style.backgroundColor = new Color(0.025f, 0.035f, 0.065f, 0.88f);
             BuildMenu();
             BuildHud();
+            BuildMainMenu();
+            BuildOptionsMenu();
+            BuildControlsMenu();
+            BuildAboutMenu();
+            BuildPauseMenu();
+            BuildResultsMenu();
+            Show(ScreenPage.Home);
         }
 
         private void BuildMenu()
@@ -78,15 +101,18 @@ namespace Vigilante8.Gameplay
                 a.name + (a.bonus ? "   ·   BÔNUS N64" : "")).ToList(), 0);
             StyleDropdown(arenaSelector);
             menu.Add(arenaSelector);
+            arenaSelector.RegisterValueChangedCallback(_ => UpdateAvailability());
 
-            var start = new Button(StartMatch) { text = "INICIAR COMBATE" };
-            start.style.height = 52;
-            start.style.marginTop = 25;
-            start.style.backgroundColor = new Color(0.89f, 0.38f, 0.16f);
-            start.style.color = Color.white;
-            start.style.unityFontStyleAndWeight = FontStyle.Bold;
-            menu.Add(start);
+            readinessLabel = new Label();
+            readinessLabel.style.color = new Color(1f, 0.72f, 0.42f);
+            readinessLabel.style.whiteSpace = WhiteSpace.Normal;
+            readinessLabel.style.marginTop = 15;
+            menu.Add(readinessLabel);
+            startCombat = CreateButton("INICIAR COMBATE", StartMatch, true);
+            menu.Add(startCombat);
+            menu.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
             AddHeading(menu, "WASD / SETAS: dirigir   ·   SHIFT: freio   ·   ESPAÇO: disparar", 12);
+            UpdateAvailability();
         }
 
         private static void AddHeading(VisualElement parent, string content, int size)
@@ -116,6 +142,7 @@ namespace Vigilante8.Gameplay
             vehicleSelector.choices = vehicles.Select(v => (string.IsNullOrWhiteSpace(v.officialName) ? v.name : v.officialName) +
                 "   ·   " + v.game.ToUpperInvariant()).ToList();
             vehicleSelector.index = vehicles.Length > 0 ? 0 : -1;
+            UpdateAvailability();
         }
 
         private void BuildHud()
@@ -141,15 +168,20 @@ namespace Vigilante8.Gameplay
                 label.style.marginBottom = 8;
                 hud.Add(label);
             }
-            var quit = new Button(BackToMenu) { text = "VOLTAR AO MENU" };
+            var quit = new Button(PauseGame) { text = "PAUSAR  /  ESC" };
             quit.style.height = 35;
             hud.Add(quit);
         }
 
         private void StartMatch()
         {
-            if (vehicleIds.Length == 0 || arenaSelector.index < 0 || vehicleSelector.index < 0) return;
-            BackToMenu();
+            if (!IsMatchAvailable(out string reason))
+            {
+                Debug.LogWarning("Combate indisponível: " + reason);
+                UpdateAvailability();
+                return;
+            }
+            CleanupMatch();
             var selected = catalog.vehicles.First(v => v.id == vehicleIds[vehicleSelector.index]);
             var arena = catalog.arenas.First(a => a.id == arenaIds[arenaSelector.index]);
             var arenaAsset = CatalogRepository.LoadArenaPrefab(arena);
@@ -170,8 +202,8 @@ namespace Vigilante8.Gameplay
             }
             player = SpawnVehicle(selected, spawns.GetSpawn(0), true);
             if (player == null) { BackToMenu(); return; }
-            var opponents = catalog.vehicles.Where(v => v.characterId != selected.characterId)
-                .OrderBy(v => v.id).ToArray();
+            var opponents = catalog.vehicles.Where(v => v.characterId != selected.characterId &&
+                IsVehicleReady(v)).OrderBy(v => v.id).ToArray();
             int cursor = Array.FindIndex(opponents, v => v.id.CompareTo(selected.id) > 0);
             if (cursor < 0) cursor = 0;
             var usedDrivers = new HashSet<string> {selected.characterId};
@@ -203,9 +235,11 @@ namespace Vigilante8.Gameplay
             chase = Camera.main != null ? Camera.main.GetComponent<ChaseCamera>() : null;
             if (chase == null) Debug.LogError("Camera has no ChaseCamera component.");
             else chase.target = player.transform;
-            menu.style.display = DisplayStyle.None;
-            root.style.backgroundColor = Color.clear;
-            hud.style.display = DisplayStyle.Flex;
+            finished = false;
+            matchVehicle = selected.officialName;
+            matchArena = arena.name;
+            Time.timeScale = 1f;
+            Show(ScreenPage.Playing);
         }
 
         private VehicleDrive SpawnVehicle(VehicleEntry descriptor, Transform spawn, bool controlled)
@@ -223,16 +257,47 @@ namespace Vigilante8.Gameplay
 
         private void Update()
         {
-            if (hud == null || hud.style.display.value != DisplayStyle.Flex || player == null) return;
+            bool pressedBack = (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
+                (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame);
+            if (pressedBack)
+            {
+                switch (activePage)
+                {
+                    case ScreenPage.Playing: PauseGame(); return;
+                    case ScreenPage.Pause: ResumeGame(); return;
+                    case ScreenPage.Options: Show(optionsReturn); return;
+                    case ScreenPage.Garage:
+                    case ScreenPage.Controls:
+                    case ScreenPage.About: Show(ScreenPage.Home); return;
+                }
+            }
+            if (activePage != ScreenPage.Playing || player == null) return;
             int alive = enemies.Count(enemy => enemy != null && enemy.IsAlive);
-            healthLabel.text = "INTEGRIDADE   " + Mathf.RoundToInt(player.Health);
+            healthLabel.text = "INTEGRIDADE   " + Mathf.RoundToInt(player.Health) +
+                " / " + Mathf.RoundToInt(player.maximumHealth);
             enemiesLabel.text = "ADVERSÁRIOS   " + alive + " / 3";
-            statusLabel.text = !player.IsAlive ? "VOCÊ FOI DESTRUÍDO" :
-                alive == 0 ? "VITÓRIA" : "COMBATE EM ANDAMENTO";
+            statusLabel.text = matchVehicle + "   /   " + matchArena;
+            if (!finished && (!player.IsAlive || alive == 0))
+            {
+                finished = true;
+                resultsTitle.text = player.IsAlive ? "VITÓRIA" : "DERROTA";
+                resultsDetails.text = (player.IsAlive ? "TODOS OS INIMIGOS DERROTADOS" :
+                    "SEU VEÍCULO FOI DESTRUÍDO") + "  ·  " + matchVehicle + "  ·  " + matchArena;
+                player.SetControls(0f, 0f, 1f, false);
+                Time.timeScale = 0f;
+                Show(ScreenPage.Results);
+            }
         }
 
         private void BackToMenu()
         {
+            CleanupMatch();
+            Show(ScreenPage.Home);
+        }
+
+        private void CleanupMatch()
+        {
+            Time.timeScale = 1f;
             if (chase != null) chase.target = null;
             chase = null;
             player = null;
@@ -241,15 +306,310 @@ namespace Vigilante8.Gameplay
             spawned.Clear();
             if (arenaInstance != null) Destroy(arenaInstance);
             arenaInstance = null;
-            if (menu != null) menu.style.display = DisplayStyle.Flex;
-            if (hud != null) hud.style.display = DisplayStyle.None;
-            if (root != null) root.style.backgroundColor = new Color(0.025f, 0.035f, 0.065f, 0.88f);
+            finished = false;
         }
 
-        private void OnDestroy()
+
+        private static Button CreateButton(string caption, Action clicked, bool highlighted = false)
         {
-            foreach (var vehicle in spawned) if (vehicle != null) Destroy(vehicle);
-            if (arenaInstance != null) Destroy(arenaInstance);
+            var button = new Button(() => clicked()) { text = caption };
+            button.style.minHeight = 48;
+            button.style.marginTop = 9;
+            button.style.marginBottom = 7;
+            button.style.paddingLeft = 20;
+            button.style.paddingRight = 20;
+            button.style.fontSize = 15;
+            button.style.color = Color.white;
+            button.style.unityFontStyleAndWeight = FontStyle.Bold;
+            button.style.backgroundColor = highlighted ? Accent : new Color(0.15f, 0.19f, 0.26f);
+            button.style.borderTopLeftRadius = 9;
+            button.style.borderTopRightRadius = 9;
+            button.style.borderBottomLeftRadius = 9;
+            button.style.borderBottomRightRadius = 9;
+            return button;
         }
+
+        private VisualElement CreateScreen(string heading, string description, out VisualElement panel)
+        {
+            var overlay = new ScrollView(ScrollViewMode.Vertical);
+            overlay.style.flexGrow = 1;
+            overlay.style.width = Length.Percent(100);
+            overlay.style.height = Length.Percent(100);
+            overlay.style.backgroundColor = Ink;
+            root.Add(overlay);
+
+            panel = new VisualElement();
+            panel.style.width = Length.Percent(92);
+            panel.style.maxWidth = 780;
+            panel.style.alignSelf = Align.Center;
+            panel.style.marginTop = 45;
+            panel.style.marginBottom = 40;
+            panel.style.paddingTop = 30;
+            panel.style.paddingLeft = 28;
+            panel.style.paddingRight = 28;
+            panel.style.paddingBottom = 28;
+            panel.style.backgroundColor = Surface;
+            panel.style.borderTopLeftRadius = 16;
+            panel.style.borderTopRightRadius = 16;
+            panel.style.borderBottomLeftRadius = 16;
+            panel.style.borderBottomRightRadius = 16;
+            overlay.Add(panel);
+            var brand = new Label("VIGILANTE 8");
+            brand.style.color = Accent;
+            brand.style.fontSize = 42;
+            brand.style.unityFontStyleAndWeight = FontStyle.Bold;
+            panel.Add(brand);
+            var edition = new Label("OFFENCE 3    /    PC EDITION");
+            edition.style.color = Muted;
+            edition.style.fontSize = 13;
+            edition.style.marginBottom = 22;
+            panel.Add(edition);
+            AddHeading(panel, heading, 24);
+            var subtitle = new Label(description);
+            subtitle.style.color = Muted;
+            subtitle.style.fontSize = 14;
+            subtitle.style.whiteSpace = WhiteSpace.Normal;
+            subtitle.style.marginBottom = 18;
+            panel.Add(subtitle);
+            return overlay;
+        }
+
+        private void BuildMainMenu()
+        {
+            homePage = CreateScreen("ESCOLHA SEU PILOTO. DOMINE A ARENA.",
+                "Os conteúdos oficiais de Vigilante 8 e 2nd Offense em uma edição para Windows.",
+                out var panel);
+            var collection = new Label(catalog.characters.Length + " PILOTOS   /   " +
+                catalog.vehicles.Length + " VEÍCULOS   /   " + catalog.arenas.Length + " ARENAS");
+            collection.style.color = Muted;
+            collection.style.fontSize = 15;
+            collection.style.marginBottom = 25;
+            panel.Add(collection);
+            panel.Add(CreateButton("JOGAR  /  SELECIONAR VEÍCULO", () => Show(ScreenPage.Garage), true));
+            panel.Add(CreateButton("OPÇÕES GRÁFICAS E ÁUDIO", () => OpenOptions(ScreenPage.Home)));
+            panel.Add(CreateButton("CONTROLES", () => Show(ScreenPage.Controls)));
+            panel.Add(CreateButton("SOBRE O ACERVO", () => Show(ScreenPage.About)));
+            panel.Add(CreateButton("SAIR DO JOGO", ExitGame));
+        }
+
+        private void BuildOptionsMenu()
+        {
+            optionsPage = CreateScreen("OPÇÕES",
+                "Alterações aplicadas ao Unity e armazenadas neste computador.", out var panel);
+            AddHeading(panel, "ÁUDIO", 19);
+            var volume = new Slider("VOLUME GERAL", 0f, 1f) { value = preferences.MasterVolume };
+            volume.style.marginBottom = 22;
+            volume.RegisterValueChangedCallback(evt => preferences.SetVolume(evt.newValue));
+            panel.Add(volume);
+            AddHeading(panel, "GRÁFICOS", 19);
+            var qualityNames = QualitySettings.names;
+            if (qualityNames.Length != 0)
+            {
+                var quality = new DropdownField("QUALIDADE", qualityNames.ToList(),
+                    GameMenuSettings.NormalizeQuality(preferences.QualityLevel, qualityNames.Length));
+                StyleDropdown(quality);
+                quality.RegisterValueChangedCallback(_ =>
+                {
+                    if (quality.index >= 0) preferences.SetQuality(quality.index);
+                });
+                panel.Add(quality);
+            }
+            else panel.Add(new Label("Nenhum perfil de qualidade está configurado no Unity."));
+            var fullscreen = new Toggle("TELA CHEIA") { value = preferences.Fullscreen };
+            fullscreen.style.marginTop = 15;
+            fullscreen.style.marginBottom = 22;
+            fullscreen.RegisterValueChangedCallback(evt => preferences.SetFullscreen(evt.newValue));
+            panel.Add(fullscreen);
+            panel.Add(CreateButton("VOLTAR", () => Show(optionsReturn), true));
+        }
+
+        private void OpenOptions(ScreenPage returnTo)
+        {
+            optionsReturn = returnTo;
+            Show(ScreenPage.Options);
+        }
+
+        private void BuildControlsMenu()
+        {
+            controlsPage = CreateScreen("CONTROLES",
+                "Comandos já conectados aos scripts reais de direção e combate.", out var panel);
+            AddHeading(panel, "TECLADO", 19);
+            AddHeading(panel, "W / S ou SETAS ↑ ↓     ACELERAR / RÉ", 14);
+            AddHeading(panel, "A / D ou SETAS ← →     VIRAR", 14);
+            AddHeading(panel, "SHIFT ESQUERDO     FREAR", 14);
+            AddHeading(panel, "ESPAÇO     DISPARAR", 14);
+            AddHeading(panel, "ESC     PAUSAR / RETOMAR / VOLTAR", 14);
+            AddHeading(panel, "GAMEPAD", 19);
+            AddHeading(panel, "GATILHOS DIREITO / ESQUERDO     ACELERAR / RÉ", 14);
+            AddHeading(panel, "ANALÓGICO ESQUERDO     VIRAR", 14);
+            AddHeading(panel, "BOTÃO INFERIOR     FREAR", 14);
+            AddHeading(panel, "OMBRO DIREITO     DISPARAR", 14);
+            AddHeading(panel, "START     PAUSAR / RETOMAR", 14);
+            panel.Add(CreateButton("MENU PRINCIPAL", () => Show(ScreenPage.Home), true));
+        }
+
+        private void BuildAboutMenu()
+        {
+            aboutPage = CreateScreen("CONTEÚDO OFICIAL",
+                "Identidades consolidadas dos dois títulos, sem repetir pilotos ou carros.",
+                out var panel);
+            AddHeading(panel, catalog.characters.Length + " PERSONAGENS  /  " +
+                catalog.vehicles.Length + " VEÍCULOS  /  " + catalog.arenas.Length + " ARENAS", 18);
+            var note = new Label("Entradas ainda não migradas aparecem na garagem como indisponíveis. " +
+                "O jogo não cria modelos, armas ou cenários fictícios para substituir recursos ausentes.");
+            note.style.color = Muted;
+            note.style.whiteSpace = WhiteSpace.Normal;
+            note.style.marginBottom = 18;
+            panel.Add(note);
+            panel.Add(CreateButton("MENU PRINCIPAL", () => Show(ScreenPage.Home), true));
+        }
+
+        private void BuildPauseMenu()
+        {
+            pausePage = CreateScreen("JOGO PAUSADO",
+                "Continue a partida ou retorne ao menu sem deixar objetos de uma rodada anterior.",
+                out var panel);
+            panel.Add(CreateButton("CONTINUAR", ResumeGame, true));
+            panel.Add(CreateButton("OPÇÕES", () => OpenOptions(ScreenPage.Pause)));
+            panel.Add(CreateButton("VOLTAR AO MENU", BackToMenu));
+        }
+
+        private void BuildResultsMenu()
+        {
+            resultsPage = CreateScreen("RESULTADO DA PARTIDA",
+                "Resultado determinado pelos veículos destruídos na rodada.", out var panel);
+            resultsTitle = new Label();
+            resultsTitle.style.color = Accent;
+            resultsTitle.style.fontSize = 30;
+            resultsTitle.style.unityFontStyleAndWeight = FontStyle.Bold;
+            panel.Add(resultsTitle);
+            resultsDetails = new Label();
+            resultsDetails.style.whiteSpace = WhiteSpace.Normal;
+            resultsDetails.style.color = Muted;
+            resultsDetails.style.marginBottom = 15;
+            panel.Add(resultsDetails);
+            panel.Add(CreateButton("JOGAR NOVAMENTE", StartMatch, true));
+            panel.Add(CreateButton("SELECIONAR OUTRO VEÍCULO", () =>
+            {
+                CleanupMatch();
+                Show(ScreenPage.Garage);
+            }));
+            panel.Add(CreateButton("MENU PRINCIPAL", BackToMenu));
+        }
+
+        private void Show(ScreenPage target)
+        {
+            activePage = target;
+            if (target == ScreenPage.Garage) UpdateAvailability();
+            if (menu != null) menu.style.display = target == ScreenPage.Garage ?
+                DisplayStyle.Flex : DisplayStyle.None;
+            if (hud != null) hud.style.display = target == ScreenPage.Playing ?
+                DisplayStyle.Flex : DisplayStyle.None;
+            var pages = new[] {
+                homePage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage
+            };
+            var ids = new[] {
+                ScreenPage.Home, ScreenPage.Options, ScreenPage.Controls,
+                ScreenPage.About, ScreenPage.Pause, ScreenPage.Results
+            };
+            for (int i = 0; i < pages.Length; i++)
+                if (pages[i] != null) pages[i].style.display =
+                    target == ids[i] ? DisplayStyle.Flex : DisplayStyle.None;
+            root.style.backgroundColor = target == ScreenPage.Playing ? Color.clear : Ink;
+        }
+
+        private static bool IsVehicleReady(VehicleEntry vehicle)
+        {
+            var prefab = CatalogRepository.LoadVehiclePrefab(vehicle);
+            if (prefab == null) return false;
+            var identity = prefab.GetComponent<OfficialAssetIdentity>();
+            var drive = prefab.GetComponent<VehicleDrive>();
+            bool hasRealMesh = prefab.GetComponentsInChildren<MeshFilter>(true)
+                .Any(m => m.sharedMesh != null && m.sharedMesh.vertexCount > 2) ||
+                prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                .Any(m => m.sharedMesh != null && m.sharedMesh.vertexCount > 2);
+            return identity != null && identity.Matches(vehicle.id, vehicle.game) &&
+                drive != null && drive.HasWeapon && hasRealMesh &&
+                prefab.GetComponent<Rigidbody>() != null &&
+                prefab.GetComponentsInChildren<Collider>(true).Length != 0;
+        }
+
+        private static bool IsArenaReady(ArenaEntry arena)
+        {
+            var prefab = CatalogRepository.LoadArenaPrefab(arena);
+            if (prefab == null) return false;
+            var identity = prefab.GetComponent<OfficialAssetIdentity>();
+            var spawns = prefab.GetComponentInChildren<ArenaSpawnPoints>(true);
+            return identity != null && identity.Matches(arena.id, arena.game) &&
+                spawns != null && spawns.HasValidSpawns(4) &&
+                prefab.GetComponentsInChildren<Collider>(true).Length != 0;
+        }
+
+        private bool IsMatchAvailable(out string reason)
+        {
+            if (vehicleIds == null || arenaIds == null || vehicleSelector == null ||
+                vehicleSelector.index < 0 || arenaSelector == null || arenaSelector.index < 0 ||
+                vehicleSelector.index >= vehicleIds.Length ||
+                arenaSelector.index >= arenaIds.Length)
+            {
+                reason = "Escolha um piloto, um veículo e uma arena.";
+                return false;
+            }
+            var selected = catalog.vehicles.First(v => v.id == vehicleIds[vehicleSelector.index]);
+            var arena = catalog.arenas.First(a => a.id == arenaIds[arenaSelector.index]);
+            if (!IsVehicleReady(selected))
+            {
+                reason = "Este carro oficial ainda não possui mesh, física e armas prontas no Unity.";
+                return false;
+            }
+            if (!IsArenaReady(arena))
+            {
+                reason = "Esta fase oficial ainda não tem geometria, colisão e pontos de partida validados.";
+                return false;
+            }
+            int validDrivers = catalog.vehicles.Where(v =>
+                    v.characterId != selected.characterId && IsVehicleReady(v))
+                .Select(v => v.characterId).Distinct().Count();
+            if (validDrivers < 3)
+            {
+                reason = "São necessários outros três pilotos distintos com veículos oficiais homologados.";
+                return false;
+            }
+            reason = "Pronto: arena, veículo e três adversários oficiais disponíveis.";
+            return true;
+        }
+
+        private void UpdateAvailability()
+        {
+            if (readinessLabel == null || startCombat == null) return;
+            bool available = IsMatchAvailable(out string reason);
+            readinessLabel.text = reason;
+            readinessLabel.style.color = available ? new Color(0.40f, 0.85f, 0.62f) :
+                new Color(1f, 0.72f, 0.42f);
+            startCombat.SetEnabled(available);
+        }
+
+        private void PauseGame()
+        {
+            if (activePage != ScreenPage.Playing) return;
+            if (player != null) player.SetControls(0f, 0f, 1f, false);
+            Time.timeScale = 0f;
+            Show(ScreenPage.Pause);
+        }
+
+        private void ResumeGame()
+        {
+            if (activePage != ScreenPage.Pause) return;
+            Time.timeScale = 1f;
+            Show(ScreenPage.Playing);
+        }
+
+        private void ExitGame()
+        {
+            CleanupMatch();
+            Application.Quit();
+        }
+
+        private void OnDestroy() => CleanupMatch();
     }
 }
