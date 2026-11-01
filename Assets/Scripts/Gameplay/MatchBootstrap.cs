@@ -332,20 +332,22 @@ namespace Vigilante8.Gameplay
 
         private void RestoreLastOfficialSelections()
         {
+            // Read all saved values before selection callbacks can rewrite preferences.
+            string originalVehicle = GameMenuSettings.RestoreSelection(
+                GameMenuSettings.VehicleKey,
+                catalog.vehicles.Select(v => v.id).ToArray());
+            string originalArena = GameMenuSettings.RestoreSelection(
+                GameMenuSettings.ArenaKey, arenaIds);
             string originalCharacter = GameMenuSettings.RestoreSelection(
                 GameMenuSettings.CharacterKey, characterIds);
             int characterIndex = Array.IndexOf(characterIds, originalCharacter);
             if (characterIndex >= 0)
                 characterSelector.index = characterIndex;
 
-            string originalVehicle = GameMenuSettings.RestoreSelection(
-                GameMenuSettings.VehicleKey, vehicleIds);
             int vehicleIndex = Array.IndexOf(vehicleIds, originalVehicle);
             if (vehicleIndex >= 0)
                 vehicleSelector.index = vehicleIndex;
 
-            string originalArena = GameMenuSettings.RestoreSelection(
-                GameMenuSettings.ArenaKey, arenaIds);
             int arenaIndex = Array.IndexOf(arenaIds, originalArena);
             if (arenaIndex >= 0)
                 arenaSelector.index = arenaIndex;
