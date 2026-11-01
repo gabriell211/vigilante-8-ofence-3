@@ -29,7 +29,9 @@
 - Unity **6000.6.7f1**, URP, Input System e IL2CPP.
 - `python3 scripts/validate_catalog.py` — integridade de personagens, carros e arenas.
 - `python3 -m unittest discover -s tests -v` — regressões estruturais.
-- `python3 scripts/audit_upstream_snapshot.py` — verifica os scripts, armas, modelos, texturas, sons e cenas originais que já estão no repositório.\n- `python3 scripts/verify_imported_models.py` — valida os dois arquivos FBX reais contra o hash Git e checa sua geometria.\n- `python3 scripts/audit_content.py` — auditoria honesta da presença dos prefabs.
+- `python3 scripts/audit_upstream_snapshot.py` — verifica os scripts, armas, modelos, texturas, sons e cenas originais que já estão no repositório.
+- `python3 scripts/verify_imported_models.py` — valida os dois arquivos FBX reais contra o hash Git e checa sua geometria.
+- `python3 scripts/audit_content.py` — auditoria honesta da presença dos prefabs.
 - `python3 scripts/audit_content.py --strict` — bloqueia a etapa de release se faltar um só prefab.
 - `python3 scripts/verify_pc_contract.py` — verifica o contrato do código de PC; não substitui execução no Editor.
 
@@ -84,3 +86,28 @@ conclui sua migração. Ainda será preciso adaptar física, materiais, armament
 especiais, scripts, campanhas, animações e testar em Windows antes de produzir
 uma versão jogável. O CI testa integridade e cobertura do acervo, não a
 compilação ou o funcionamento do jogo.
+
+## Migração de geometria, texturas e áudio do 2nd Offense
+
+A fase atual já inclui os seguintes dados **reais** do repositório original:
+
+- **18/18 veículos do segundo jogo:** geometria PS1 extraída em `Assets/GameContent/ExtractedV82/`, com verificação de triângulos e hashes da fonte
+- **790 BMPs originais:** importados com GUIDs de textura preservados em `Assets/GameContent/LegacyTextureBank/`
+- **18 prévias OBJ/MTL:** a geometria real possui **677 materiais ligados diretamente às texturas** nos modos TMD conhecidos, em `Assets/GameContent/TexturedPreviewV82/`
+- **235 WAVs originais:** importados com GUIDs preservados em `Assets/GameContent/LegacyAudioV82/`; os 18 veículos têm **88 amostras indexadas**, as oito arenas possuem **54**, e os demais efeitos permanecem em seus bancos originais
+- **Catálogo para o Unity:** `Assets/GameContent/LegacyAudioV82/catalog.json` vincula os sons às identidades oficiais por dados reais, sem IDs de veículos codificados manualmente
+
+### Ferramentas no Unity
+
+O menu **Vigilante 8 > Migração > Gerar galeria 3D dos 18 carros oficiais**
+prepara materiais URP, cria prefabs de inspeção, vincula os WAVs e monta
+a cena `OriginalVehicleReview.unity`. A galeria serve exclusivamente à
+inspeção visual e à migração. Consulte [o procedimento](docs/UNITY_ASSET_REVIEW.md).
+
+**Não confundir com uma release jogável:** a estrutura de peças, transformações,
+efeitos especiais, sistemas originais das armas, colisões, 13 modelos do primeiro
+jogo e arenas definitivas continuam pendentes. Os projetos públicos de origem
+não disponibilizam todos os dados 3D comerciais do primeiro jogo. Os testes Python
+verificam cópias e integridade do conteúdo; **ainda não houve compilação nem
+teste PlayMode/EditMode homologado com o Editor Unity 6.6**.
+
