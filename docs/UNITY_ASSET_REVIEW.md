@@ -30,3 +30,18 @@ Auditoria estrutural no CI: `scripts/verify_extracted_geometry.py`,
 `scripts/verify_tmd_previews.py`, `scripts/verify_legacy_textures.py`
 e `scripts/verify_legacy_audio.py`. Testes C# de Editor requerem uma
 instalação do Unity e não são executados pelo job Python do GitHub.
+
+## Importação geométrica determinística
+
+A importação agora utiliza `OriginalObjMeshBuilder` no Editor Unity para ler
+diretamente o OBJ original: cada grupo `g` de TMD vira um `Mesh` próprio,
+cada `usemtl` define o submesh, e os vértices/índices `vt` são mantidos
+conforme o material real. Esse processo **não depende da heurística do
+ModelImporter** para nomear materiais. Os assets de malha gerados ficam em
+`Assets/GameContent/PreviewMeshesV82/<id>/`, fora de `Resources`.
+
+O contrato de origem é conferido no CI por
+`python3 scripts/verify_unity_mesh_sources.py`: 18 OBJ, triangulação,
+grupos, UVs, MTL, BMPs, IDs e integridade da geometria TMD. Testes de
+importação e renderização no Unity Editor continuam obrigatórios antes
+de tratar qualquer modelo como utilizável na versão Windows.

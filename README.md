@@ -111,3 +111,11 @@ não disponibilizam todos os dados 3D comerciais do primeiro jogo. Os testes Pyt
 verificam cópias e integridade do conteúdo; **ainda não houve compilação nem
 teste PlayMode/EditMode homologado com o Editor Unity 6.6**.
 
+
+### Confiabilidade do importador Unity
+
+O conversor `OriginalObjMeshBuilder.cs` lê os polígonos, UVs e nomes
+de materiais diretamente dos arquivos originais, preservando os grupos
+de peças. O CI confirma essas relações nos 18 carros. Essa etapa evita
+erros causados pela interpretação automática de `.mtl` do Unity, mas
+ainda não substitui teste visual do motor e não libera o EXE.

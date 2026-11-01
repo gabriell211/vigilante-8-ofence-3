@@ -87,7 +87,7 @@ def parse_source_obj(path: Path) -> dict:
             "materials": materials_used, "vertices": vertices}
 
 
-def parse_materials(path: Path) -> dict:
+def parse_materials(path: Path, root: Path = ROOT) -> dict:
     materials = {}
     name = None
     for raw in path.read_text("utf-8").splitlines():
@@ -104,7 +104,7 @@ def parse_materials(path: Path) -> dict:
             if not relative.startswith("../LegacyTextureBank/") or "\\" in relative:
                 raise ValueError("Texture does not reference the original BMP bank")
             actual = (path.parent / relative).resolve()
-            bank = (ROOT / "Assets/GameContent/LegacyTextureBank").resolve()
+            bank = (root / "Assets/GameContent/LegacyTextureBank").resolve()
             if not actual.is_relative_to(bank) or not actual.is_file():
                 raise ValueError("Missing authentic referenced bitmap: " + relative)
             materials[name]["map"] = actual
@@ -123,39 +123,32 @@ def parse_materials(path: Path) -> dict:
 
 
 def verify(root: Path = ROOT) -> dict:
-    global ROOT, BASE
-    previous = ROOT, BASE
-    ROOT = root
-    BASE = root / "Assets/GameContent/TexturedPreviewV82"
-    try:
-        manifest = json.loads((BASE / "manifest.json").read_text("utf-8"))
-        geometry = json.loads(
-            (root / "Assets/GameContent/ExtractedV82/manifest.json").read_text("utf-8"))
-        stats = {row["vehicleId"]: row for row in geometry["vehicleModels"]}
-        if len(manifest["vehicles"]) != 18 or len(stats) != 18:
-            raise ValueError("Incomplete original vehicle roster")
-        report = []
-        for vehicle in manifest["vehicles"]:
-            identifier = vehicle["vehicleId"]
-            if identifier not in stats or not SAFE.fullmatch(identifier):
-                raise ValueError("Unrecognized real vehicle")
-            result = parse_source_obj(BASE / (identifier + ".obj"))
-            materials = parse_materials(BASE / (identifier + ".mtl"))
-            if result["triangles"] != vehicle["triangles"] or result["triangles"] != stats[identifier]["triangles"]:
-                raise ValueError("Original triangle counts do not agree: " + identifier)
-            if result["groups"] > stats[identifier]["tmdParts"] or not result["materials"] <= materials.keys():
-                raise ValueError("Missing TMD parts or original MTL definitions: " + identifier)
-            mapped_count = sum(bool(materials[n]["map"]) for n in result["materials"])
-            if mapped_count != vehicle["mappedOriginalBitmapMaterials"]:
-                raise ValueError("Original referenced bitmap count changed: " + identifier)
-            report.append({"vehicle": identifier, **{
-                k: value for k, value in result.items() if k != "materials"}})
-        if len({row["vehicle"] for row in report}) != 18:
-            raise ValueError("Duplicate original car")
-        return {"vehicles": report}
-    finally:
-        ROOT, BASE = previous
-
+    base = root / "Assets/GameContent/TexturedPreviewV82"
+    manifest = json.loads((base / "manifest.json").read_text("utf-8"))
+    geometry = json.loads(
+        (root / "Assets/GameContent/ExtractedV82/manifest.json").read_text("utf-8"))
+    stats = {row["vehicleId"]: row for row in geometry["vehicleModels"]}
+    if len(manifest["vehicles"]) != 18 or len(stats) != 18:
+        raise ValueError("Incomplete original vehicle roster")
+    report = []
+    for vehicle in manifest["vehicles"]:
+        identifier = vehicle["vehicleId"]
+        if identifier not in stats or not SAFE.fullmatch(identifier):
+            raise ValueError("Unrecognized real vehicle")
+        result = parse_source_obj(base / (identifier + ".obj"))
+        materials = parse_materials(base / (identifier + ".mtl"), root=root)
+        if result["triangles"] != vehicle["triangles"] or result["triangles"] != stats[identifier]["triangles"]:
+            raise ValueError("Original triangle counts do not agree: " + identifier)
+        if result["groups"] > stats[identifier]["tmdParts"] or not result["materials"] <= materials.keys():
+            raise ValueError("Missing TMD parts or original MTL definitions: " + identifier)
+        mapped_count = sum(bool(materials[n]["map"]) for n in result["materials"])
+        if mapped_count != vehicle["mappedOriginalBitmapMaterials"]:
+            raise ValueError("Original referenced bitmap count changed: " + identifier)
+        report.append({"vehicle": identifier, **{
+            k: value for k, value in result.items() if k != "materials"}})
+    if len({row["vehicle"] for row in report}) != 18:
+        raise ValueError("Duplicate original car")
+    return {"vehicles": report}
 
 if __name__ == "__main__":
     report = verify()

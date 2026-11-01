@@ -223,7 +223,7 @@ namespace Vigilante8.Gameplay
 
         private void Update()
         {
-            if (hud == null || hud.style.display != DisplayStyle.Flex || player == null) return;
+            if (hud == null || hud.style.display.value != DisplayStyle.Flex || player == null) return;
             int alive = enemies.Count(enemy => enemy != null && enemy.IsAlive);
             healthLabel.text = "INTEGRIDADE   " + Mathf.RoundToInt(player.Health);
             enemiesLabel.text = "ADVERSÁRIOS   " + alive + " / 3";
