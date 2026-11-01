@@ -1,17 +1,19 @@
-name: Validate unified game catalog
+name: Validate Unity PC source
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  catalog:
+  catalog-and-pc-contract:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Validate catalog and run regression tests
-        run: |
-          python3 scripts/validate_catalog.py
-          python3 -m unittest discover -s tests -v
+      - name: Validate both game rosters without duplicates
+        run: python3 scripts/validate_catalog.py
+      - name: Regression suite
+        run: python3 -m unittest discover -s tests -v
+      - name: Verify PC standalone source contract
+        run: python3 scripts/verify_pc_contract.py
