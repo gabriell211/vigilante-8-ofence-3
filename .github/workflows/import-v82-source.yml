@@ -20,13 +20,13 @@ jobs:
     timeout-minutes: 35
     steps:
       - name: Checkout game repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
           persist-credentials: true
 
       - name: Checkout complete upstream Unity project at pinned revision
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: stefanvranjes/Vigilante2Unity
           ref: d20883df0d5da3ba517142fb4d486db1f5e673fb
