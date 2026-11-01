@@ -1,0 +1,42 @@
+name: Stage original V8 2nd Offense audio
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-v82-audio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v82-original-wav-import
+  cancel-in-progress: false
+
+jobs:
+  import-original-audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test WAV archive metadata validation
+        run: python3 -m unittest discover -s tests -p 'test_legacy_audio.py' -v
+      - name: Copy authentic WAVs and original Unity importer metadata
+        run: python3 scripts/migrate_legacy_audio.py
+      - name: Validate source audio hashes, banks and GUID integrity
+        run: python3 scripts/verify_legacy_audio.py
+      - name: Commit source-derived WAV bank
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all Assets/GameContent/LegacyAudioV82 docs/v82-audio-sources.json
+          if git diff --cached --quiet; then
+            echo "Original audio files already imported."
+            exit 0
+          fi
+          git commit -m "assets(v82): preserve original vehicle, arena and shared WAV archives"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
