@@ -31,6 +31,19 @@ namespace Vigilante8.Gameplay
         private bool firing;
         private float nextShot;
 
+#if UNITY_EDITOR
+        /// <summary>Development-only loadout for imported test meshes.
+        /// Never represents a verified original special weapon.</summary>
+        public void ConfigurePlaytestLoadout(Transform sourceMuzzle, Projectile projectile)
+        {
+            if (sourceMuzzle == null || projectile == null ||
+                !sourceMuzzle.IsChildOf(transform))
+                throw new ArgumentException("An attached muzzle and an authored test projectile are required");
+            muzzle = sourceMuzzle;
+            projectilePrefab = projectile;
+        }
+#endif
+
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
