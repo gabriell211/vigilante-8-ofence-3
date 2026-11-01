@@ -123,3 +123,7 @@ ainda não substitui teste visual do motor e não libera o EXE.
 ### Compilação real em Unity 6.6
 
 O workflow manual [Unity 6.6 Editor tests](.github/workflows/unity-editmode.yml) executa o Editor e testes EditMode com GameCI, quando houver licença Unity disponível. O CI automático atual verifica apenas contratos, origem e integridade dos assets. Leia [instruções de homologação do Editor](docs/UNITY_CI.md).
+
+## Menu nativo do jogo
+
+O UI Toolkit já implementa **menu principal, garagem com seleção oficial, opções de volume/gráficos/tela cheia, controles, pausa, vitória/derrota, repetir partida e sair**, com valores dinâmicos do catálogo. A disponibilidade de cada combate depende dos prefabs reais homologados. Configurações e últimas escolhas são persistidas no PC. Veja [documentação do menu](docs/GAME_MENU.md). A validação automática não substitui abrir o projeto no Editor Unity 6.6.
