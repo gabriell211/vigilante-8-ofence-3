@@ -131,7 +131,7 @@ def copy_audio(root: Path = ROOT) -> dict:
         "banks": editor_banks,
     }
     (root / DEST / "catalog.json").write_text(
-        json.dumps(editor_catalog, indent=2, ensure_ascii=False) + "\\n",
+        json.dumps(editor_catalog, indent=2, ensure_ascii=False) + chr(10),
         encoding="utf-8")
 
     manifest = root / MANIFEST
