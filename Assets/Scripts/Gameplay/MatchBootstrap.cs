@@ -53,6 +53,7 @@ namespace Vigilante8.Gameplay
             root.style.flexGrow = 1;
             root.style.backgroundColor = new Color(0.025f, 0.035f, 0.065f, 0.88f);
             BuildMenu();
+            RestoreLastOfficialSelections();
             BuildHud();
             BuildMainMenu();
             BuildOptionsMenu();
@@ -88,11 +89,20 @@ namespace Vigilante8.Gameplay
             characterSelector = new DropdownField("PILOTO", characters.Select(c => c.name).ToList(), 0);
             StyleDropdown(characterSelector);
             menu.Add(characterSelector);
-            characterSelector.RegisterValueChangedCallback(_ => RefreshVehicles());
+            characterSelector.RegisterValueChangedCallback(_ =>
+            {
+                SaveOfficialChoice(GameMenuSettings.CharacterKey, characterIds, characterSelector.index);
+                RefreshVehicles();
+            });
 
             vehicleSelector = new DropdownField("VEÍCULO");
             StyleDropdown(vehicleSelector);
             menu.Add(vehicleSelector);
+            vehicleSelector.RegisterValueChangedCallback(_ =>
+            {
+                SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
+                UpdateAvailability();
+            });
             RefreshVehicles();
 
             var arenas = catalog.arenas.OrderBy(a => a.name).ToArray();
@@ -101,7 +111,11 @@ namespace Vigilante8.Gameplay
                 a.name + (a.bonus ? "   ·   BÔNUS N64" : "")).ToList(), 0);
             StyleDropdown(arenaSelector);
             menu.Add(arenaSelector);
-            arenaSelector.RegisterValueChangedCallback(_ => UpdateAvailability());
+            arenaSelector.RegisterValueChangedCallback(_ =>
+            {
+                SaveOfficialChoice(GameMenuSettings.ArenaKey, arenaIds, arenaSelector.index);
+                UpdateAvailability();
+            });
 
             readinessLabel = new Label();
             readinessLabel.style.color = new Color(1f, 0.72f, 0.42f);
@@ -309,6 +323,34 @@ namespace Vigilante8.Gameplay
             finished = false;
         }
 
+
+        private static void SaveOfficialChoice(string key, string[] ids, int index)
+        {
+            if (ids == null || index < 0 || index >= ids.Length) return;
+            GameMenuSettings.StoreSelection(key, ids[index], ids);
+        }
+
+        private void RestoreLastOfficialSelections()
+        {
+            string originalCharacter = GameMenuSettings.RestoreSelection(
+                GameMenuSettings.CharacterKey, characterIds);
+            int characterIndex = Array.IndexOf(characterIds, originalCharacter);
+            if (characterIndex >= 0)
+                characterSelector.index = characterIndex;
+
+            string originalVehicle = GameMenuSettings.RestoreSelection(
+                GameMenuSettings.VehicleKey, vehicleIds);
+            int vehicleIndex = Array.IndexOf(vehicleIds, originalVehicle);
+            if (vehicleIndex >= 0)
+                vehicleSelector.index = vehicleIndex;
+
+            string originalArena = GameMenuSettings.RestoreSelection(
+                GameMenuSettings.ArenaKey, arenaIds);
+            int arenaIndex = Array.IndexOf(arenaIds, originalArena);
+            if (arenaIndex >= 0)
+                arenaSelector.index = arenaIndex;
+            UpdateAvailability();
+        }
 
         private static Button CreateButton(string caption, Action clicked, bool highlighted = false)
         {
