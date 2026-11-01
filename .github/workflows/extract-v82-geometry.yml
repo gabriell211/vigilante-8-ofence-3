@@ -1,0 +1,45 @@
+name: Export authentic 2nd Offense vehicle geometry
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/extract-v82-geometry.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-original-v82-geometry
+  cancel-in-progress: false
+
+jobs:
+  reconstruct-real-tmd-models:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Regression tests for original PS1 TMD polygon decoder
+        run: python3 -m unittest discover -s tests -p 'test_legacy_geometry.py' -v
+      - name: Convert all 18 actual 2nd Offense vehicle TMD meshes to OBJ
+        run: python3 scripts/export_legacy_geometry.py
+      - name: Verify original TMD provenance and output completeness
+        run: python3 scripts/verify_extracted_geometry.py
+      - name: Preserve generated game-sourced OBJ geometry on main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all Assets/GameContent/ExtractedV82/
+          if git diff --cached --quiet; then
+            echo "All TMD models already match original source."
+            exit 0
+          fi
+          git commit -m "assets(v82): export 18 authentic original TMD vehicle geometry models"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
