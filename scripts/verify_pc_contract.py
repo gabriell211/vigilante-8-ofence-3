@@ -46,13 +46,19 @@ def verify(root: Path = ROOT) -> None:
         if fragment in game_code:
             raise ValueError(f"Prohibited temporary/runtime dependency: {fragment}")
 
+    if not (root / "Assets/Scripts/Catalog/OfficialAssetIdentity.cs").is_file():
+        raise ValueError("Missing official per-prefab identity component")
+    if not (root / "Assets/Editor/OfficialPrefabIdentityEditor.cs").is_file():
+        raise ValueError("Missing official identity binding editor")
+
     editor = (root / "Assets/Editor/WindowsReleaseBuilder.cs").read_text(encoding="utf-8")
     tokens = ("RequiredWindowsAssetsGate", "BuildPipeline.BuildPlayer",
               "BuildTarget.StandaloneWindows64", "ScriptingImplementation.IL2CPP",
               "ZipFile.CreateFromDirectory", "SHA256.Create",
               "foreach (VehicleEntry vehicle in catalog.vehicles)",
               "foreach (ArenaEntry arena in catalog.arenas)",
-              "HasValidSpawns(4)", "!drive.HasWeapon")
+              "HasValidSpawns(4)", "!drive.HasWeapon", "identity.Matches(vehicle.id",
+              "identity.Matches(arena.id", "seenVehicleBodyMeshes", "seenArenaMeshes")
     for token in tokens:
         if token not in editor:
             raise ValueError(f"Missing build gate contract: {token}")
