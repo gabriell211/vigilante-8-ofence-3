@@ -1,0 +1,17 @@
+name: Validate unified game catalog
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate catalog and run regression tests
+        run: |
+          python3 scripts/validate_catalog.py
+          python3 -m unittest discover -s tests -v
