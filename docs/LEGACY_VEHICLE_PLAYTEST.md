@@ -51,3 +51,11 @@ A auditoria das oito cenas Unity originais é feita separadamente por
 `scripts/audit_legacy_stages.py` e `scripts/verify_legacy_stages.py`.
 Esse inventário de arquivos não demonstra que os cenários estejam
 jogáveis ou que seus objetos tenham sido migrados para Unity 6.
+
+## Oficina visual integrada
+
+Abra **Vigilante 8 > Migração > Oficina - testar os 18 veículos originais**.
+Escolha o carro pelo nome oficial, clique em **Integrar os 18 modelos**
+e depois **Abrir teste de direção (Play Mode)**. O Editor monta uma
+cena técnica com o veículo selecionado; modelos sem a fonte importada
+geram erro explícito, e nenhuma cena de desenvolvimento é incluída na release.

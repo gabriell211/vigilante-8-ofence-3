@@ -127,3 +127,32 @@ O workflow manual [Unity 6.6 Editor tests](.github/workflows/unity-editmode.yml)
 ## Menu nativo do jogo
 
 O UI Toolkit já implementa **menu principal, garagem com seleção oficial, opções de volume/gráficos/tela cheia, controles, pausa, vitória/derrota, repetir partida e sair**, com valores dinâmicos do catálogo. A disponibilidade de cada combate depende dos prefabs reais homologados. Configurações e últimas escolhas são persistidas no PC. Veja [documentação do menu](docs/GAME_MENU.md). A validação automática não substitui abrir o projeto no Editor Unity 6.6.
+
+## Oficina: veículos reais dirigíveis em modo de desenvolvimento
+
+A ferramenta **Vigilante 8 > Migração > Oficina - testar os 18 veículos originais**
+permite selecionar cada carro oficial do segundo jogo e gerar protótipos
+de **direção e colisão no Unity 6** a partir das malhas TMD reais, BMPs e
+WAVs já importados. Usa `VehicleDrive` e `PlayerVehicleInput`,
+Rigidbody e colisores calculados do próprio modelo. O disparo é um
+**projétil invisível de diagnóstico**: ainda não é a arma especial original.
+
+Os prefabs são salvos em
+`Assets/GameContent/PlaytestVehiclesV82/`, **fora de Resources**.
+O cenário técnico tem somente chão invisível e **não é arena oficial**.
+O build Windows recusa os marcadores de protótipo e cenas de teste, para
+impedir publicação de um jogo incompleto. Veja
+[manual da oficina e testes](docs/LEGACY_VEHICLE_PLAYTEST.md).
+
+As **8 cenas reais do segundo jogo** foram auditadas por SHA-256,
+estrutura Unity e referências em
+`Assets/GameContent/LegacyStageManifests/scene-audit.json`, somando
+44,3 MB de fontes originais. Esses cenários ainda dependem de portar
+LevelManager/VigMesh, objetos interativos, colisores e spawns ao Unity 6;
+inventariar as cenas não as torna jogáveis.
+
+**Não está tudo pronto para uma release:** os 13 modelos exclusivos do
+primeiro jogo não estão integrados como recursos Unity 6 e os 19
+cenários continuam sem prefabs jogáveis certificados. O CI automático
+confere o código e as fontes; a compilação/renderização real exige
+executar os testes no Editor Unity.
