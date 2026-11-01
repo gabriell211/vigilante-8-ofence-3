@@ -24,6 +24,8 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid(self):
         self.assertEqual(len(self.data["characters"]), 23)
+        self.assertEqual(len(self.data["vehicles"]), 31)
+        self.assertEqual(len(self.data["arenas"]), 19)
 
     def test_rejects_duplicate_vehicle(self):
         self.check_rejects(lambda d: d["vehicles"][1].update(
@@ -56,6 +58,21 @@ class CatalogTests(unittest.TestCase):
         clyde = next(c for c in self.data["characters"] if c["id"] == "slick_clyde")
         self.assertIn("Lord Clyde", clyde["aliases"])
 
+
+    def test_n64_bonus_is_exclusive_and_not_duplicated(self):
+        bonuses = [a for a in self.data["arenas"] if a["bonus"]]
+        self.assertEqual(len(bonuses), 1)
+        self.assertEqual(bonuses[0]["id"], "v8_super_dreamland_64")
+        self.assertEqual(bonuses[0]["platforms"], ["n64"])
+
+    def test_rejects_invented_stage_even_when_count_is_correct(self):
+        self.check_rejects(lambda d: d["arenas"][0].update(name="Nonexistent Stage"))
+
+    def test_rejects_changed_official_vehicle_owner(self):
+        self.check_rejects(lambda d: d["vehicles"][0].update(characterId="sheila"))
+
+    def test_rejects_wrong_bonus_platform(self):
+        self.check_rejects(lambda d: d["arenas"][-1].update(platforms=["ps1"]))
 
 if __name__ == "__main__":
     unittest.main()

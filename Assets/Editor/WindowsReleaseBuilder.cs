@@ -87,7 +87,7 @@ namespace Vigilante8.Editor
 
             GameCatalog catalog = CatalogRepository.Load();
             if (catalog.characters.Length != 23 || catalog.vehicles.Length != 31 ||
-                catalog.arenas.Length != 18)
+                catalog.arenas.Length != 19)
                 throw new BuildFailedException("Unified V8 and V82 roster is incomplete.");
 
             foreach (VehicleEntry vehicle in catalog.vehicles)
@@ -122,7 +122,7 @@ namespace Vigilante8.Editor
                     prefab.GetComponentsInChildren<Collider>(true).Length == 0)
                     throw new BuildFailedException("Arena geometry or 4 spawn points are missing: " + arena.assetId);
             }
-            Debug.Log("Release asset gate passed: 23 drivers, 31 vehicles, 18 arenas.");
+            Debug.Log("Release asset gate passed: 23 drivers, 31 vehicles, 19 arenas.");
         }
 
         [MenuItem("Vigilante 8/Build Windows x64 IL2CPP com assets")]

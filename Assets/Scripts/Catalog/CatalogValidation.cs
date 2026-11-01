@@ -35,7 +35,8 @@ namespace Vigilante8.Content
             foreach (var vehicle in catalog.vehicles)
             {
                 if (!characters.Contains(vehicle.characterId) || !games.Contains(vehicle.game) ||
-                    !IsSafeAssetId(vehicle.assetId) || !vehicleNames.Add(vehicle.name))
+                    !IsSafeAssetId(vehicle.assetId) || string.IsNullOrWhiteSpace(vehicle.officialName) ||
+                    !vehicleNames.Add(vehicle.name))
                     throw new InvalidOperationException("Invalid or duplicate vehicle: " + vehicle.id);
                 CharacterEntry owner = null;
                 foreach (var candidate in catalog.characters)
@@ -43,9 +44,23 @@ namespace Vigilante8.Content
                 if (owner == null || Array.IndexOf(owner.appearances, vehicle.game) < 0)
                     throw new InvalidOperationException("Vehicle owner is absent from source game: " + vehicle.id);
             }
+            int bonusCount = 0;
             foreach (var arena in catalog.arenas)
-                if (!games.Contains(arena.game) || !IsSafeAssetId(arena.assetId))
+            {
+                if (!games.Contains(arena.game) || !IsSafeAssetId(arena.assetId) ||
+                    arena.platforms == null || arena.platforms.Length == 0)
                     throw new InvalidOperationException("Invalid arena: " + arena.id);
+                if (arena.bonus)
+                {
+                    bonusCount++;
+                    if (arena.id != "v8_super_dreamland_64" || arena.game != "v8" ||
+                        arena.platforms.Length != 1 || arena.platforms[0] != "n64")
+                        throw new InvalidOperationException("Invalid N64 bonus stage");
+                }
+            }
+            if (catalog.characters.Length != 23 || catalog.vehicles.Length != 31 ||
+                catalog.arenas.Length != 19 || bonusCount != 1)
+                throw new InvalidOperationException("Official roster incomplete");
         }
 
         private static HashSet<string> UniqueIds<T>(IEnumerable<T> entries, Func<T, string> selector, string label)

@@ -55,3 +55,6 @@ O GitHub Actions atualmente roda testes do catálogo e contrato estático; isso
 Status atual: **não existe release jogável**. O build é bloqueado
 intencionalmente até que assets autorizados estejam integrados e os testes do
 motor sejam realizados.
+
+
+**Cobertura oficial entre versões:** 13 veículos do primeiro jogo, 18 do segundo, 23 identidades sem repetição e 19 fases ao incluir Super Dreamland 64 (bônus exclusivo N64). O elenco é verificado por nomes, personagens e plataformas em `tests/fixtures/official_content.json`, não apenas por contagem. A presença no catálogo não implica prefab jogável ou build homologado.

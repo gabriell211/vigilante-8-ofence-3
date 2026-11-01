@@ -26,3 +26,6 @@ Se tiver os arquivos originais sob sua licença, podem ser convertidos em assets
 - Build Unity IL2CPP bem-sucedido e smoke test com ZIP instalado em máquina limpa.
 
 O build gate verifica a existência e estrutura mínima dos assets. Ele **não** prova qualidade artística, completude das campanhas ou ausência de bugs. Nunca marcar o projeto como homologado sem executar testes no Unity.
+
+
+**Cobertura oficial entre versões:** 13 veículos do primeiro jogo, 18 do segundo, 23 identidades sem repetição e 19 fases ao incluir Super Dreamland 64 (bônus exclusivo N64). O elenco é verificado por nomes, personagens e plataformas em `tests/fixtures/official_content.json`, não apenas por contagem. A presença no catálogo não implica prefab jogável ou build homologado.

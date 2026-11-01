@@ -13,7 +13,7 @@ def validate(path=CATALOG):
     data = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
     if data.get("schemaVersion") != 1:
         raise ValueError("Unsupported schema")
-    expected = {"characters": 23, "vehicles": 31, "arenas": 18}
+    expected = {"characters": 23, "vehicles": 31, "arenas": 19}
     for entity, count in expected.items():
         records = data.get(entity)
         if not isinstance(records, list) or len(records) != count:
@@ -54,7 +54,7 @@ def validate(path=CATALOG):
             raise ValueError(f"Invalid arena: {arena['id']}")
 
     for game, expected_drivers, expected_cars, expected_arenas in [
-        ("v8", 13, 13, 10), ("v82", 18, 18, 8)
+        ("v8", 13, 13, 11), ("v82", 18, 18, 8)
     ]:
         if sum(game in c["appearances"] for c in data["characters"]) != expected_drivers:
             raise ValueError(f"Wrong driver count: {game}")
@@ -62,6 +62,23 @@ def validate(path=CATALOG):
             raise ValueError(f"Wrong vehicle count: {game}")
         if sum(a["game"] == game for a in data["arenas"]) != expected_arenas:
             raise ValueError(f"Wrong arena count: {game}")
+
+    official = json.loads((ROOT / "tests/fixtures/official_content.json").read_text("utf-8"))
+    expected_characters = official["characters"]
+    actual_characters = {c["id"]: {"name": c["name"], "appearances": c["appearances"]}
+                         for c in data["characters"]}
+    if actual_characters != expected_characters:
+        raise ValueError("Official character roster mismatch")
+    actual_vehicles = {v["id"]: {k: v[k] for k in ("name", "characterId", "game", "officialName")}
+                       for v in data["vehicles"]}
+    if actual_vehicles != official["vehicles"]:
+        raise ValueError("Official vehicles or driver associations mismatch")
+    actual_arenas = {a["id"]: {k: a[k] for k in ("name", "game", "bonus", "platforms")}
+                     for a in data["arenas"]}
+    if actual_arenas != official["arenas"]:
+        raise ValueError("Official stages, platforms or N64 bonus mismatch")
+    if sum(a["bonus"] for a in data["arenas"]) != 1:
+        raise ValueError("Expected exactly one N64 exclusive bonus stage")
     return data
 
 

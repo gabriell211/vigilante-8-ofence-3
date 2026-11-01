@@ -38,6 +38,7 @@ namespace Vigilante8.Content
         public string game;
         public string characterId;
         public string assetId;
+        public string officialName;
     }
 
     [Serializable]
@@ -47,6 +48,8 @@ namespace Vigilante8.Content
         public string name;
         public string game;
         public string assetId;
+        public bool bonus;
+        public string[] platforms;
     }
 
     public static class CatalogRepository

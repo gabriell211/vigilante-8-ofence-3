@@ -8,7 +8,7 @@
 
 | Área | Estado verificável |
 | --- | --- |
-| Catálogo unificado | **23 personagens, 31 veículos, 18 arenas**; IDs únicos e aliases |
+| Catálogo unificado | **23 personagens, 31 veículos, 19 arenas**; IDs únicos e aliases |
 | Código de combate | Direção arcade, tiros, dano, câmera, inimigos IA, controles e seleção dinâmica |
 | Pipeline Windows | Gerador de cena, validação de prefabs e empacotamento IL2CPP/ZIP/SHA-256 |
 | Modelos, texturas e arenas reais | **Acervo Unity original importado** para `LegacySources/Vigilante2Unity/Assets`: veículos, prefabs, texturas, áudios e cenas do 2nd Offense. **Migração para prefabs ativos Unity 6.6 ainda pendente** |
@@ -20,7 +20,7 @@
 ## Conteúdo dos dois jogos
 
 - Cada personagem aparece **uma única vez** no seletor; veículos de jogos diferentes continuam disponíveis quando forem realmente diferentes.
-- O pipeline foi estruturado para empacotar os **31 veículos e 18 arenas** no executável Windows.
+- O pipeline foi estruturado para empacotar os **31 veículos e 19 arenas** no executável Windows.
 - A referência de conteúdo abrange os dois jogos, sem depender deles no computador do jogador.
 - Você informou possuir os direitos/autorização para usar os arquivos. A próxima etapa de integração exige que os **arquivos de mídia reais estejam acessíveis no ambiente de desenvolvimento** (eles não aparecem automaticamente pela autorização).
 
@@ -51,7 +51,7 @@ O workflow [Import complete Vigilante2Unity source archive](.github/workflows/im
 
 A árvore contém **scripts C# de veículos e armas** (incluindo MGun, Missile, Rocket, Mortar, Mine, FlameThrower, Cannon e armas especiais), **prefabs originais**, materiais, milhares de texturas, WAV e cenas de arena. Os arquivos permanecem preservados sob seus nomes e hierarquia originais, com metadados `.meta`; não são representações geradas ou placeholders.
 
-**Próxima etapa técnica:** converter os scripts de 2020, materiais PSX e prefabs de origem para sistemas compiláveis na Unity 6.6, sem colidir com o código nativo do jogo. O catálogo do primeiro Vigilante 8 continua cadastrando todos os veículos, mas materiais comerciais desse jogo não são automaticamente incluídos no repositório [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp), que os ignora no Git. Portanto, a importação de fonte do segundo título não prova que **31 veículos e 18 arenas** já sejam jogáveis no projeto final.
+**Próxima etapa técnica:** converter os scripts de 2020, materiais PSX e prefabs de origem para sistemas compiláveis na Unity 6.6, sem colidir com o código nativo do jogo. O catálogo do primeiro Vigilante 8 continua cadastrando todos os veículos, mas materiais comerciais desse jogo não são automaticamente incluídos no repositório [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum/Vigilante-8-recomp), que os ignora no Git. Portanto, a importação de fonte do segundo título não prova que **31 veículos e 19 arenas** já sejam jogáveis no projeto final.
 
 ## Vigilante 8 Classic — fontes gráficas e ferramentas incluídas
 
@@ -60,3 +60,6 @@ O acervo público do [GTTeancum/Vigilante-8-recomp](https://github.com/GTTeancum
 **Duas auditorias** são obrigatórias no CI: `python3 scripts/audit_upstream_snapshot.py` (Unity original do segundo jogo) e `python3 scripts/audit_recomp_snapshot.py` (recompilação Classic dos dois jogos).
 
 **O que NÃO deve ser confundido:** os repositórios públicos não incluem todos os arquivos comerciais base que a recompilação utiliza. Os dois acervos têm scripts, texturas e outros recursos reais, mas ainda é preciso migrar componentes para prefabs modernos da Unity 6.6 e homologar as armas, cenários e veículos. **Nenhum ZIP ou EXE do jogo completo foi gerado nesta etapa.**
+
+
+**Cobertura oficial entre versões:** 13 veículos do primeiro jogo, 18 do segundo, 23 identidades sem repetição e 19 fases ao incluir Super Dreamland 64 (bônus exclusivo N64). O elenco é verificado por nomes, personagens e plataformas em `tests/fixtures/official_content.json`, não apenas por contagem. A presença no catálogo não implica prefab jogável ou build homologado.

@@ -74,7 +74,8 @@ namespace Vigilante8.Gameplay
 
             var arenas = catalog.arenas.OrderBy(a => a.name).ToArray();
             arenaIds = arenas.Select(a => a.id).ToArray();
-            arenaSelector = new DropdownField("ARENA", arenas.Select(a => a.name).ToList(), 0);
+            arenaSelector = new DropdownField("ARENA", arenas.Select(a =>
+                a.name + (a.bonus ? "   ·   BÔNUS N64" : "")).ToList(), 0);
             StyleDropdown(arenaSelector);
             menu.Add(arenaSelector);
 
@@ -112,7 +113,8 @@ namespace Vigilante8.Gameplay
             var vehicles = catalog.vehicles.Where(v => v.characterId == characterIds[index])
                 .OrderBy(v => v.name).ToArray();
             vehicleIds = vehicles.Select(v => v.id).ToArray();
-            vehicleSelector.choices = vehicles.Select(v => v.name + "   ·   " + v.game.ToUpperInvariant()).ToList();
+            vehicleSelector.choices = vehicles.Select(v => (string.IsNullOrWhiteSpace(v.officialName) ? v.name : v.officialName) +
+                "   ·   " + v.game.ToUpperInvariant()).ToList();
             vehicleSelector.index = vehicles.Length > 0 ? 0 : -1;
         }
 

@@ -384,217 +384,248 @@
       "name": "Rattler",
       "game": "v8",
       "characterId": "chassey_blue",
-      "assetId": "v8_rattler"
+      "assetId": "v8_rattler",
+      "officialName": "'67 Rattler"
     },
     {
       "id": "v8_clydesdale",
       "name": "Clydesdale",
       "game": "v8",
       "characterId": "slick_clyde",
-      "assetId": "v8_clydesdale"
+      "assetId": "v8_clydesdale",
+      "officialName": "'70 Clydesdale"
     },
     {
       "id": "v8_strider",
       "name": "Strider",
       "game": "v8",
       "characterId": "sheila",
-      "assetId": "v8_strider"
+      "assetId": "v8_strider",
+      "officialName": "'74 Strider"
     },
     {
       "id": "v8_jefferson",
       "name": "Jefferson",
       "game": "v8",
       "characterId": "john_torque",
-      "assetId": "v8_jefferson"
+      "assetId": "v8_jefferson",
+      "officialName": "'69 Jefferson"
     },
     {
       "id": "v8_van",
       "name": "Van",
       "game": "v8",
       "characterId": "dave",
-      "assetId": "v8_van"
+      "assetId": "v8_van",
+      "officialName": "'70 Van"
     },
     {
       "id": "v8_moth_truck",
       "name": "Moth Truck",
       "game": "v8",
       "characterId": "convoy",
-      "assetId": "v8_moth_truck"
+      "assetId": "v8_moth_truck",
+      "officialName": "'72 Moth Truck"
     },
     {
       "id": "v8_glenn_4x4",
       "name": "Glenn 4x4",
       "game": "v8",
       "characterId": "loki",
-      "assetId": "v8_glenn_4x4"
+      "assetId": "v8_glenn_4x4",
+      "officialName": "'73 Glenn 4X4"
     },
     {
       "id": "v8_palomino",
       "name": "Palomino",
       "game": "v8",
       "characterId": "houston_3",
-      "assetId": "v8_palomino"
+      "assetId": "v8_palomino",
+      "officialName": "'75 Palomino"
     },
     {
       "id": "v8_leprechaun",
       "name": "Leprechaun",
       "game": "v8",
       "characterId": "boogie",
-      "assetId": "v8_leprechaun"
+      "assetId": "v8_leprechaun",
+      "officialName": "'76 Leprechaun"
     },
     {
       "id": "v8_stag_pickup",
       "name": "Stag Pickup",
       "game": "v8",
       "characterId": "beezwax",
-      "assetId": "v8_stag_pickup"
+      "assetId": "v8_stag_pickup",
+      "officialName": "'70 Stag Pickup"
     },
     {
       "id": "v8_school_bus",
       "name": "School Bus",
       "game": "v8",
       "characterId": "molo",
-      "assetId": "v8_school_bus"
+      "assetId": "v8_school_bus",
+      "officialName": "'66 School Bus"
     },
     {
       "id": "v8_manta",
       "name": "Manta",
       "game": "v8",
       "characterId": "sid_burn",
-      "assetId": "v8_manta"
+      "assetId": "v8_manta",
+      "officialName": "'69 Manta"
     },
     {
       "id": "v8_luxo_saucer",
       "name": "Luxo Saucer",
       "game": "v8",
       "characterId": "y_the_alien",
-      "assetId": "v8_luxo_saucer"
+      "assetId": "v8_luxo_saucer",
+      "officialName": "'64 Luxo Saucer"
     },
     {
       "id": "v82_wonderwagon",
       "name": "Wonderwagon",
       "game": "v82",
       "characterId": "sheila",
-      "assetId": "v82_wonderwagon"
+      "assetId": "v82_wonderwagon",
+      "officialName": "Wonderwagon"
     },
     {
       "id": "v82_thunderbolt",
       "name": "Thunderbolt",
       "game": "v82",
       "characterId": "john_torque",
-      "assetId": "v82_thunderbolt"
+      "assetId": "v82_thunderbolt",
+      "officialName": "Thunderbolt"
     },
     {
       "id": "v82_dakota_stunt_cycle",
       "name": "Dakota Stunt Cycle",
       "game": "v82",
       "characterId": "flying_all_star_trio",
-      "assetId": "v82_dakota_stunt_cycle"
+      "assetId": "v82_dakota_stunt_cycle",
+      "officialName": "Dakota Stunt Cycle"
     },
     {
       "id": "v82_samson_tow_truck",
       "name": "Samson Tow Truck",
       "game": "v82",
       "characterId": "houston_3",
-      "assetId": "v82_samson_tow_truck"
+      "assetId": "v82_samson_tow_truck",
+      "officialName": "Samson Tow Truck"
     },
     {
       "id": "v82_livingston_truck",
       "name": "Livingston Truck",
       "game": "v82",
       "characterId": "convoy",
-      "assetId": "v82_livingston_truck"
+      "assetId": "v82_livingston_truck",
+      "officialName": "Livingston Truck"
     },
     {
       "id": "v82_xanadu_rv",
       "name": "Xanadu RV",
       "game": "v82",
       "characterId": "dave_s_cultsmen",
-      "assetId": "v82_xanadu_rv"
+      "assetId": "v82_xanadu_rv",
+      "officialName": "Xanadu RV"
     },
     {
       "id": "v82_palomino_xiii",
       "name": "Palomino XIII",
       "game": "v82",
       "characterId": "dallas_13",
-      "assetId": "v82_palomino_xiii"
+      "assetId": "v82_palomino_xiii",
+      "officialName": "Palomino XIII"
     },
     {
       "id": "v82_el_guerrero",
       "name": "El Guerrero",
       "game": "v82",
       "characterId": "nina_loco",
-      "assetId": "v82_el_guerrero"
+      "assetId": "v82_el_guerrero",
+      "officialName": "El Guerrero"
     },
     {
       "id": "v82_blue_burro_bus",
       "name": "Blue Burro Bus",
       "game": "v82",
       "characterId": "molo",
-      "assetId": "v82_blue_burro_bus"
+      "assetId": "v82_blue_burro_bus",
+      "officialName": "Blue Burro Bus"
     },
     {
       "id": "v82_excelsior_stretch",
       "name": "Excelsior Stretch",
       "game": "v82",
       "characterId": "slick_clyde",
-      "assetId": "v82_excelsior_stretch"
+      "assetId": "v82_excelsior_stretch",
+      "officialName": "Excelsior Stretch"
     },
     {
       "id": "v82_tsunami",
       "name": "Tsunami",
       "game": "v82",
       "characterId": "obake",
-      "assetId": "v82_tsunami"
+      "assetId": "v82_tsunami",
+      "officialName": "Tsunami"
     },
     {
       "id": "v82_marathon",
       "name": "Marathon",
       "game": "v82",
       "characterId": "boogie",
-      "assetId": "v82_marathon"
+      "assetId": "v82_marathon",
+      "officialName": "Marathon"
     },
     {
       "id": "v82_moon_trekker",
       "name": "Moon Trekker",
       "game": "v82",
       "characterId": "astronaut_bob_o",
-      "assetId": "v82_moon_trekker"
+      "assetId": "v82_moon_trekker",
+      "officialName": "Moon Trekker"
     },
     {
       "id": "v82_grubb_dual_loader",
       "name": "Grubb Dual Loader",
       "game": "v82",
       "characterId": "garbage_man",
-      "assetId": "v82_grubb_dual_loader"
+      "assetId": "v82_grubb_dual_loader",
+      "officialName": "Grubb Dual Loader"
     },
     {
       "id": "v82_chrono_stinger",
       "name": "Chrono Stinger",
       "game": "v82",
       "characterId": "agent_r_chase",
-      "assetId": "v82_chrono_stinger"
+      "assetId": "v82_chrono_stinger",
+      "officialName": "Chrono Stinger"
     },
     {
       "id": "v82_vertigo",
       "name": "Vertigo",
       "game": "v82",
       "characterId": "chassey_blue",
-      "assetId": "v82_vertigo"
+      "assetId": "v82_vertigo",
+      "officialName": "Vertigo"
     },
     {
       "id": "v82_goliath_halftrack",
       "name": "Goliath Halftrack",
       "game": "v82",
       "characterId": "padre_destino",
-      "assetId": "v82_goliath_halftrack"
+      "assetId": "v82_goliath_halftrack",
+      "officialName": "Goliath Halftrack"
     },
     {
       "id": "v82_wapiti_4wd",
       "name": "Wapiti 4WD",
       "game": "v82",
       "characterId": "dusty_earth",
-      "assetId": "v82_wapiti_4wd"
+      "assetId": "v82_wapiti_4wd",
+      "officialName": "Wapiti 4WD"
     }
   ],
   "arenas": [
@@ -602,109 +633,217 @@
       "id": "v8_ski_resort",
       "name": "Ski Resort",
       "game": "v8",
-      "assetId": "v8_ski_resort"
+      "assetId": "v8_ski_resort",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_valley_farms",
       "name": "Valley Farms",
       "game": "v8",
-      "assetId": "v8_valley_farms"
+      "assetId": "v8_valley_farms",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_aircraft_graveyard",
       "name": "Aircraft Graveyard",
       "game": "v8",
-      "assetId": "v8_aircraft_graveyard"
+      "assetId": "v8_aircraft_graveyard",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_canyonlands",
       "name": "Canyonlands",
       "game": "v8",
-      "assetId": "v8_canyonlands"
+      "assetId": "v8_canyonlands",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_oil_fields",
       "name": "Oil Fields",
       "game": "v8",
-      "assetId": "v8_oil_fields"
+      "assetId": "v8_oil_fields",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_casino_city",
       "name": "Casino City",
       "game": "v8",
-      "assetId": "v8_casino_city"
+      "assetId": "v8_casino_city",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_ghost_town",
       "name": "Ghost Town",
       "game": "v8",
-      "assetId": "v8_ghost_town"
+      "assetId": "v8_ghost_town",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_hoover_dam",
       "name": "Hoover Dam",
       "game": "v8",
-      "assetId": "v8_hoover_dam"
+      "assetId": "v8_hoover_dam",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_sand_factory",
       "name": "Sand Factory",
       "game": "v8",
-      "assetId": "v8_sand_factory"
+      "assetId": "v8_sand_factory",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v8_secret_base",
       "name": "Secret Base",
       "game": "v8",
-      "assetId": "v8_secret_base"
+      "assetId": "v8_secret_base",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64"
+      ]
     },
     {
       "id": "v82_meteor_crater",
       "name": "Meteor Crater",
       "game": "v82",
-      "assetId": "v82_meteor_crater"
+      "assetId": "v82_meteor_crater",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_winter_games",
       "name": "Winter Games",
       "game": "v82",
-      "assetId": "v82_winter_games"
+      "assetId": "v82_winter_games",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_ghastly_bayou",
       "name": "Ghastly Bayou",
       "game": "v82",
-      "assetId": "v82_ghastly_bayou"
+      "assetId": "v82_ghastly_bayou",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_launch_site",
       "name": "Launch Site",
       "game": "v82",
-      "assetId": "v82_launch_site"
+      "assetId": "v82_launch_site",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_steel_mill",
       "name": "Steel Mill",
       "game": "v82",
-      "assetId": "v82_steel_mill"
+      "assetId": "v82_steel_mill",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_nuclear_plant",
       "name": "Nuclear Plant",
       "game": "v82",
-      "assetId": "v82_nuclear_plant"
+      "assetId": "v82_nuclear_plant",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_alaskan_pipeline",
       "name": "Alaskan Pipeline",
       "game": "v82",
-      "assetId": "v82_alaskan_pipeline"
+      "assetId": "v82_alaskan_pipeline",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
     },
     {
       "id": "v82_pacific_harbor",
       "name": "Pacific Harbor",
       "game": "v82",
-      "assetId": "v82_pacific_harbor"
+      "assetId": "v82_pacific_harbor",
+      "bonus": false,
+      "platforms": [
+        "ps1",
+        "n64",
+        "dreamcast"
+      ]
+    },
+    {
+      "id": "v8_super_dreamland_64",
+      "name": "Super Dreamland 64",
+      "game": "v8",
+      "assetId": "v8_super_dreamland_64",
+      "bonus": true,
+      "platforms": [
+        "n64"
+      ]
     }
   ]
 }
