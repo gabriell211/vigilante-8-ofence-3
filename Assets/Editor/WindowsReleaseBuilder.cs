@@ -90,37 +90,68 @@ namespace Vigilante8.Editor
                 catalog.arenas.Length != 19)
                 throw new BuildFailedException("Unified V8 and V82 roster is incomplete.");
 
+            var seenVehicleBodyMeshes = new System.Collections.Generic.HashSet<int>();
             foreach (VehicleEntry vehicle in catalog.vehicles)
             {
                 string path = "Assets/Resources/Vehicles/" + vehicle.assetId + ".prefab";
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab == null)
-                    throw new BuildFailedException("Missing authored vehicle: " + vehicle.assetId);
+                    throw new BuildFailedException("Missing official vehicle: " + vehicle.assetId);
+
+                OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
+                if (identity == null || !identity.Matches(vehicle.id, vehicle.game))
+                    throw new BuildFailedException("Wrong or missing official vehicle identity: " + vehicle.id);
 
                 VehicleDrive drive = prefab.GetComponent<VehicleDrive>();
                 if (drive == null || prefab.GetComponent<Rigidbody>() == null ||
                     prefab.GetComponentsInChildren<Collider>(true).Length == 0 ||
                     !drive.HasWeapon)
-                    throw new BuildFailedException("Vehicle physics, colliders or weapons missing: " + vehicle.assetId);
+                    throw new BuildFailedException("Original vehicle lacks configured physics or weapon: " + vehicle.id);
 
-                bool mesh = prefab.GetComponentsInChildren<MeshFilter>(true)
-                    .Any(x => x.sharedMesh != null) ||
-                    prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true)
-                    .Any(x => x.sharedMesh != null);
-                if (!mesh || prefab.GetComponentsInChildren<Renderer>(true).Length == 0)
-                    throw new BuildFailedException("Missing real authored 3D geometry: " + vehicle.assetId);
+                var renderers = prefab.GetComponentsInChildren<Renderer>(true);
+                if (renderers.Length == 0 || renderers.Any(r =>
+                    r.sharedMaterials.Length == 0 || r.sharedMaterials.Any(m => m == null)))
+                    throw new BuildFailedException("Vehicle materials are missing: " + vehicle.id);
+
+                Mesh primaryMesh = prefab.GetComponentsInChildren<MeshFilter>(true)
+                    .Where(f => f.sharedMesh != null).Select(f => f.sharedMesh)
+                    .Concat(prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                        .Where(f => f.sharedMesh != null).Select(f => f.sharedMesh))
+                    .OrderByDescending(mesh => mesh.vertexCount).FirstOrDefault();
+                if (primaryMesh == null || primaryMesh.vertexCount < 3 ||
+                    string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(primaryMesh)))
+                    throw new BuildFailedException("Imported authored vehicle geometry missing: " + vehicle.id);
+                if (!seenVehicleBodyMeshes.Add(primaryMesh.GetInstanceID()))
+                    throw new BuildFailedException("Repeated vehicle body mesh used as another official car: " + vehicle.id);
             }
 
+            var seenArenaMeshes = new System.Collections.Generic.HashSet<int>();
             foreach (ArenaEntry arena in catalog.arenas)
             {
                 string path = "Assets/Resources/Arenas/" + arena.assetId + ".prefab";
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab == null)
-                    throw new BuildFailedException("Missing authored arena: " + arena.assetId);
+                    throw new BuildFailedException("Missing official arena: " + arena.assetId);
+
+                OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
+                if (identity == null || !identity.Matches(arena.id, arena.game))
+                    throw new BuildFailedException("Wrong or missing arena identity: " + arena.id);
+
                 ArenaSpawnPoints spawns = prefab.GetComponentInChildren<ArenaSpawnPoints>(true);
                 if (spawns == null || !spawns.HasValidSpawns(4) ||
                     prefab.GetComponentsInChildren<Collider>(true).Length == 0)
-                    throw new BuildFailedException("Arena geometry or 4 spawn points are missing: " + arena.assetId);
+                    throw new BuildFailedException("Arena collision or four spawn points missing: " + arena.id);
+
+                Mesh primaryMesh = prefab.GetComponentsInChildren<MeshFilter>(true)
+                    .Where(f => f.sharedMesh != null).Select(f => f.sharedMesh)
+                    .Concat(prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                        .Where(f => f.sharedMesh != null).Select(f => f.sharedMesh))
+                    .OrderByDescending(mesh => mesh.vertexCount).FirstOrDefault();
+                if (primaryMesh == null || primaryMesh.vertexCount < 3 ||
+                    string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(primaryMesh)))
+                    throw new BuildFailedException("Actual arena mesh not imported: " + arena.id);
+                if (!seenArenaMeshes.Add(primaryMesh.GetInstanceID()))
+                    throw new BuildFailedException("Same arena geometry reused for different official stages: " + arena.id);
             }
             Debug.Log("Release asset gate passed: 23 drivers, 31 vehicles, 19 arenas.");
         }
