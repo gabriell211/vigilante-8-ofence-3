@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "description": "Physical GitHub asset provenance and migration coverage; file existence is not proof of playability.",
+  "sourceUnityCommit": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+  "sourceRecompCommit": "54805112186f970b05777540627ab5bdd084ddb7",
+  "vehicles": {
+    "v82_wonderwagon": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/WUNDER.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_thunderbolt": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/TBOLT.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_dakota_stunt_cycle": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/STNTBIKE.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_samson_tow_truck": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/TOWTRUCK.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_livingston_truck": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/TRUCK.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_xanadu_rv": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/CARAVLLE.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_palomino_xiii": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/CORSAIR.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_el_guerrero": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/ELGUERRO.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_blue_burro_bus": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/BUS.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_excelsior_stretch": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/EXCELSR.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_tsunami": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/TSUNAMI.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_marathon": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/MARATHON.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_moon_trekker": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/LUNAR.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_grubb_dual_loader": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/GRBLDER.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_chrono_stinger": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/STINGER.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_vertigo": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/VERTIGO.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_goliath_halftrack": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/HALFTRAK.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_wapiti_4wd": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/FRONTIER.prefab",
+      "sourceType": "unity2020_prefab",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    }
+  },
+  "arenas": {
+    "v82_meteor_crater": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Route66/ROUTE66.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_winter_games": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Olympic/OLYMPIC.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_ghastly_bayou": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Bayou/BAYOU.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_launch_site": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Launch/LAUNCH.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_steel_mill": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Steelmil/STEELMIL.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_nuclear_plant": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Nuclear/NUCLEAR.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_alaskan_pipeline": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Oilfield/OILFIELD.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    },
+    "v82_pacific_harbor": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Harbor/HARBOR.unity",
+      "sourceType": "unity2020_scene",
+      "status": "legacy_source_verified_not_ported",
+      "mappingReview": "candidate_requires_visual_homologation"
+    }
+  },
+  "n64Bonus": {
+    "id": "v8_super_dreamland_64",
+    "sourcePath": "LegacySources/Vigilante8ClassicRecomp/tools/recompone-v8-2/port_dreamland_assets.py",
+    "sourceType": "conversion_tool_only",
+    "status": "no_Unity6_arena_prefab"
+  },
+  "weaponScripts": [
+    "LegacySources/Vigilante2Unity/Assets/Scripts/MGun.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Bullet.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Cannon.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Cannonball.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/FlameThrower.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Flamewall1.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Hovermine.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Mine.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/MineDr.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Missile.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/MissileL.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Mortar.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Rocket.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/RocketL.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Shell.cs",
+    "LegacySources/Vigilante2Unity/Assets/Scripts/Shield.cs",
+    "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/Scripts/GloryRocket.cs",
+    "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/Scripts/Freezer.cs",
+    "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/Scripts/DiscoBall.cs",
+    "LegacySources/Vigilante2Unity/Assets/SHARED/COMMON/Scripts/Revolver.cs"
+  ],
+  "v8OriginalMediaStatus": "GitHub recomp source omits original retail 3D models and scene media; 13 original vehicles and 10 arenas not yet game-ready"
+}
