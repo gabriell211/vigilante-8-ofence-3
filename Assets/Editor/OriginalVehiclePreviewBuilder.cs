@@ -67,53 +67,29 @@ namespace Vigilante8.Editor
                     !record.vehicleId.StartsWith("v82_", StringComparison.Ordinal))
                     throw new InvalidOperationException("Unapproved source preview: " + record.vehicleId);
 
-                var sourceAsset = SourceDir + "/" + record.vehicleId + ".obj";
-                var originalObj = AssetDatabase.LoadAssetAtPath<GameObject>(sourceAsset);
-                if (originalObj == null)
-                    throw new InvalidOperationException("Unity has not imported the original OBJ: " + sourceAsset);
+                string sourceAsset = SourceDir + "/" + record.vehicleId + ".obj";
                 string mtlAsset = SourceDir + "/" + record.vehicleId + ".mtl";
-                if (!File.Exists(mtlAsset))
-                    throw new FileNotFoundException("Missing original material association", mtlAsset);
+                if (!File.Exists(sourceAsset) || !File.Exists(mtlAsset))
+                    throw new FileNotFoundException("Original OBJ/MTL source is missing: " +
+                        record.vehicleId);
 
                 Dictionary<string, Material> materials = ImportMaterialReferences(
                     record.vehicleId, mtlAsset, shader);
-                GameObject instance = UnityEngine.Object.Instantiate(originalObj);
+                GameObject instance = OriginalObjMeshBuilder.CreateInspectionRoot(
+                    record.vehicleId, File.ReadAllText(sourceAsset),
+                    materials, "Assets/GameContent/PreviewMeshesV82/" + record.vehicleId,
+                    record.triangles);
                 try
                 {
                     instance.name = "ORIGINAL INSPECTION ONLY - " + record.vehicleId;
-                    Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
-                    if (renderers.Length == 0)
-                        throw new InvalidOperationException("No original 3D renderer: " + record.vehicleId);
-                    int assigned = 0;
-                    foreach (Renderer renderer in renderers)
-                    {
-                        Material[] sourceMaterials = renderer.sharedMaterials;
-                        if (sourceMaterials.Length == 0)
-                            throw new InvalidOperationException("No imported material slots in " + record.vehicleId);
-                        var replacements = new Material[sourceMaterials.Length];
-                        for (int i = 0; i < sourceMaterials.Length; i++)
-                        {
-                            Material old = sourceMaterials[i];
-                            if (old == null || !materials.TryGetValue(old.name, out Material replacement))
-                                throw new InvalidOperationException("Unmapped original material " +
-                                    (old == null ? "<null>" : old.name) + " on " + record.vehicleId +
-                                    ". Inspect Unity OBJ material importer, do not apply generic replacements.");
-                            replacements[i] = replacement;
-                            assigned++;
-                        }
-                        renderer.sharedMaterials = replacements;
-                    }
-
-                    if (assigned == 0)
-                        throw new InvalidOperationException("No original materials applied on " + record.vehicleId);
-
-                    var marker = instance.AddComponent<OriginalVehiclePreviewIdentity>();
-                    marker.Configure(record.vehicleId, record.triangles);
+                    var identity = instance.AddComponent<OriginalVehiclePreviewIdentity>();
+                    identity.Configure(record.vehicleId, record.triangles);
                     string prefab = PrefabDir + "/" + record.vehicleId + ".prefab";
                     if (PrefabUtility.SaveAsPrefabAsset(instance, prefab) == null)
                         throw new InvalidOperationException("Failed to save original preview: " + prefab);
-                    Debug.Log("Prepared original model inspection: " + record.vehicleId +
-                              " (" + assigned + " material slots, no release certification)");
+                    Debug.Log("Original triangle mesh / UV / source material imported: " +
+                              record.vehicleId + " (" + record.triangles +
+                              " triangles; preview, not release certification)");
                 }
                 finally
                 {
