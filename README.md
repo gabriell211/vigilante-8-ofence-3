@@ -192,3 +192,16 @@ e resistência no `VehicleDrive` **é uma calibração provisória de teste**, n
 reprodução homologada da física em ponto fixo do PlayStation. A oficina continua
 fora de `Resources` e bloqueada no build Windows. Armas especiais e arenas
 continuam pendentes, assim como as malhas comerciais do primeiro jogo.
+
+## Extração dos oito bancos de objetos 3D originais das fases V82
+
+`Assets/GameContent/ExtractedStageObjectsV82/` contém 8 OBJ derivados
+diretamente dos `LEVELS/*/XOBF00.prefab` originais do 2nd Offense.
+A geometria é real e mantém grupos TMD diferentes. O script
+`python3 scripts/export_v82_stage_banks.py --check` valida no CI a topologia
+e as posições dos vértices contra as fontes arquivadas.
+
+**Atenção:** bancos XOBF representam objetos do cenário, mas **não**
+terreno completo, texturas, colisão, eventos, posicionamento de objetos
+nem os quatro spawns. Não são arenas jogáveis e não entram em
+`Assets/Resources/Arenas` nem no build Windows até migração e teste.
