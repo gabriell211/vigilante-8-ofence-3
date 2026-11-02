@@ -138,7 +138,7 @@ namespace Vigilante8.Editor
             Debug.Log("Source-derived 1-v-" + enemyVehicleIds.Length +
                 " terrain battle ready: " + stageId + " / " + playerVehicleId +
                 " vs " + string.Join(", ", enemyVehicleIds) +
-                ". Original special weapons, exact collision and official spawn points NOT ready.");
+                ". Rocket/Bastion steering is source-informed, but the actual rocket meshes, original weapon effects, exact collision and official spawn points are NOT ready.");
         }
 
         private static Material EnsureDiagnosticTerrainMaterial()
@@ -181,6 +181,7 @@ namespace Vigilante8.Editor
                 original.GetComponent<OfficialAssetIdentity>() != null ||
                 original.GetComponent<LegacyVehicleHandlingProfile>() == null ||
                 original.GetComponent<OriginalMachineGunSourceTest>() == null ||
+                original.GetComponent<OriginalBastionRocketLauncher>() == null ||
                 original.GetComponent<OriginalAudioBank>() == null ||
                 original.GetComponent<Rigidbody>() == null ||
                 original.GetComponent<VehicleDrive>()?.HasWeapon != true ||
