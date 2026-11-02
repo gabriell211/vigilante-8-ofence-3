@@ -101,6 +101,7 @@ namespace Vigilante8.Editor
             {
                 GameObject opponent = SpawnVehicle(enemyPrefabs[i - 1], points[i], points[0], scene);
                 opponent.AddComponent<BotVehicleInput>();
+                opponent.AddComponent<OriginalBotSourceWeaponAI>();
                 opponentDrives.Add(opponent.GetComponent<VehicleDrive>());
             }
 

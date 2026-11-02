@@ -25,6 +25,50 @@ namespace Vigilante8.Gameplay
             return normal.sqrMagnitude > 0.0001f && normal.normalized.y >= 0.7f;
         }
 
+        /// <summary>
+        /// Geometry-only aim test on the horizontal plane. Safe on steep source
+        /// terrain and invalid directions; it is NOT original PS1 bot behavior.
+        /// </summary>
+        public static bool IsWithinAimCone(Vector3 forward, Vector3 direction, float maxDegrees)
+        {
+            if (float.IsNaN(maxDegrees) || float.IsInfinity(maxDegrees) ||
+                maxDegrees <= 0f || maxDegrees > 180f)
+                return false;
+            forward.y = 0f;
+            direction.y = 0f;
+            if (!Finite(forward.x) || !Finite(forward.z) ||
+                !Finite(direction.x) || !Finite(direction.z) ||
+                forward.sqrMagnitude < 0.0001f || direction.sqrMagnitude < 0.0001f)
+                return false;
+            return Vector3.Angle(forward, direction) <= maxDegrees;
+        }
+
+        private static bool Finite(float value) =>
+            !float.IsNaN(value) && !float.IsInfinity(value);
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Uses the bot's CURRENT live target, existing firing range and
+        /// obstacle raycast before diagnostic source weapons may launch.
+        /// This explicitly does not certify the original opponent AI.
+        /// </summary>
+        public bool CanUseSourceWeapon(VehicleDrive intendedTarget)
+        {
+            if (!Application.isPlaying || Time.timeScale <= 0f ||
+                vehicle == null || !vehicle.IsAlive ||
+                intendedTarget == null || !intendedTarget.IsAlive ||
+                target == null || target.GetComponentInParent<VehicleDrive>() != intendedTarget)
+                return false;
+            Vector3 offset = intendedTarget.transform.position - transform.position;
+            offset.y = 0f;
+            if (offset.sqrMagnitude <= 0.01f ||
+                offset.sqrMagnitude >= shootingRange * shootingRange ||
+                !IsWithinAimCone(transform.forward, offset, 12f))
+                return false;
+            return HasClearShot(intendedTarget);
+        }
+#endif
+
         private void FixedUpdate()
         {
             if (!vehicle.IsAlive) return;
