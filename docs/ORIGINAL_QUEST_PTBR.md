@@ -37,18 +37,18 @@ python3 scripts/prepare_original_quest_ptbr.py \
   --v82-executable "originais/V82/SLUS_008.68"
 ```
 
-O comando confere hashes, 12 + 15 campanhas, 48 + 120 missões,
+O comando registra hashes SHA-256 e valida 12 + 15 campanhas, 48 + 120 missões,
 personagens elegíveis, atores e rotas; gera localmente em `QuestImportWork/`:
 
-- `quest-source-audit.json`: origem completa autenticada, com os briefings;
+- `quest-source-audit.json`: origem decodificada com hashes, incluindo os briefings;
 - `quest-ptbr-template.json`: **somente as frases distintas**, cada qual
   identificada pelo SHA-256 do texto original; inicialmente `ptBr` vazio.
 
 Revise cada campo `ptBr` com português brasileiro natural, preservando
 nomes próprios, objetivos, direção DESTROY/PROTECT e quebras relevantes.
 Não traduza hashes, índices, equipe, atores ou registros de rota. A revisão
-linguística é humana: SHA-256 assegura *identidade da fonte*, não qualidade
-semântica da tradução.
+linguística é humana: SHA-256 identifica os bytes fornecidos, mas **não atesta
+sozinho a autenticidade da mídia**, nem a qualidade semântica da tradução.
 
 Para aproveitar traduções anteriores por hash/texto de origem:
 
