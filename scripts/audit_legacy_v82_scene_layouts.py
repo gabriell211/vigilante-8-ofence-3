@@ -19,13 +19,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 STAGES = {
     "v82_alaskan_pipeline": ("Oilfield/OILFIELD.unity", "eeabc7174370d1482f7c8aa2c61df60739b13925"),
-    "v82_bayou": ("Bayou/BAYOU.unity", "391c654649366c665d3ecfb283b87d3a04182045"),
-    "v82_houston_3am": ("Launch/LAUNCH.unity", "df6ac4f87de0e7d7a50087bfe2c0b7902a234334"),
+    "v82_ghastly_bayou": ("Bayou/BAYOU.unity", "391c654649366c665d3ecfb283b87d3a04182045"),
+    "v82_launch_site": ("Launch/LAUNCH.unity", "df6ac4f87de0e7d7a50087bfe2c0b7902a234334"),
     "v82_meteor_crater": ("Route66/ROUTE66.unity", "3669c932afbcc1548cdb7635f7a139793bfaadbf"),
-    "v82_nuclear_winter": ("Nuclear/NUCLEAR.unity", "1327a7cad46cba445d2a286c4edccb23f20912eb"),
-    "v82_southern_steel": ("Steelmil/STEELMIL.unity", "2d39a1a504c443605a85ab205c78715287d72116"),
+    "v82_nuclear_plant": ("Nuclear/NUCLEAR.unity", "1327a7cad46cba445d2a286c4edccb23f20912eb"),
+    "v82_steel_mill": ("Steelmil/STEELMIL.unity", "2d39a1a504c443605a85ab205c78715287d72116"),
     "v82_winter_games": ("Olympic/OLYMPIC.unity", "3e1f9d9e94b5c43330555a69b21fe5a8f9669796"),
-    "v82_yankee_harbor": ("Harbor/HARBOR.unity", "b2ad393114f437357f092f3f4f17f17cac430f0b"),
+    "v82_pacific_harbor": ("Harbor/HARBOR.unity", "b2ad393114f437357f092f3f4f17f17cac430f0b"),
 }
 
 # Unity YAML object sections, not the nested tmdList inside MonoBehaviour.
