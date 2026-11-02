@@ -10,6 +10,12 @@ A cena criada agora possui `OriginalBattleSession`, um monitor **somente do Edit
 
 O HUD e suas condições de resultado **não substituem** as regras originais de pontuação, missões ou campanha. Não existem personagens ou carros fictícios: as etiquetas vêm do catálogo oficial e os HP vêm das instâncias vivas do teste. O build de produção continua proibindo `OriginalBattleSession` dentro dos prefabs das arenas.
 
+## Eliminações reais entre carros originais
+
+O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.
+
+O monitor `OriginalBattleSession` acompanha os KOs de cada carro/piloto oficial instanciado, inclui eliminações entre bots e apresenta a última eliminação com nomes do catálogo. O pontuador usa a identidade dos objetos e não nomes de tela, impedindo trocar créditos entre carros. Os nomes e a geometria dos veículos permanecem originais; **a física dos projéteis e os parâmetros de dano continuam provisórios**, não representam armas especiais ou pontuação oficial do PlayStation.
+
 ## IA de perseguição sobre o terreno original
 
 A detecção de obstáculos distingue superfícies dirigíveis de paredes por inclinação da normal da malha; usa consultas físicas sem alocação por decisão. IA interrompe os controles quando o veículo-alvo foi destruído e evita disparos com geometria entre os carros. Estas são **correções de comportamento na física Unity de desenvolvimento**, não equivalência confirmada com a IA, navegação ou armas do PlayStation. A verificação completa depende de PlayMode no Unity Editor com as sete malhas importadas.
