@@ -169,6 +169,9 @@ namespace Vigilante8.Gameplay
 
         private void SpawnFragments()
         {
+            // A mine can outlive the vehicle that placed it. Do not spawn
+            // unowned child physics objects or throw from a collision callback.
+            if (source == null || !source.IsAlive) return;
             for (int i = 0; i < payload; i++)
             {
                 var fragment = new GameObject("SOURCE CactusPatch Mine fragment - NO MESH");
