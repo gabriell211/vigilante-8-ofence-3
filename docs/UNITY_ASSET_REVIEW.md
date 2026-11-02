@@ -309,3 +309,31 @@ ou comportamento físico. Cada uma é identificada por
 prefabs oficiais pelo validador da release Windows. Sem execução do
 Unity Editor real, a inspeção visual e os EditMode tests permanecem por
 homologar; o CI atual valida código, estrutura, auditoria e regressões.
+
+
+## Alturas RSEG usando VigTerrain.FUN_1B750 preservado (evidência autêntica)
+
+\`scripts/audit_v82_vigterrain_heights.py --json\` agora lê, diretamente
+das cenas Unity arquivadas com SHA Git verificado, a componente
+\`VigTerrain\` pelo GUID exato e seus arrays originais \`vertices\`
+(ushort LE) e \`chunks\` (ushort LE). Verifica dimensão 1024 dos chunks,
+quantidade de vértices por \`zoneCount\` e vínculos à fonte.
+O método original \`VigTerrain.FUN_1B750(uint x, uint z)\` usa duas
+interpolações por triângulo dependendo de \`(x & 65535) + (z & 65535)\`;
+o parser reproduz os cálculos fixed-point com limite int32.
+Ele **não** substitui a origem por um Raycast de MeshCollider, altura
+de malha importada ou terreno inventado.
+
+O relatório cruza cada RSEG/JUNC real com cinco amostras originais.
+Quando as flags RSEG já estabelecem Y, preserva esse ramo.
+Quando exigem \`VigTerrain\`, usa a altura dos vértices originais
+do mapa, **somente se o componente de terreno estiver disponível e
+íntegro**. Se a cena não tiver os arrays, falta um chunk ou o cálculo
+não for seguro, a altura permanece \`null\` e o relatório sinaliza
+a causa. O CI exporta \`v82-original-vigterrain-road-heights\`.
+
+**Ainda não foi incorporado à visualização 3D no Unity**: a etapa
+atual é um relatório independente, verificável e testado, que fornece
+a referência de altura para portar a mesma rotina em C#.
+Não comprova terreno deformado em execução, largura/malhas de estrada,
+colisão ou posições de spawn do jogo final.
