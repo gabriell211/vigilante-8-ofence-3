@@ -115,7 +115,8 @@ namespace Vigilante8.Editor
                     prefab.GetComponentInChildren<OriginalMissileSourceFlight>(true) != null)
                     throw new BuildFailedException("Source-only Missile flight test cannot be released: " + vehicle.id);
                 if (prefab.GetComponent<OriginalMineSourceLauncher>() != null ||
-                    prefab.GetComponentInChildren<OriginalMineSourceTrap>(true) != null)
+                    prefab.GetComponentInChildren<OriginalMineSourceTrap>(true) != null ||
+                    prefab.GetComponentInChildren<OriginalSpecialMineSourceBehavior>(true) != null)
                     throw new BuildFailedException("Source-only Mine test cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
