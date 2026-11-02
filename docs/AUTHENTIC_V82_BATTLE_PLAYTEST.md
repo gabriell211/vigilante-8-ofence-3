@@ -30,6 +30,17 @@ O comportamento é **derivado diretamente** de `LegacySources/Vigilante2Unity/As
 
 Os testes NUnit EditMode verificam estados, fases e os 18 prefabs verdadeiros; testes PlayMode verificam orientação do Rigidbody e cancelamento de alvo destruído. O CI Python/Roslyn não substitui executar esses testes dentro da Unity. O gate do executável continua recusando o launcher e o controlador experimental.
 
+## Míssil original Shell → Projectile (integração de teste)
+
+O código original `LegacySources/Vigilante2Unity/Assets/Scripts/Missile.cs` registra os estados `Shell`, `Projectile` e `Halo`. O lançamento da configuração normal em `MissileL.cs` usa **60 pontos de dano**, e a conversão `UpdateW(arg1=5)` do projétil recebe **480 ciclos**. A perseguição usa ajuste do erro de trajetória com divisores **16 horizontalmente e 8 verticalmente**, junto com limites de incremento sobre as velocidades inteiras. O novo `OriginalMissileSourceFlight` conserva os dois primeiros estados e essas relações em um Rigidbody de desenvolvimento.
+
+- Em uma cena criada com **18 modelos TMD de carros V82** e terreno Geo.asset preservado, o jogador pressiona **Q** no teclado ou **D-pad para cima** no controle para disparar contra o carro vivo mais próximo.
+- O míssil passa pelo estado `Shell` e é ativado como `Projectile`; sua trajetória é corrigida até atingir um collider, perder o alvo ou esgotar o tempo de fonte.
+- O componente `OriginalMissileSourceLauncher` é acoplado apenas aos prefabs de teste de carros originais. Não cria nomes fictícios, munição, modelos comerciais ou texturas artificiais.
+- **Limitações:** a velocidade, o alvo espacial, o limite horizontal convertido em escala Unity e os efeitos de colisão ainda não replicam a aritmética fixed-point original. O modo `Halo`, os gráficos, áudio, recarga e munições não foram homologados. `480 * Time.fixedDeltaTime` é uma conversão de tempo provisória e não a taxa original do PlayStation. Os bots somente escolhem alvo; ainda não disparam esse míssil por IA.
+
+O gate de release proíbe `OriginalMissileSourceLauncher` e `OriginalMissileSourceFlight` nas entidades comerciais. Os testes PlayMode de perseguição e expiração precisam de execução real na Unity licenciada, além do CI Python/Roslyn.
+
 ## Eliminações reais entre carros originais
 
 O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.
@@ -51,7 +62,7 @@ A heurística de alvo mais próximo **não afirma replicar o algoritmo oficial**
 - **18** veículos V82 têm geometria original disponível no teste. Os **13** veículos do primeiro jogo ainda dependem de mídia e migração final.
 - O terreno usa a **malha original visível**, mas um **material neutro explicitamente diagnóstico**, pois as texturas da arena ainda não foram portadas. O terreno não é substituído por geometria genérica.
 - Existem **sete** malhas nativas de terreno utilizáveis para inspeção e colisão derivada de malha. A malha de **Meteor Crater / Route 66** continua ausente; nenhuma arena está completa.
-- Os carros usam física Unity provisória e projéteis invisíveis para diagnóstico (com estados da MGun e do Rocket/Bastion baseados nos arquivos legados). As demais armas especiais, animações, regras completas de dano, áudios classificados por função, materiais e spawns originais **não** foram homologados.
+- Os carros usam física Unity provisória e projéteis invisíveis para diagnóstico (com estados da MGun, do Rocket/Bastion e do Missile Shell/Projectile baseados nos arquivos legados). As demais armas especiais, animações, regras completas de dano, áudios classificados por função, materiais e spawns originais **não** foram homologados.
 - A ferramenta recusa carros repetidos, pilotos duplicados, mais de três adversários e o terreno ausente. Spawns são inferidos por raycast em geometria real, não retirados de dados oficiais.
 - A homologação real exige executar `.github/workflows/unity-editmode.yml` com licença Unity configurada. O CI normal verifica apenas sintaxe e contratos estruturais; um resultado verde não implica build do jogo.
 

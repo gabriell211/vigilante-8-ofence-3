@@ -111,6 +111,9 @@ namespace Vigilante8.Editor
                 if (prefab.GetComponent<OriginalBastionRocketLauncher>() != null ||
                     prefab.GetComponentInChildren<OriginalBastionRocketFlight>(true) != null)
                     throw new BuildFailedException("Source-only Rocket/Bastion test cannot be released: " + vehicle.id);
+                if (prefab.GetComponent<OriginalMissileSourceLauncher>() != null ||
+                    prefab.GetComponentInChildren<OriginalMissileSourceFlight>(true) != null)
+                    throw new BuildFailedException("Source-only Missile flight test cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(vehicle.id, vehicle.game))
