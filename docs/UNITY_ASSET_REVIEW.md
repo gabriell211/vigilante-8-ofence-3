@@ -234,3 +234,29 @@ receberam a transformação dos vértices por \`JUNC_DB.LoadDB()\` e
 não é aprovação da posição final de edifícios ou pontes, geometria
 dinâmica, física do jogo original ou fase homologada. O Windows release
 continua bloqueando qualquer prefab que contenha esses marcadores.
+
+
+## Conexões de estradas originais: RSEG_DB -> JUNC_DB
+
+A auditoria \`python3 scripts/audit_v82_road_segments.py --json\`
+agora lê cada componente original \`RSEG_DB\` das **oito fases**
+diretamente das cenas com hash Git verificado. Cada segmento aponta
+pelos dois **fileIDs** serializados para objetos \`JUNC_DB\` da mesma cena.
+Preserva \`DAT_0C\` (flags), os dois vetores \`DAT_10\`/\`DAT_14\`
+(int32 little-endian) e os seis coeficientes inteiros de curva
+\`DAT_20\` a \`DAT_34\`. Não cria conexões quando falta alguma origem.
+
+Para revisão, os pontos 0%, 25%, 50%, 75% e 100% seguem a
+expressão **X/Z de \`RSEG_DB.FUN_285E4\`** em aritmética fixed-point.
+O relatório mantém todos os valores brutos e oferece apenas uma
+conversão de inspeção na escala de \`DEBUG.unity\`. Quando a rotina
+original depende de \`VigTerrain.FUN_1B750()\`, a altura **Y é nula**
+em vez de gerar uma estrada numa altura inventada. Valores sujeitos
+a overflow de int32 também são rejeitados em vez de induzir
+falsa certificação.
+
+O CI arquiva \`v82-original-road-segment-graph\`, incluindo
+referências ausentes, status por fase e as amostras verificáveis.
+**Ainda não são malhas rodoviárias, estradas dirigíveis, física ou
+spawns homologados.** Essa evidência é a base para reconstruir os
+segmentos/curvas reais antes de gerar geometria de cenário no Unity 6.

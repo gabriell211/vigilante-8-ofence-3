@@ -81,6 +81,14 @@ jobs:
           name: v82-original-junction-fixed-positions
           path: v82-original-junction-fixed-position-evidence.json
           if-no-files-found: error
+      - name: Recover original V82 RSEG-to-JUNC road graph and source curve evidence
+        run: python3 scripts/audit_v82_road_segments.py --json > v82-original-road-segment-graph.json
+      - name: Store authenticated RSEG fixed-point graph (NOT playable roads)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-road-segment-graph
+          path: v82-original-road-segment-graph.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage
