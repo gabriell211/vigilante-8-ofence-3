@@ -112,15 +112,24 @@ def main(argv: list[str] | None = None) -> int:
     if args.previous_translations:
         reused = merge_translations(
             template, json.loads(args.previous_translations.read_text("utf-8")))
-    write_json(args.work_dir / "quest-source-audit.json", report)
-    write_json(args.work_dir / "quest-ptbr-template.json", template)
-    print(f"Origem validada: 12/48 V8 + 15/120 V82. "
-          f"{len(template['translations'])} textos distintos; {reused} traduções preservadas.")
+    # Compile before writing anything: a failed translation must never leave
+    # behind a partial or misleading mission catalog.
+    localized = None
     if args.translations:
+        translations = json.loads(args.translations.read_text("utf-8"))
         importer.verify_binary_provenance(
             report, args.v8_quest_bin, args.v82_quest_bin)
-        localized = importer.apply_ptbr(
-            report, json.loads(args.translations.read_text("utf-8")))
+        localized = importer.apply_ptbr(report, translations)
+    audit_path = args.work_dir / "quest-source-audit.json"
+    worksheet_path = args.work_dir / "quest-ptbr-template.json"
+    write_json(audit_path, report)
+    # The user's completed worksheet may be exactly the default output path.
+    # Never overwrite it with empty ptBr entries when compiling a catalog.
+    if not args.translations or worksheet_path.resolve() != args.translations.resolve():
+        write_json(worksheet_path, template)
+    print(f"Origem validada: 12/48 V8 + 15/120 V82. "
+          f"{len(template['translations'])} textos distintos; {reused} traduções preservadas.")
+    if localized is not None:
         write_json(args.catalog, localized)
         print(f"Catálogo PT-BR compilado, sem depender de BIN/CUE: {args.catalog}")
     else:
