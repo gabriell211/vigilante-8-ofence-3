@@ -528,3 +528,29 @@ faltam \`FUN_6604\` e a integração da subdivisão com
 \`FUN_5850\`, as UVs \`Junction.FUN_4F828\` e as malhas
 e colisões finais. O relatório e os polígonos não são conteúdo
 de release, nem comprovam uma pista jogável.
+
+
+## Prévia texturizada com amostragem adaptativa autenticada (FUN_630C)
+
+A subdivisão pré-junção já recuperada por \`FUN_630C\` agora determina
+uma grade de valores \`t\` originais (32 seções por folha, máximo de
+128 folhas / 4097 pares de pontos). Cada ponto é calculado novamente
+pela equação inteira de \`RSEG_DB.FUN_285E4\`, inclusive a tangente,
+o offset lateral \`XRTP.DAT_24\` e as alturas originais de cada lado:
+\`VigTerrain\` para estrada sobre terreno e \`RSEG\` para alturas
+definidas no fonte. Não é uma interpolação da antiga amostragem de
+33 pontos. A grade falha se as folhas tiverem lacunas, repetição
+de \`t\`, profundidade excessiva ou coordenadas sem representação
+segura em int32.
+
+A malha de **inspeção** aproveita o mesmo material URP e BMP
+original já identificado nas oito fases e utiliza os próprios
+valores \`t\` para distribuir as **UVs provisórias** no comprimento,
+em vez de esticar a textura igualmente por folha. Se o conjunto
+adaptativo não passar na validação, a prévia anterior de 33 pontos
+continua disponível quando sua fonte é confiável.
+
+Ainda **não** reproduz a correção de junção \`FUN_6604\`, a
+triangulação, espaçamento \`DAT_28\` e as UVs oficiais de
+\`FUN_5850\` / \`Junction.FUN_4F828\`. Nenhum Collider,
+Rigidbody, spawn ou pista de produção é gerado.
