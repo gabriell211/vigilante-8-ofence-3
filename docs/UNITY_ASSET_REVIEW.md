@@ -102,3 +102,25 @@ Cena: Assets/Scenes/OriginalNativeTerrainDriveTest.unity, **sempre fora do
 build Windows**. As posições inferidas NÃO são os spawns oficiais, a colisão
 MeshCollider NÃO reproduz VigTerrain e o projétil é o protótipo de teste,
 não uma arma especial original. Não usa piso, carros nem arenas fictícios.
+
+
+## Hierarquia TRS das cenas Unity originais (evidência de mundo, não arena pronta)
+
+`python3 scripts/resolve_v82_scene_hierarchy.py --json` parte das **oito
+cenas originais com hashes Git verificados** e resolve posições de mundo
+apenas para os `Transform` e `RectTransform` cujas cadeias de
+`m_Father`, `m_LocalRotation`, `m_LocalScale` e `m_LocalPosition` estão
+explicitamente serializadas. A multiplicação usa matrizes afins 3×4,
+preservando a rotação e a escala não uniforme dos ancestrais. Parent
+ausente, ciclo ou valores inválidos geram `worldPosition: null` e
+`resolutionStatus` específico: **nenhum zero é presumido**.
+
+O CI mantém o JSON local anterior e publica agora também o artefato
+`v82-original-world-transform-evidence` com nomes dos GameObjects,
+IDs de origem, TRS local, posição de mundo resolvida e status de cada
+elemento. Essas posições pertencem à **hierarquia explícita da cena
+arquivada**, não comprovam se o objeto corresponde ao banco XOBF,
+se é spawn de jogador, nem validam colisão ou prefab overrides. É
+necessário cruzar GUIDs de MeshFilter/MonoBehaviour com o banco da fase
+antes de instanciar objetos oficiais em uma arena Unity 6; o artefato
+não é usado automaticamente no build e não desbloqueia a release Windows.
