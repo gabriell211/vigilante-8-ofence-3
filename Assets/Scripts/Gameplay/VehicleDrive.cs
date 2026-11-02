@@ -21,6 +21,11 @@ namespace Vigilante8.Gameplay
         [SerializeField] private LayerMask groundLayers = -1;
 
         public event Action<VehicleDrive> Destroyed;
+        /// <summary>
+        /// Fired exactly once on destruction. The second argument is the vehicle
+        /// that delivered the fatal hit, or null for unattributed damage.
+        /// </summary>
+        public event Action<VehicleDrive, VehicleDrive> Eliminated;
         public float Health { get; private set; }
         public bool IsAlive => Health > 0f;
         public bool HasWeapon => muzzle != null && projectilePrefab != null;
@@ -93,7 +98,14 @@ namespace Vigilante8.Gameplay
             }
         }
 
-        public void TakeDamage(float damage)
+        public void TakeDamage(float damage) => TakeDamage(damage, null);
+
+        /// <summary>
+        /// Attributes only the *fatal* valid hit to its real projectile owner.
+        /// Untagged/environmental hits do not invent a killer or carry over
+        /// an earlier attacker. Existing uncredited damage callers still work.
+        /// </summary>
+        public void TakeDamage(float damage, VehicleDrive attacker)
         {
             if (!IsAlive || float.IsNaN(damage) || float.IsInfinity(damage) || damage <= 0f)
                 return;
@@ -101,6 +113,7 @@ namespace Vigilante8.Gameplay
             if (Health > 0f) return;
             SetControls(0f, 0f, 1f, false);
             Destroyed?.Invoke(this);
+            Eliminated?.Invoke(this, attacker != this ? attacker : null);
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 collider.enabled = false;
             body.isKinematic = true;
