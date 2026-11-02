@@ -19,9 +19,9 @@ namespace Vigilante8.Gameplay
         public const int NormalBulletDamage = 7;
         public const int DoubleDamageBullet = 14;
 
-        [SerializeField, HideInInspector] private ushort sourceHeat = InitialHeat;
-        [SerializeField, HideInInspector] private sbyte sourceTags;
-        [SerializeField, HideInInspector] private int shotsFired;
+        private ushort sourceHeat = InitialHeat;
+        private sbyte sourceTags;
+        private int shotsFired;
 
         public int SourceHeat => sourceHeat;
         public int SourceTags => sourceTags;
