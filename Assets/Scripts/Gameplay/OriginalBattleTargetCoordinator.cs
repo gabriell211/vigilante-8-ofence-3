@@ -124,6 +124,9 @@ namespace Vigilante8.Gameplay
             var playerLauncher = player.GetComponent<OriginalBastionRocketLauncher>();
             if (playerLauncher != null)
                 playerLauncher.SetTarget(SelectTarget(player, participants));
+            var playerMissile = player.GetComponent<OriginalMissileSourceLauncher>();
+            if (playerMissile != null)
+                playerMissile.SetTarget(SelectTarget(player, participants));
             for (int i = 0; i < opponents.Length; i++)
             {
                 BotVehicleInput bot = botInputs[i];
@@ -132,6 +135,8 @@ namespace Vigilante8.Gameplay
                 bot.target = target == null ? null : target.transform;
                 var launcher = opponents[i].GetComponent<OriginalBastionRocketLauncher>();
                 if (launcher != null) launcher.SetTarget(target);
+                var missile = opponents[i].GetComponent<OriginalMissileSourceLauncher>();
+                if (missile != null) missile.SetTarget(target);
             }
         }
     }
