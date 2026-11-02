@@ -81,6 +81,18 @@ namespace Vigilante8.Gameplay
             if (victim == owner) return;
             if (victim != null && victim.IsAlive)
             {
+                var variant = GetComponent<OriginalSpecialMineSourceBehavior>();
+                if (variant != null)
+                {
+                    if (variant.OnVehicleContact(victim))
+                    {
+                        state = SourceState.Triggered;
+                        Destroy(gameObject);
+                    }
+                    else if (state == SourceState.Airborne)
+                        state = SourceState.Armed;
+                    return;
+                }
                 state = SourceState.Triggered;
                 Rigidbody targetBody = victim.GetComponent<Rigidbody>();
                 if (targetBody != null && !targetBody.isKinematic)
