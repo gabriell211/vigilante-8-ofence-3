@@ -41,6 +41,14 @@ O código original `LegacySources/Vigilante2Unity/Assets/Scripts/Missile.cs` reg
 
 O gate de release proíbe `OriginalMissileSourceLauncher` e `OriginalMissileSourceFlight` nas entidades comerciais. Os testes PlayMode de perseguição e expiração precisam de execução real na Unity licenciada, além do CI Python/Roslyn.
 
+## Minas MineDr → Mine (física de desenvolvimento fiel ao comportamento documentado)
+
+A versão preservada de `LegacySources/Vigilante2Unity/Assets/Scripts/MineDr.cs` inicializa a arma com **6 cargas** (`maxHalfHealth=6`) e consome uma por lançamento (`UpdateW(12)`). A classe `Mine.cs` mantém uma lista mundial com até **16 minas** e reage ao impacto com um veículo chamando `FUN_2B370(GameManager.DAT_A5C, screen)`. A constante original `DAT_A5C` é o vetor **(0, -0x20000, 0)** no sistema legado, que se traduz em impulso vertical ascendente na Unity.
+
+No teste Editor, pressione **R** (teclado) ou **D-pad para baixo** (controle) para lançar uma mina atrás do carro original. Ela cai pelo Rigidbody, arma ao tocar o solo, reage ao impacto com outro carro e é consumida. A origem permite comprovar o **impulso**, mas **não um número de dano de vida**: não chamamos `TakeDamage` nem atribuímos eliminações falsas. O componente `OriginalMineSourceTrap` limita o registro a 16 instâncias ativas e `OriginalMineSourceLauncher` respeita as seis cargas de cada carro original.
+
+**Limites:** as minas usam colliders físicos invisíveis para homologação de colisão, nunca um objeto 3D genérico apresentado como original; ponto de queda, massa, impulso Unity, aderência ao terreno e duração são adaptações de teste. As minas especiais `Bearhug`, `Hovermine` e `CactusPatch`, efeitos visuais, dano sobre rodas e partículas permanecem pendentes. Nada é distribuído como arma final: o build Windows recusa os dois componentes.
+
 ## Eliminações reais entre carros originais
 
 O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.
