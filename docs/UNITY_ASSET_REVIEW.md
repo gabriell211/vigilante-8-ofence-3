@@ -376,3 +376,28 @@ referência, overflow na curva ou qualquer falha de consulta da altura
 não recebem um traçado 3D parcial ou uma altura aproximada. As linhas
 continuam sem colisão e sem malha de estrada, não são posições de
 release, e exigem validação visual pelo Unity Editor.
+
+
+## Auditoria original da largura e dos materiais XRTP de cada estrada
+
+O relatório \`scripts/audit_v82_xrtp_road_profiles.py\` percorre as oito
+fases originais (hash Git fixado), identifica a única lista
+\`LevelManager.xrtpList\` pelo GUID original do script e resolve o
+\`RSEG_DB.DAT_0A\` pelo índice real **da lista serializada** — não pelo
+nome do prefab ou por convenção heurística.
+
+Cada referência passa por GUID do \`XRTPnn.prefab.meta\`, \`fileID\`
+do componente original e GUID de \`XRTP_DB.cs\`. A auditoria grava os
+valores literais \`DAT_24\` (largura, usada por \`FUN_5850\` dividida por 2
+antes de normalizar a perpendicular), \`DAT_28\` (passo longitudinal)
+e \`DAT_2C\` (flags), além de **referências** a materiais
+\`timFarList\` preservados. Guarda SHA Git do prefab e seu meta; casos
+sem correspondência, índices fora da lista, valores inválidos ou
+referências de outra fase ficam explicitamente não resolvidos.
+
+O CI arquiva \`v82-original-xrtp-road-profiles\`. Esse resultado **não**
+confirma que os materiais do prefab correspondem ao atlas final do jogo,
+nem reconstrói a largura da malha triangulada, UV, textura em runtime,
+colisão ou spawn. A geração completa ainda exige portar
+\`LevelManager.FUN_719C\`, \`FUN_5850\`, \`FUN_630C\` e ramificações de
+\`FUN_6604\`, incluindo as junções e materiais de origem.
