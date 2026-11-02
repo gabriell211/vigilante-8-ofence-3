@@ -359,3 +359,20 @@ independentes, além da verificação de dados incompletos.
 Os traçados continuam \`LineRenderer\` de inspeção, não malhas de
 estrada, colisão original, spawns oficiais nem arena pronta para
 release. Homologação visual e EditMode dependem do Editor Unity.
+
+
+## Traçado de inspeção RSEG com 33 amostras originais
+
+A linha 3D exibida na cena de combate de teste agora contém **33 pontos** (de
+`t=0` a `t=4096`, com passo de 128) por segmento, calculados novamente
+pela equação inteira original de `RSEG_DB.FUN_285E4`. Os cinco pontos
+originais da planta 2D continuam preservados para compatibilidade e
+comparação; os pontos intermediários **não** são interpolações artificiais
+dessas cinco posições.
+
+Quando `RSEG_DB` exige `VigTerrain.FUN_1B750`, o Editor consulta a
+malha original serializada em cada um dos 33 pontos. Trechos com erro de
+referência, overflow na curva ou qualquer falha de consulta da altura
+não recebem um traçado 3D parcial ou uma altura aproximada. As linhas
+continuam sem colisão e sem malha de estrada, não são posições de
+release, e exigem validação visual pelo Unity Editor.

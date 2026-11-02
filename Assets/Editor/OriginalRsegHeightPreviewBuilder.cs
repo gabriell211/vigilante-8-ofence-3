@@ -50,8 +50,10 @@ namespace Vigilante8.Editor
 
                 foreach (var road in lines)
                 {
-                    if (road.OriginalFixedXYZ == null || road.OriginalFixedXYZ.Length != 5)
-                        throw new InvalidDataException("RSEG source has incomplete original Y data");
+                    if (road.OriginalFixedXYZDense == null ||
+                        road.OriginalFixedXYZDense.Length !=
+                        OriginalRoadSegmentSourceReviewWindow.DenseCurveSampleCount)
+                        throw new InvalidDataException("RSEG source has incomplete original 33-sample Y data");
                     var item = new GameObject("RSEG / " + road.RsegFileId +
                         " / JUNC " + road.FirstJuncFileId + " > " + road.SecondJuncFileId);
                     item.transform.SetParent(parent, false);
@@ -63,9 +65,9 @@ namespace Vigilante8.Editor
                     line.numCornerVertices = 0;
                     line.receiveShadows = false;
                     line.shadowCastingMode = ShadowCastingMode.Off;
-                    line.positionCount = road.OriginalFixedXYZ.Length;
-                    for (int i = 0; i < road.OriginalFixedXYZ.Length; i++)
-                        line.SetPosition(i, ToSourceReviewPosition(road.OriginalFixedXYZ[i], divisor));
+                    line.positionCount = road.OriginalFixedXYZDense.Length;
+                    for (int i = 0; i < road.OriginalFixedXYZDense.Length; i++)
+                        line.SetPosition(i, ToSourceReviewPosition(road.OriginalFixedXYZDense[i], divisor));
                     item.AddComponent<OriginalRoadSourcePreviewIdentity>().Configure(
                         stage, road.RsegFileId, road.FirstJuncFileId,
                         road.SecondJuncFileId, divisor);
@@ -113,8 +115,29 @@ namespace Vigilante8.Editor
                     samples[i] = new Vector3(original.x, y, original.y);
                 }
                 if (resolved) road.OriginalFixedXYZ = samples;
+
+                // The terrain grid is the original signed-height source,
+                // queried independently at every genuine curve position.
+                // We never interpolate heights between the 5 coarse points.
+                if (!resolved || road.OriginalFixedXZExactDense == null ||
+                    road.OriginalFixedXZExactDense.Length !=
+                    OriginalRoadSegmentSourceReviewWindow.DenseCurveSampleCount)
+                    continue;
+                var dense = new Vector3[road.OriginalFixedXZExactDense.Length];
+                for (int i = 0; i < dense.Length; i++)
+                {
+                    Vector2Int raw = road.OriginalFixedXZExactDense[i];
+                    if (!originalGrid.TrySampleHeight(raw.x, raw.y, out int y))
+                    {
+                        resolved = false;
+                        break;
+                    }
+                    dense[i] = new Vector3(raw.x, y, raw.y);
+                }
+                if (resolved) road.OriginalFixedXYZDense = dense;
             }
-            var onlyKnownHeight = plan.Roads.Where(x => x.OriginalFixedXYZ != null).ToArray();
+            var onlyKnownHeight = plan.Roads.Where(x => x.OriginalFixedXYZ != null &&
+                x.OriginalFixedXYZDense != null).ToArray();
             Material material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
             if (material == null)
             {
