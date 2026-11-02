@@ -96,11 +96,18 @@ namespace Vigilante8.Editor
             Vector3[] points = FindGroundSpawns(collider, participants.Length);
             GameObject player = SpawnVehicle(playerPrefab, points[0], points[1], scene);
             player.AddComponent<PlayerVehicleInput>();
+            var opponentDrives = new List<VehicleDrive>(enemyVehicleIds.Length);
             for (int i = 1; i < points.Length; i++)
             {
                 GameObject opponent = SpawnVehicle(enemyPrefabs[i - 1], points[i], points[0], scene);
                 opponent.AddComponent<BotVehicleInput>().target = player.transform;
+                opponentDrives.Add(opponent.GetComponent<VehicleDrive>());
             }
+
+            var sessionObject = new GameObject("ORIGINAL V82 BATTLE - DEVELOPMENT ONLY");
+            var session = sessionObject.AddComponent<OriginalBattleSession>();
+            session.Configure(stageId, playerVehicleId, player.GetComponent<VehicleDrive>(),
+                enemyVehicleIds, opponentDrives.ToArray());
 
             var cameraObject = new GameObject("Original terrain chase camera");
             cameraObject.tag = "MainCamera";

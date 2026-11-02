@@ -4,6 +4,12 @@ Abra o projeto no **Unity 6000.6.7f1**. No menu **Vigilante 8 > Migração > Dir
 
 O gerador chama `OriginalTerrainSourceImporter.ImportAll()` e `LegacyVehiclePlaytestBuilder.PrepareAll()`, exige malhas TMD/Geo e audiobancos originais e monta a cena `Assets/Scenes/OriginalNativeTerrainDriveTest.unity`. Esta cena não entra nas Build Settings e não é usada no executável Windows.
 
+## Placar dinâmico de desenvolvimento
+
+A cena criada agora possui `OriginalBattleSession`, um monitor **somente do Editor** que mostra o nome da arena de origem, o modelo e piloto originais de cada participante, a vida real de cada `VehicleDrive` e o total de IA ainda em combate. Ao perder toda a vida, a sessão indica derrota; quando todos os adversários ficam sem vida, indica vitória. Pressione **P** para pausar/despausar no Play Mode; o relógio de simulação é restaurado quando o monitor é desativado.
+
+O HUD e suas condições de resultado **não substituem** as regras originais de pontuação, missões ou campanha. Não existem personagens ou carros fictícios: as etiquetas vêm do catálogo oficial e os HP vêm das instâncias vivas do teste. O build de produção continua proibindo `OriginalBattleSession` dentro dos prefabs das arenas.
+
 ## Limitações de homologação
 
 - **18** veículos V82 têm geometria original disponível no teste. Os **13** veículos do primeiro jogo ainda dependem de mídia e migração final.
