@@ -41,3 +41,17 @@ quando houver licença configurada.
 faltando prefabs finais dos 31 veículos e 19 arenas, armas especiais
 e integração completa das fases oficiais. Não há carros ou arenas
 criados artificialmente para contornar esse bloqueio.
+
+## Navegador de conteúdo oficial
+
+O menu **CATÁLOGO OFICIAL** inclui filtros por **Vigilante 8**,
+**2nd Offense** e **todas as versões**, com categorias para **carros,
+pilotos e arenas**. Cada item leva diretamente à seleção correspondente
+da garagem e conserva a identidade oficial; as fases exclusivas do N64
+são identificadas. Os recursos ainda não portados aparecem com status
+**MIGRAÇÃO PENDENTE**, sem botões de jogar enganosos.
+
+O serviço `OfficialMenuSelections` define a ordenação e a propriedade
+de cada carro. Os testes Unity EditMode verificam todos os **23 pilotos,
+31 carros e 19 arenas** e asseguram que não seja possível selecionar um
+veículo associado ao piloto errado.

@@ -101,7 +101,7 @@ namespace Vigilante8.Gameplay
             AddHeading(menu, "VIGILANTE 8", 34);
             AddHeading(menu, "OFFENCE 3  /  UNIFIED PC EDITION", 13);
 
-            var characters = catalog.characters.OrderBy(c => c.name).ToArray();
+            var characters = OfficialMenuSelections.Pilots(catalog);
             characterIds = characters.Select(c => c.id).ToArray();
             characterSelector = new DropdownField("PILOTO", characters.Select(c => c.name).ToList(), 0);
             StyleDropdown(characterSelector);
@@ -130,7 +130,7 @@ namespace Vigilante8.Gameplay
             });
             RefreshVehicles();
 
-            var arenas = catalog.arenas.OrderBy(a => a.name).ToArray();
+            var arenas = OfficialMenuSelections.Arenas(catalog);
             arenaIds = arenas.Select(a => a.id).ToArray();
             arenaSelector = new DropdownField("ARENA", arenas.Select(a =>
                 a.name + (a.bonus ? "   ·   BÔNUS N64" : "")).ToList(), 0);
@@ -184,8 +184,7 @@ namespace Vigilante8.Gameplay
         {
             int index = characterSelector.index;
             if (index < 0 || index >= characterIds.Length) return;
-            var vehicles = catalog.vehicles.Where(v => v.characterId == characterIds[index])
-                .OrderBy(v => v.name, StringComparer.Ordinal).ToArray();
+            var vehicles = OfficialMenuSelections.CarsForPilot(catalog, characterIds[index]);
             string[] available = vehicles.Select(v => v.id).ToArray();
             string remembered = GameMenuSettings.RestoreVehicleForCharacter(
                 characterIds[index], characterIds, available);
@@ -534,9 +533,7 @@ namespace Vigilante8.Gameplay
             switch (catalogCategory.index)
             {
                 case 0:
-                    foreach (VehicleEntry car in catalog.vehicles
-                        .Where(v => game == null || v.game == game)
-                        .OrderBy(v => v.officialName, StringComparer.Ordinal))
+                    foreach (VehicleEntry car in OfficialMenuSelections.Cars(catalog, game))
                     {
                         CharacterEntry pilot = catalog.characters.First(c => c.id == car.characterId);
                         string status = IsVehicleReady(car) ? "DISPONÍVEL" : "MIGRAÇÃO PENDENTE";
@@ -547,9 +544,7 @@ namespace Vigilante8.Gameplay
                     }
                     break;
                 case 1:
-                    foreach (CharacterEntry pilot in catalog.characters
-                        .Where(c => game == null || c.appearances.Contains(game))
-                        .OrderBy(c => c.name, StringComparer.Ordinal))
+                    foreach (CharacterEntry pilot in OfficialMenuSelections.Pilots(catalog, game))
                     {
                         int vehicleCount = catalog.vehicles.Count(v => v.characterId == pilot.id &&
                             (game == null || v.game == game));
@@ -560,9 +555,7 @@ namespace Vigilante8.Gameplay
                     }
                     break;
                 case 2:
-                    foreach (ArenaEntry arena in catalog.arenas
-                        .Where(a => game == null || a.game == game)
-                        .OrderBy(a => a.name, StringComparer.Ordinal))
+                    foreach (ArenaEntry arena in OfficialMenuSelections.Arenas(catalog, game))
                     {
                         string status = IsArenaReady(arena) ? "DISPONÍVEL" : "MIGRAÇÃO PENDENTE";
                         catalogEntries.Add(CreateButton(arena.name +
@@ -819,7 +812,8 @@ namespace Vigilante8.Gameplay
             }
             var selected = catalog.vehicles.First(v => v.id == vehicleIds[vehicleSelector.index]);
             var arena = catalog.arenas.First(a => a.id == arenaIds[arenaSelector.index]);
-            if (selected.characterId != characterIds[characterSelector.index])
+            if (!OfficialMenuSelections.OwnsVehicle(
+                catalog, characterIds[characterSelector.index], selected.id))
             {
                 reason = "O veículo selecionado não pertence ao piloto atual.";
                 return false;

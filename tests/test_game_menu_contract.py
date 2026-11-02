@@ -17,9 +17,9 @@ class InGameMenuWiringTests(unittest.TestCase):
             self.assertIn(name, self.menu)
 
     def test_actual_official_catalog_is_used_instead_of_demo_vehicle_lists(self):
-        self.assertIn("catalog.characters.OrderBy", self.menu)
-        self.assertIn("catalog.arenas.OrderBy", self.menu)
-        self.assertIn("catalog.vehicles.Where(v => v.characterId", self.menu)
+        self.assertIn("OfficialMenuSelections.Pilots(catalog)", self.menu)
+        self.assertIn("OfficialMenuSelections.Arenas(catalog)", self.menu)
+        self.assertIn("OfficialMenuSelections.CarsForPilot", self.menu)
         self.assertIn("identity.Matches(vehicle.id, vehicle.game)", self.menu)
         self.assertIn("identity.Matches(arena.id, arena.game)", self.menu)
         self.assertIn("startCombat.SetEnabled(available)", self.menu)
@@ -60,6 +60,15 @@ class InGameMenuWiringTests(unittest.TestCase):
         self.assertIn('BackToMenu();', self.menu)
         self.assertIn('Camera has no ChaseCamera component.', self.menu)
         self.assertIn('CleanupMatch();', self.menu)
+    def test_all_catalog_pages_have_filters_and_real_selection_actions(self):
+        for signal in ("BuildCatalogBrowser();", "CATÁLOGO OFICIAL",
+                       "RefreshCatalogBrowser", "SelectPilotFromCatalog",
+                       "SelectArenaFromCatalog", "OfficialMenuSelections.Cars(catalog, game)",
+                       "OfficialMenuSelections.Pilots(catalog, game)",
+                       "OfficialMenuSelections.Arenas(catalog, game)",
+                       "Show(ScreenPage.Garage)"):
+            self.assertIn(signal, self.menu)
+        self.assertIn("OfficialMenuSelections.OwnsVehicle", self.menu)
 
 if __name__ == "__main__":
     unittest.main()
