@@ -97,6 +97,14 @@ jobs:
           name: v82-original-vigterrain-road-heights
           path: v82-original-vigterrain-road-heights.json
           if-no-files-found: error
+      - name: Cross-link authentic XRTP road width/texture profiles with source RSEG indices
+        run: python3 scripts/audit_v82_xrtp_road_profiles.py --json > v82-original-xrtp-road-profiles.json
+      - name: Store XRTP width and material source evidence (NOT road meshes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-xrtp-road-profiles
+          path: v82-original-xrtp-road-profiles.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage

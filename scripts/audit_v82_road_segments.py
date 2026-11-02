@@ -58,6 +58,8 @@ def read_road_segments(scene: str, script_guid: str) -> list[dict]:
                 "gameObjectFileId": row.get("gameObjectFileId"),
                 "junctionComponentFileIds": row.get("endpoints", []),
                 "sourceFlags": row.get("DAT_0C"),
+                "sourceProfileIndex": row.get("DAT_0A"),
+                "sourceRoadOrder": row.get("DAT_08"),
                 "sourceTangentX": row.get("DAT_10"),
                 "sourceTangentZ": row.get("DAT_14"),
                 "sourcePolynomial": {key: row.get(key) for key in COEFFICIENTS},
@@ -96,7 +98,7 @@ def read_road_segments(scene: str, script_guid: str) -> list[dict]:
             key, value = line.strip().split(": ", 1)
             row[key] = encoded_pair(value)
         else:
-            for key in (*COEFFICIENTS, "DAT_0C"):
+            for key in (*COEFFICIENTS, "DAT_0C", "DAT_0A", "DAT_08"):
                 if line.startswith("  " + key + ": "):
                     try:
                         row[key] = signed32(int(line.partition(":")[2].strip()))
