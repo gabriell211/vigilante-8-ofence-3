@@ -260,3 +260,26 @@ referências ausentes, status por fase e as amostras verificáveis.
 **Ainda não são malhas rodoviárias, estradas dirigíveis, física ou
 spawns homologados.** Essa evidência é a base para reconstruir os
 segmentos/curvas reais antes de gerar geometria de cenário no Unity 6.
+
+
+## Planta 2D das estradas RSEG no Unity Editor (não é cenário jogável)
+
+**Vigilante 8 > Migração > Visualizar estradas RSEG originais em planta XZ**
+abre a planta interativa das oito fases, incluindo o local sem
+\`Geo.asset\` (Meteor Crater). Escolha a fase e pressione **Carregar curvas
+RSEG originais verificadas**. O gráfico permite zoom e clique em cada
+traçado para exibir seu \`fileID\` autêntico.
+
+O leitor C# reutiliza o verificador de **SHA Git da cena e do banco
+XOBF**, GUIDs exatos de \`JUNC_DB\` e \`RSEG_DB\`, confere os
+\`fileIDs\` das duas extremidades e calcula cinco amostras X/Z com
+\`RSEG_DB.FUN_285E4\`. Referências ausentes, entradas malformadas e
+cálculos que podem transbordar int32 são rejeitados, nunca substituídos.
+Trechos que dependem da altura real \`VigTerrain.FUN_1B750\` aparecem
+em cor distinta. **A representação é uma planta de origem X/Z**, não uma
+posição 3D validada: nenhuma coordenada Y é deduzida ou desenhada.
+
+Esta visualização não cria GameObjects, Mesh, colisão, prefabs,
+estradas artificiais ou conteúdo de release. É uma ferramenta de
+análise para posteriormente importar a geometria real das vias,
+as alturas do terreno e a colisão com fidelidade.

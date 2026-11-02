@@ -344,6 +344,12 @@ namespace Vigilante8.Editor
                     throw new InvalidDataException("JUNC_DB.Update source conversion changed");
         }
 
+        internal static string VerifiedOriginalScenePath(string id) =>
+            Absolute(VerifiedStage(id).sourceScenePath);
+
+        internal static string VerifiedScriptGuid(string metaPath) =>
+            SourceGuid(metaPath);
+
         private static Row VerifiedStage(string id)
         {
             TextAsset asset = AssetDatabase.LoadAssetAtPath<TextAsset>(ManifestPath);
