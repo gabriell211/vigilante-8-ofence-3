@@ -1,0 +1,86 @@
+name: Unity Windows x64 strict build and verification (manual only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: unity-66-strict-windows
+  cancel-in-progress: false
+
+jobs:
+  native-windows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout complete Unity project and original asset sources
+        uses: actions/checkout@v7
+        with:
+          lfs: true
+
+      - name: Reject missing official 31 cars and 19 arenas before starting Unity
+        run: python3 scripts/audit_content.py --strict
+
+      - name: Require real Unity license before any Editor compilation
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ] && [ -z "$UNITY_SERIAL" ]; then
+            echo "::error::Real Unity 6.6 license required; no fabricated Windows packages."
+            exit 1
+          fi
+
+      - name: Compile source and run genuine Unity EditMode and PlayMode tests
+        id: unity-tests
+        uses: game-ci/unity-test-runner@v4.4.0
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          unityVersion: 6000.6.7f1
+          testMode: all
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          artifactsPath: unity-windows-preflight-tests
+          checkName: Real Unity 6.6 tests before Windows IL2CPP build
+
+      - name: Store Unity Editor test evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-windows-real-test-evidence
+          path: unity-windows-preflight-tests
+          if-no-files-found: ignore
+
+      - name: Build genuine Windows x64 IL2CPP using the strict authored asset gate
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          unityVersion: 6000.6.7f1
+          targetPlatform: StandaloneWindows64
+          buildMethod: Vigilante8.Editor.WindowsReleaseBuilder.BuildFromCommandLine
+          buildsPath: Builds
+
+      - name: Verify real exe DLL data manifest ZIP and SHA256
+        run: python3 scripts/verify_windows_package.py --builds-dir Builds
+
+      - name: Upload verified test package (not a public GitHub release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: vigilante8-offence3-windows-verified
+          path: |
+            Builds/Vigilante8Offence3-*-win-x64.zip
+            Builds/Vigilante8Offence3-*-win-x64.zip.sha256
+          if-no-files-found: error
+          retention-days: 14

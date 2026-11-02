@@ -8,7 +8,7 @@ O produto será um **jogo PC autônomo em Unity**, NÃO uma interface para rodar
 Vigilante8Offence3-<versao>-win-x64.zip
   Vigilante8Offence3.exe
   Vigilante8Offence3_Data/
-  UnityPlayer.dll e demais dependências geradas pelo Unity
+  UnityPlayer.dll, GameAssembly.dll e demais dependências geradas pelo Unity
   release-manifest.json
 Vigilante8Offence3-<versao>-win-x64.zip.sha256
 ```
@@ -43,14 +43,22 @@ real e implementação completa de missões, armas, destruição e sons.
 Antes de empacotar:
 - 23 identidades sem duplicar personagens;
 - 31 veículos únicos com Rigidbody, collider, mesh real, VehicleDrive e armas;
-- 18 arenas com colisão e 4 spawns;
+- 19 arenas com colisão e 4 spawns;
 - cena Bootstrap.unity e PanelSettings salvos;
 - URP configurado;
 - BuildPipeline IL2CPP informa sucesso e o EXE/Data existem;
 - ZIP é gerado e SHA256 é escrito.
 
-O GitHub Actions atualmente roda testes do catálogo e contrato estático; isso
-**não substitui** compilar no Unity e abrir o EXE em Windows de teste.
+O CI automático valida código, catálogos e integridade de arquivos, **não** executa a Unity.
+Agora existem workflows manuais, todos dependentes de licença Unity real:
+
+- `Unity 6.6 real Editor and PlayMode tests` executa testes EditMode e PlayMode de física no Editor.
+- `Unity Windows x64 strict build and verification (manual only)` rejeita inicialmente a ausência de qualquer prefab oficial de carro ou arena (`audit_content.py --strict`), exige licença Unity e aprovação dos testes reais, invoca `WindowsReleaseBuilder.BuildFromCommandLine`, valida o ZIP gerado (EXE, `_Data`, UnityPlayer, GameAssembly, manifesto e SHA-256) e só disponibiliza um **artifact privado do Actions** em caso de sucesso. **Não publica GitHub Release automaticamente**.
+
+O verificador independente é `python3 scripts/verify_windows_package.py --builds-dir Builds`.
+Testes unitários criam pequenos arquivos de fixture temporários para exercitar esse verificador; esses arquivos não são jogos, não vão para a build e nunca viram pacote distribuído.
+
+A validação do executável deve continuar com execução e testes de gameplay numa máquina Windows limpa antes de qualquer distribuição pública.
 
 Status atual: **não existe release jogável**. O build é bloqueado
 intencionalmente até que assets autorizados estejam integrados e os testes do
