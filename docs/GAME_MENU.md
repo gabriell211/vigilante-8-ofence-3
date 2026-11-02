@@ -9,8 +9,9 @@ as telas usando o catálogo oficial em `Resources/Catalog/roster.json`.
 
 - **Menu principal** — marca, contagens reais do catálogo e ações de jogo,
   opções, controles, informações de acervo e saída do programa
-- **Garagem / iniciar combate** — filtra os 23 personagens, seus 31 carros
-  oficiais e as 19 arenas, sem repetir o mesmo piloto no elenco
+- **Garagem / iniciar combate** — disponibiliza os 31 veículos oficiais
+  dos dois jogos em uma única lista e as 19 arenas. Cada carro vincula
+  automaticamente seu piloto original, sem seleção prévia de facção ou personagem
 - **Verificação de partida** — só permite iniciar quando carro e arena
   selecionados possuem prefabs com identidade oficial, malhas, colisores,
   física, armas e 4 spawns; exige três outros carros jogáveis, de pilotos
@@ -24,8 +25,8 @@ as telas usando o catálogo oficial em `Resources/Catalog/roster.json`.
 - **Resultado** — tela de vitória ou derrota ligada à saúde real dos
   veículos; pode repetir partida, escolher outro veículo ou voltar ao menu
 
-O jogo restaura o último personagem, carro e arena escolhidos somente
-quando ainda constam do catálogo oficial. Entradas vazias, malformadas ou
+O jogo restaura o último carro e a última arena escolhidos somente
+quando ainda constam do catálogo oficial. O piloto é derivado do carro. Entradas vazias, malformadas ou
 que não existem não podem ser persistidas.
 
 ## Garantias e limitações
@@ -45,13 +46,13 @@ criados artificialmente para contornar esse bloqueio.
 ## Navegador de conteúdo oficial
 
 O menu **CATÁLOGO OFICIAL** inclui filtros por **Vigilante 8**,
-**2nd Offense** e **todas as versões**, com categorias para **carros,
-pilotos e arenas**. Cada item leva diretamente à seleção correspondente
+**2nd Offense** e **todas as versões**, com categorias para **carros
+e arenas**. Cada item leva diretamente à seleção correspondente
 da garagem e conserva a identidade oficial; as fases exclusivas do N64
 são identificadas. Os recursos ainda não portados aparecem com status
 **MIGRAÇÃO PENDENTE**, sem botões de jogar enganosos.
 
-O serviço `OfficialMenuSelections` define a ordenação e a propriedade
-de cada carro. Os testes Unity EditMode verificam todos os **23 pilotos,
-31 carros e 19 arenas** e asseguram que não seja possível selecionar um
-veículo associado ao piloto errado.
+O serviço `OfficialMenuSelections` define a ordenação e resolve o piloto
+original de cada carro por `PilotForCar`. Os testes Unity EditMode verificam
+os **31 carros**, as **23 identidades de piloto** e as **19 arenas**, inclusive
+a rejeição de vínculos de piloto adulterados.

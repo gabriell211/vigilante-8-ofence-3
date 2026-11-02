@@ -21,14 +21,18 @@ class CompleteMenuSelectionTests(unittest.TestCase):
         self.assertEqual(len({a["id"] for a in self.data["arenas"]}), 19)
         self.assertEqual(len({c["id"] for c in self.data["characters"]}), 23)
 
-    def test_every_car_can_be_selected_only_by_its_pilot(self):
+    def test_every_car_keeps_its_pilot_without_pilot_selection(self):
         pilots = {c["id"] for c in self.data["characters"]}
         owners = {id: [] for id in pilots}
         for car in self.data["vehicles"]:
             self.assertIn(car["characterId"], pilots)
             owners[car["characterId"]].append(car["id"])
         self.assertTrue(all(len(cars) >= 1 for cars in owners.values()))
-        self.assertIn("OfficialMenuSelections.OwnsVehicle", self.menu)
+        self.assertIn("OfficialMenuSelections.PilotForCar", self.menu)
+        self.assertNotIn("characterSelector", self.menu)
+        self.assertNotIn("SelectPilotFromCatalog", self.menu)
+        self.assertIn("OfficialMenuSelections.Cars(catalog)", self.menu)
+        self.assertIn("SelectVehicleFromCatalog(car.id)", self.menu)
 
     def test_filter_counts_match_every_game_and_bonus(self):
         for game, vehicles, arenas in (("v8", 13, 11), ("v82", 18, 8)):

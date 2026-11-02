@@ -14,8 +14,8 @@ original.** O desenho e os componentes do terceiro jogo são próprios.
 - Identificação própria **OFFENCE 3**, com detalhes laranja e azul elétrico
 - Botões grandes com estados hover e foco visíveis, inclusive por gamepad
 - Leitura responsiva com rolagem em telas pequenas e proporção widescreen
-- Informações do piloto/veículo/arena e estado dos arquivos disponíveis
-- Navegador com filtros do primeiro jogo, 2nd Offense e ambas as versões
+- Informações do piloto vinculado automaticamente ao carro, veículo, arena e estado dos arquivos disponíveis
+- Navegador de carros e arenas, com filtros opcionais do primeiro jogo, 2nd Offense ou ambos
 - Garagem com passagem direta do catálogo para a seleção de combate
 
 ## Navegação
@@ -23,9 +23,10 @@ original.** O desenho e os componentes do terceiro jogo são próprios.
 **Menu inicial:** Um Jogador / Arcade → garagem; catálogo de carros e
 arenas; opções; controles; sobre; sair.
 
-**Seleção:** cada carro, piloto ou arena tem botão próprio na categoria
-correspondente. Seleções são validadas contra as relações oficiais e as
-preferências do PC. O próximo combate só é liberado se os prefabs oficiais
+**Seleção:** há uma única lista de todos os 31 carros, sem etapas de
+seleção de piloto ou facção. O personagem é identificado pelo veículo,
+e as arenas são escolhidas à parte. As preferências do PC são validadas
+contra as relações oficiais. O próximo combate só é liberado se os prefabs oficiais
 e adversários estiverem realmente disponíveis.
 
 **Menus e modos clássicos:** Quest, Sobrevivência e Multijogador aparecem
