@@ -167,17 +167,22 @@ namespace Vigilante8.Editor
                 if (!TrySourceHalfWidthOffset(tangent.x, tangent.y,
                         profile.FullWidthFixed, out Vector2Int delta))
                     return;
-                Vector3 origin = road.OriginalFixedXYZDense[i];
-                long lx = (long)origin.x - delta.x;
-                long rx = (long)origin.x + delta.x;
-                long lz = (long)origin.z + delta.y;
-                long rz = (long)origin.z - delta.y;
+                // Keep integer XZ source precision: Unity Vector3 is a float
+                // and rounds large original fixed-point coordinates.
+                if (road.OriginalFixedXZExactDense == null ||
+                    road.OriginalFixedXZExactDense.Length != left.Length)
+                    return;
+                Vector2Int originalXZ = road.OriginalFixedXZExactDense[i];
+                long lx = (long)originalXZ.x - delta.x;
+                long rx = (long)originalXZ.x + delta.x;
+                long lz = (long)originalXZ.y + delta.y;
+                long rz = (long)originalXZ.y - delta.y;
                 if (!IsInt32(lx) || !IsInt32(rx) || !IsInt32(lz) || !IsInt32(rz))
                     return;
 
                 int ly, ry;
                 if ((road.SourceRoadFlags & 1) != 0)
-                    ly = ry = (int)origin.y; // FUN_5850 bridge/non-terrain height branch
+                    ly = ry = (int)road.OriginalFixedXYZDense[i].y; // FUN_5850 bridge/non-terrain height branch
                 else if (originalGrid != null &&
                     originalGrid.TrySampleHeight((int)lx, (int)lz, out ly) &&
                     originalGrid.TrySampleHeight((int)rx, (int)rz, out ry))

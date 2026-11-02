@@ -40,6 +40,7 @@ class OriginalWidthGuideContract(unittest.TestCase):
         for fragment in (
             "TrySourceHalfWidthOffset(",
             "profile.FullWidthFixed",
+            "road.OriginalFixedXZExactDense[i]",
             "OriginalXrtpSourceProfileReview.LoadVerified(stageId)",
             "originalGrid.TrySampleHeight((int)lx, (int)lz, out ly)",
             "originalGrid.TrySampleHeight((int)rx, (int)rz, out ry)",
