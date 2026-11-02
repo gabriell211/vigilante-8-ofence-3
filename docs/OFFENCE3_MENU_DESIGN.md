@@ -41,3 +41,22 @@ sido renderizada ou testada no Editor**. É necessário validar navegação,
 contraste, resolução, áudio, consumo e entrada de controle com Unity 6.6.
 A release PC ainda está bloqueada enquanto os recursos oficiais de
 veículos, armas e arenas não forem integralmente homologados.
+
+## Garagem 3D oficial
+
+A garagem possui um painel **VEÍCULO OFICIAL / VISUALIZAÇÃO 3D**
+que usa `Offence3VehicleShowroom` para instanciar exclusivamente um
+prefab oficial carregado de `Resources/Vehicles` e com identidade
+verificada. A câmera renderiza para uma textura própria, com rotação
+suave do carro e sem interferir na física da partida.
+
+Quando o modelo real não existe ou não corresponde ao ID oficial, a
+visualização 3D é ocultada e o menu informa a ausência do arquivo.
+**Nunca é exibido um cubo, carro genérico ou modelo inventado.** A
+prévia é desligada fora da garagem e a RenderTexture é liberada no
+descarregamento da interface.
+
+A função está implementada em C#, com contratos automatizados.
+A aparência final depende do shader, materiais e prefabs da cena
+Unity 6.6 e precisa de inspeção visual no Editor; não representa
+homologação de todos os 31 modelos.
