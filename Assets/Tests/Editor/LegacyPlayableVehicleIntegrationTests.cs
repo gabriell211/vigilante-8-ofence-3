@@ -100,6 +100,12 @@ namespace Vigilante8.EditorTests
             Assert.That(roots.SelectMany(root =>
                 root.GetComponentsInChildren<BotVehicleInput>(true)).Count(),
                 Is.EqualTo(3));
+            var encounter = roots.SelectMany(root =>
+                root.GetComponentsInChildren<OriginalBattleSession>(true)).Single();
+            Assert.That(encounter.OriginalArenaId, Is.EqualTo(stage));
+            Assert.That(encounter.OriginalPlayerId, Is.EqualTo("v82_tsunami"));
+            Assert.That(encounter.TotalOpponents, Is.EqualTo(3));
+            Assert.That(encounter.IsReleaseApproved, Is.False);
             var terrain = roots.SelectMany(root =>
                 root.GetComponentsInChildren<OriginalTerrainPreviewIdentity>(true))
                 .SingleOrDefault();
