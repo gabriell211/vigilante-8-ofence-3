@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "dialect": "v82",
+  "source": "Assets/GameContent/Private/DiscV82Europe/SHARED/COMMON.EXP",
+  "sourceSha256": "b4e4273c4dd6f401924a2b4bd1b207b4c8f9d3882282d480e761ce6d6ec23e32",
+  "status": "source_geometry_only_not_playable",
+  "materialsReady": false,
+  "prefabReady": false,
+  "gameplayTested": false,
+  "banks": [
+    {
+      "sourceIndex": 0,
+      "obj": "source_bank_00.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_wonderwagon",
+      "binSha256": "45951339207f640f9ebfe929e92f55e8e561cee601b2d7c1194ef8db2ee6d77a",
+      "objSha256": "944ab840e13efb7ff2f2c02df7ea62f7327c2f431f4e9e53d1a34bfe05e56f12",
+      "groups": 19,
+      "vertices": 471,
+      "triangles": 810
+    },
+    {
+      "sourceIndex": 1,
+      "obj": "source_bank_01.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_thunderbolt",
+      "binSha256": "a7a1aadfa2b6ee3dcaf72bc16dd9af96f497a25cfac661eebce14c771f3ee99b",
+      "objSha256": "faf2833ce865dc4aec27a587e5b6a5b95fdff1a138f72d684e88e6962d2e10cd",
+      "groups": 32,
+      "vertices": 474,
+      "triangles": 880
+    },
+    {
+      "sourceIndex": 2,
+      "obj": "source_bank_02.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_dakota_stunt_cycle",
+      "binSha256": "476bf65b3d4b8aab43aebefdabe023cb804dc7fc5eec4618b91ad142a34ec844",
+      "objSha256": "1fa958a697a2616cc1ffe4a9e9989c13419f0a4dcb9aecbe4eda2c88d9510bb7",
+      "groups": 23,
+      "vertices": 448,
+      "triangles": 626
+    },
+    {
+      "sourceIndex": 3,
+      "obj": "source_bank_03.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_samson_tow_truck",
+      "binSha256": "37440be0ccea75512718bea5c80a5c710dfac8239059f5c1b21e9ca91e27403a",
+      "objSha256": "0ee8e560a1495d9b12e618664d573e07cd674a45b902c991b4968214c129229c",
+      "groups": 23,
+      "vertices": 471,
+      "triangles": 800
+    },
+    {
+      "sourceIndex": 4,
+      "obj": "source_bank_04.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_livingston_truck",
+      "binSha256": "00254f6be640b7eb8187e1a2261cbcd5deb00e4d0fc214c5f118b824dcc21395",
+      "objSha256": "ae195c4b8612771668a8991fc4aa0b45d80fbf5c964b826f9b8d1dd0a4570db7",
+      "groups": 32,
+      "vertices": 664,
+      "triangles": 1219
+    },
+    {
+      "sourceIndex": 5,
+      "obj": "source_bank_05.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_xanadu_rv",
+      "binSha256": "5f5350c7a3eaeb0b7b64e45eaf41a326bce70c38c7a69bae010eddd96ff62385",
+      "objSha256": "26ede098a516df398d9fb897d44a99ce809421ef2be38c0c14cd8282c38d2a4c",
+      "groups": 27,
+      "vertices": 631,
+      "triangles": 1033
+    },
+    {
+      "sourceIndex": 6,
+      "obj": "source_bank_06.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_palomino_xiii",
+      "binSha256": "a2220ae978f0d0ea88b4f7c13dbd6a6e1b63c028b8c3db44a336f37ef469bdcf",
+      "objSha256": "f88bde9aa99eaf1221ac655d5ab2951618270cd6abeb4c74e08ba7692e7b4ab9",
+      "groups": 28,
+      "vertices": 471,
+      "triangles": 884
+    },
+    {
+      "sourceIndex": 7,
+      "obj": "source_bank_07.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_el_guerrero",
+      "binSha256": "fe77f3d8bf15ae74f624313c16f1410173cb9a4b896de1bc7ddbc68b65636095",
+      "objSha256": "5286595a058b76f36730fe8d322efe10a07a44357ee4b89e949173f9d1b58173",
+      "groups": 20,
+      "vertices": 499,
+      "triangles": 967
+    },
+    {
+      "sourceIndex": 8,
+      "obj": "source_bank_08.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_blue_burro_bus",
+      "binSha256": "d4fc5bc3fc1476b10cfdb9a1f05ea987c984ddebc19543b19b064ed5b3cbd07a",
+      "objSha256": "188d7167555c9f97b6d7529455e8b06032223ebd44b4931228f63c6dd1c68d86",
+      "groups": 15,
+      "vertices": 524,
+      "triangles": 980
+    },
+    {
+      "sourceIndex": 9,
+      "obj": "source_bank_09.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_excelsior_stretch",
+      "binSha256": "d1c9e757ae61d4f78b9428867da86183c001c0fd69b4f801f70f85d6e32f8a54",
+      "objSha256": "7352a9abddf7d02b659a31654246812b318d94b98424eb4f10aef7ecaa0ad112",
+      "groups": 18,
+      "vertices": 514,
+      "triangles": 1022
+    },
+    {
+      "sourceIndex": 10,
+      "obj": "source_bank_10.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_tsunami",
+      "binSha256": "f8d94712bc694ddb87e1c1bcaf4c05dcb6f8d1d73e366e4ab3b8fae91d7aa26f",
+      "objSha256": "06ff76fb22d69107d88d6b51e1e65b0dc0a6d7b8122ff320153d680d31b40484",
+      "groups": 30,
+      "vertices": 599,
+      "triangles": 1093
+    },
+    {
+      "sourceIndex": 11,
+      "obj": "source_bank_11.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_marathon",
+      "binSha256": "50b1e97c2fb87731a2830071e631a42d82c300e0a22ecdd4bae10c896c69d690",
+      "objSha256": "149e1d7fbfd08542cdc0b8299b260a780f1844060bfb31fd789e0d2c5dbd069a",
+      "groups": 31,
+      "vertices": 485,
+      "triangles": 1010
+    },
+    {
+      "sourceIndex": 12,
+      "obj": "source_bank_12.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_moon_trekker",
+      "binSha256": "1c5c33122aecbd60e351b552b43fd51a33b8356b6df264f800db45a46de7042c",
+      "objSha256": "aef306ff3670c3a50ef7a57c9d1b7e681fcf6d72dc60eddb04be7e14d541c08c",
+      "groups": 46,
+      "vertices": 945,
+      "triangles": 1254
+    },
+    {
+      "sourceIndex": 13,
+      "obj": "source_bank_13.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_grubb_dual_loader",
+      "binSha256": "3c827488f0dfdc0dd1938c4d6728f971ca9094687618c87c2017e524a175593e",
+      "objSha256": "e3693094f1002be6ef5f969eb37c0067a8930e1fe444db9ad6841d7e218db9d1",
+      "groups": 21,
+      "vertices": 519,
+      "triangles": 811
+    },
+    {
+      "sourceIndex": 14,
+      "obj": "source_bank_14.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_chrono_stinger",
+      "binSha256": "357adca41a56dea95fb240d1c35146ddb48685a941588c96df522869a821c7cf",
+      "objSha256": "93d09bd23603272274eec862c97a90890ffd7dbe5ecae1f5f302d75b0333b3db",
+      "groups": 24,
+      "vertices": 593,
+      "triangles": 992
+    },
+    {
+      "sourceIndex": 15,
+      "obj": "source_bank_15.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_vertigo",
+      "binSha256": "962fd83880f56b5f30c6ea3834e55d29f048edd700ea41ca075f4051905495ff",
+      "objSha256": "372b60a81c8834a9d0b2cb8edac57c8d6a482e97d435779fde02b599071153b0",
+      "groups": 20,
+      "vertices": 479,
+      "triangles": 945
+    },
+    {
+      "sourceIndex": 16,
+      "obj": "source_bank_16.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_goliath_halftrack",
+      "binSha256": "45544317874279fad4e144fd8077490729e5a2bb18f945e29c4b566c562b384d",
+      "objSha256": "2a7566916346967eaa19c00aad026945a9adcf21234b88c86109f0027f74b078",
+      "groups": 35,
+      "vertices": 713,
+      "triangles": 1024
+    },
+    {
+      "sourceIndex": 17,
+      "obj": "source_bank_17.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v82_wapiti_4wd",
+      "binSha256": "60ef6054d65adf8e58f4712b1bc24e90cb3a79b119861706402655e0b5baf477",
+      "objSha256": "965fcf1472233ccf9a469a6fa7dcdb8c95fc27856570b8d9310dbf9edcd969e9",
+      "groups": 25,
+      "vertices": 552,
+      "triangles": 1162
+    },
+    {
+      "sourceIndex": 18,
+      "obj": "source_bank_18.obj",
+      "role": "transform_library",
+      "binSha256": "477aea70b1a96adfb7f4d8b43b41604b66e575746d0a9dd66e82b01e774794b4",
+      "objSha256": "0eeb6da4dd0e842c5797778fa269f799fd3357106f652a73abb2a1cefc608dfd",
+      "groups": 87,
+      "vertices": 1356,
+      "triangles": 1212
+    },
+    {
+      "sourceIndex": 19,
+      "obj": "source_bank_19.obj",
+      "role": "shared_bank",
+      "binSha256": "094b48200177f1b931ef22982cad99a7745425d6bf11c90280f909871290b1e2",
+      "objSha256": "0c3eba5d04cd6bc1e7e79acf1746b8d18488de892c541375cdeb4212ce9c0372",
+      "groups": 153,
+      "vertices": 1335,
+      "triangles": 1530
+    }
+  ]
+}

@@ -29,3 +29,6 @@
 
 # Local original Quest source audits and reviewed translation workspace
 /QuestImportWork/
+
+# User-provided PlayStation disc images and provenance readme files stay local.
+/Vigilante 8/

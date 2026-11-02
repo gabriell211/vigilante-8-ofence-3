@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "dialect": "v8",
+  "source": "Assets/GameContent/Private/DiscV8/COMMON.EXP",
+  "sourceSha256": "43319de40db58be51dbf22cdeef5f61cf7139efeb97953546741ce6ab3b73cff",
+  "status": "source_geometry_only_not_playable",
+  "materialsReady": false,
+  "prefabReady": false,
+  "gameplayTested": false,
+  "banks": [
+    {
+      "sourceIndex": 0,
+      "obj": "source_bank_00.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_rattler",
+      "binSha256": "242975251aa06b890503cbfcab118950d91f0a8d2e4146068635c0c6d55ba6fe",
+      "objSha256": "00fc58a0e092f5434f54b1a20d332f99c46308b7885c29b82ec932281902a9e9",
+      "groups": 15,
+      "vertices": 369,
+      "triangles": 593
+    },
+    {
+      "sourceIndex": 1,
+      "obj": "source_bank_01.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_clydesdale",
+      "binSha256": "8d0769dc53cad77b240c26bf5216fbc796ac0f83cbd079e6f11562e2dac1e238",
+      "objSha256": "22b0f0be020307fc8cd9c065f291be30f00655cdd39f3ac2f5dc785a26147751",
+      "groups": 17,
+      "vertices": 481,
+      "triangles": 688
+    },
+    {
+      "sourceIndex": 2,
+      "obj": "source_bank_02.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_strider",
+      "binSha256": "fe0a6a45e6823c974c23cebaa065c001d2e7a1a4d4fd7209920ffae4a065f7a5",
+      "objSha256": "9024f3a03e8ef4f049e870e64800041f0899a46eb50782c63d1ffe3e80f90e30",
+      "groups": 21,
+      "vertices": 451,
+      "triangles": 714
+    },
+    {
+      "sourceIndex": 3,
+      "obj": "source_bank_03.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_jefferson",
+      "binSha256": "4909e4c9976f39c5e1069b2ebed34a196168262ac87afc6488bc5cb392de8fc2",
+      "objSha256": "b9571dbd77046588a773bf7c4f624f09b60d6a5264c0b0ab0eff1b2fbe6e9725",
+      "groups": 14,
+      "vertices": 442,
+      "triangles": 690
+    },
+    {
+      "sourceIndex": 4,
+      "obj": "source_bank_04.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_van",
+      "binSha256": "8000c1854ace046bafc1c35253a9a39c1b9aaebe2bbce2c1498c204afd1151e9",
+      "objSha256": "e2632c8a3cb0c75e13f262f9592a20a7611424b67f9d6fdb255c959a834500dc",
+      "groups": 21,
+      "vertices": 552,
+      "triangles": 898
+    },
+    {
+      "sourceIndex": 5,
+      "obj": "source_bank_05.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_moth_truck",
+      "binSha256": "13337e579ee0672179a5cd2839f2f260398de6e6477cbaf7008b98a4769ab409",
+      "objSha256": "1fb957b17de01c91ffa9521a214a6a1e360bcb5f3e0088bd6e6f6070dacf675f",
+      "groups": 18,
+      "vertices": 659,
+      "triangles": 953
+    },
+    {
+      "sourceIndex": 6,
+      "obj": "source_bank_06.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_glenn_4x4",
+      "binSha256": "287165bb6c3b055359c919259374a09196d47bcfcc5a9252d3834204c555f49d",
+      "objSha256": "a531d2bf87c66fa1e46efe01c85c930dcb1633a1d5475c2a575f8c77f6b94b3d",
+      "groups": 20,
+      "vertices": 432,
+      "triangles": 671
+    },
+    {
+      "sourceIndex": 7,
+      "obj": "source_bank_07.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_palomino",
+      "binSha256": "7be991481637171126511deeb49744616fd7b18b36c86af92fcb092c92cef190",
+      "objSha256": "f3bec69595f66ede5d141d7cb15a869a70fee856ec5358de78c52329153b776a",
+      "groups": 19,
+      "vertices": 542,
+      "triangles": 802
+    },
+    {
+      "sourceIndex": 8,
+      "obj": "source_bank_08.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_leprechaun",
+      "binSha256": "efb68baafb89558d3636add39e6b4f7a0b9b404809ed9e470211d84bd387216f",
+      "objSha256": "e7779dc686bb3e3644977ca55ec8e163057cc9d0f10259d5f8a92467f05253ee",
+      "groups": 26,
+      "vertices": 414,
+      "triangles": 701
+    },
+    {
+      "sourceIndex": 9,
+      "obj": "source_bank_09.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_stag_pickup",
+      "binSha256": "4e173da06c436d105278b031a60f846b3a10762b863fd674e820f1eb4d939e9a",
+      "objSha256": "ba34316a8b98765458ada44780dae62dcec16df5541604f49854d62c1b238f1e",
+      "groups": 16,
+      "vertices": 458,
+      "triangles": 737
+    },
+    {
+      "sourceIndex": 10,
+      "obj": "source_bank_10.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_school_bus",
+      "binSha256": "a032e2549ae904005d6ae3402adac66e01a3153329c411b1df520ab703c08917",
+      "objSha256": "9464197b878efa83976ce4be126e55dfa941f62fb519ff773a0e3d727bcbe440",
+      "groups": 13,
+      "vertices": 404,
+      "triangles": 688
+    },
+    {
+      "sourceIndex": 11,
+      "obj": "source_bank_11.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_manta",
+      "binSha256": "a239c3f485d6c85a411acf511b2079a1c6483da89f22f3bc6e0f7793007c661f",
+      "objSha256": "fb281464a411232493c7ee7faedc5b6d341b544f4011bd18b693f636756565be",
+      "groups": 16,
+      "vertices": 477,
+      "triangles": 772
+    },
+    {
+      "sourceIndex": 12,
+      "obj": "source_bank_12.obj",
+      "role": "vehicle_body",
+      "vehicleId": "v8_luxo_saucer",
+      "binSha256": "749b9b89d336fc35c155cff8508cff077b4f7238461c37df25a29a21913219e6",
+      "objSha256": "ae0ac68cebe44724427aa1d80f7cb60abac0cb4df8542d0ad4ef7033bb6f2097",
+      "groups": 7,
+      "vertices": 157,
+      "triangles": 277
+    },
+    {
+      "sourceIndex": 13,
+      "obj": "source_bank_13.obj",
+      "role": "wheel_library",
+      "binSha256": "5b3d3380d60c46bf12ee66158dfb496b7b163b0f07d52f361dd0cd930955c7fd",
+      "objSha256": "b15327d967187d5dcc7289b590b04efeb24d2e104e1941d923278c87655127be",
+      "groups": 15,
+      "vertices": 392,
+      "triangles": 320
+    },
+    {
+      "sourceIndex": 14,
+      "obj": "source_bank_14.obj",
+      "role": "shared_effects",
+      "binSha256": "51dd2026dec505ac4f14f090319b9de7555a71ed9d8d571e62ff692cfaef43b9",
+      "objSha256": "4a117c79d615e4c7121a1a87612d47f74bf589d2b70e758aa29e84aa93f54b09",
+      "groups": 45,
+      "vertices": 340,
+      "triangles": 346
+    },
+    {
+      "sourceIndex": 15,
+      "obj": "source_bank_15.obj",
+      "role": "shared_effects",
+      "binSha256": "4cf2fae4e806f98e71308b2e27b3aa0133ddec3e57d72af4861269c6a26221e2",
+      "objSha256": "d62ae90ff77648e77b4d7bd0279986494d9ea4110fb3c0228bff2c75833ba150",
+      "groups": 33,
+      "vertices": 433,
+      "triangles": 526
+    }
+  ]
+}

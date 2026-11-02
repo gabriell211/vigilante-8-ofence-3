@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "status": "stage_object_geometry_only_not_playable",
+  "terrainReady": false,
+  "placementsReady": false,
+  "collisionReady": false,
+  "stages": [
+    {
+      "stageId": "v82_ghastly_bayou",
+      "sourceName": "BAYOU",
+      "sourceSha256": "cefac8e682da2da8be246337712eb54c087c48b3ed23d55db99541265c19b65c",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "c249787eccf64c9714030d42f748c5e7bfb4ca88b8474718d12418903d9de01a",
+          "objSha256": "4a56e0c9168732cf0ed149a0585257dc786c09a1173c745b32957b35f5d102a1",
+          "groups": 119,
+          "vertices": 1715,
+          "triangles": 2631
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_pacific_harbor",
+      "sourceName": "HARBOR",
+      "sourceSha256": "ababf68ed7a0a4a811947e1ad0b560cd80053e4badcfa7dcf96dfb482fb377dc",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "482442dfd93f777cad4a6981cc65f7dee561222da6757e3bca02dc8a909f1647",
+          "objSha256": "3a26bac6405c55f2dcfa093f436cfdbd85e8c67c40c09bbd5e10067e6744bc27",
+          "groups": 147,
+          "vertices": 2522,
+          "triangles": 3663
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_launch_site",
+      "sourceName": "LAUNCH",
+      "sourceSha256": "562782b66ce2ca9cc6a9ff88c1282ca10e3fcab63300bb6c0ef6040c250a1715",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "b3a41437692225c135ae6813be946165dfa7bc3db0397663c4871cf6ed68ac6c",
+          "objSha256": "12bd13f250cfd38dc2a4655fd51488a1002f1e314f4c90b5ddd3f9492965c972",
+          "groups": 167,
+          "vertices": 2756,
+          "triangles": 4661
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_nuclear_plant",
+      "sourceName": "NUCLEAR",
+      "sourceSha256": "d94cb1876500d99c150c8ae05d2ac3861021389148adc0bf1a3f7f13e9b44386",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "74cb6dffb5242920554910a85fa8bcbeb5b2d53da987eb3d07ee498676daabab",
+          "objSha256": "4f78cc005dc63c97e955ac2e79d779560572e46bc3ef975e0fdb986cc995dedd",
+          "groups": 146,
+          "vertices": 2783,
+          "triangles": 4606
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_alaskan_pipeline",
+      "sourceName": "OILFIELD",
+      "sourceSha256": "f93e80bfd3e94192eb6525b9ed5d2ec864a39423e2954237a2853574aa537650",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "e71149f1fb0b4917ad26db8dbb365d751d3d04f00c599578e68b0209a316d7c9",
+          "objSha256": "3f21477c22c1db62bf0ce0c6f8d08d810c910791ea55175a16b2f03ab65f0e17",
+          "groups": 93,
+          "vertices": 1889,
+          "triangles": 3539
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_winter_games",
+      "sourceName": "OLYMPIC",
+      "sourceSha256": "719470806d7234bd0d7e7ad5e1eefa2acc419377c274405be161a4645e93691b",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "7ab91a6593f10a738037635f873890d4d73e216253a706a432f4b5bf562eefd1",
+          "objSha256": "cdab2620ce4f9992253424e8f6b80884b1e7932bba425d28220f07e5c0ebfb71",
+          "groups": 106,
+          "vertices": 1761,
+          "triangles": 2621
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_meteor_crater",
+      "sourceName": "ROUTE66",
+      "sourceSha256": "e1d3a47709c76268994623ed55e25e7628d500e4fccba56ee090b42618cbe66e",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "a3fea8fb14bf2443d613a65851decf871cf9cb7fb53e1a001a2c50c7628fd9d7",
+          "objSha256": "9d35396a106bfacaf5b9c9921f669e61373f1d37ec82368654653b44c98bfaed",
+          "groups": 177,
+          "vertices": 2435,
+          "triangles": 3839
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    },
+    {
+      "stageId": "v82_steel_mill",
+      "sourceName": "STEELMIL",
+      "sourceSha256": "0cd9f8597b7f2fa4f60968ba12fb1176725ed5aa4af5a6d221b236e3131ca5d0",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "7cf6450014959d4ae3a0688551bfa1c7d8c6ab0ae23d81da6633cd2b8707ebf4",
+          "objSha256": "0e26f9871e7b32250a57337ad594d066cbf58cc28a66b560dee49c55e2e8693d",
+          "groups": 165,
+          "vertices": 3116,
+          "triangles": 4687
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "16936f17b798930835f3402b8d8d9bee6f5f00cb29aa49504cd7951b7f23f3bd",
+          "objSha256": "ec859f11dc845bcec9cc70629b2934388b97578dc192ddada824c4637776e89b",
+          "groups": 24,
+          "vertices": 361,
+          "triangles": 582
+        }
+      ]
+    }
+  ]
+}

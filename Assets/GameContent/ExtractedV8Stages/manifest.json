@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "status": "stage_object_geometry_only_not_playable",
+  "terrainReady": false,
+  "placementsReady": false,
+  "collisionReady": false,
+  "stages": [
+    {
+      "stageId": "v8_aircraft_graveyard",
+      "sourceName": "AIRGRAVE",
+      "sourceSha256": "624b8836cfe01e9c789ea48f673a581c7f058454fa9879249c47c2e3c87623bf",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "281a4bb6636b09026c7e97f0a2cc39497e8b017a85cf6e120ffcf5e392d6bd1a",
+          "objSha256": "a779a42a564071ad59f8bda2c942237c5c1f2cd6f98b7a07b99bf4a3bda596f7",
+          "groups": 148,
+          "vertices": 2387,
+          "triangles": 3735
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_canyonlands",
+      "sourceName": "CANYNLND",
+      "sourceSha256": "586197dff2b860a9ad5e09f1ece633aa5a21f58c14a29fce88cb2dfef71680da",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "4928c245f7b31c18a2ae8c40bfb3a786be36ed1bca389418bc32ed7d3fef7956",
+          "objSha256": "aea3567f6ed6ede2aecc5b5a99345b9ab109a8173aed2fbf381e07253f45131f",
+          "groups": 233,
+          "vertices": 3374,
+          "triangles": 4890
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_casino_city",
+      "sourceName": "CASNOCTY",
+      "sourceSha256": "846c1944d0a2e7927d6e332adfac795275e327abc9e1617d66e60fcc3bf2009b",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "fd06f163ccf3587467b11dcf867db171c7b57515266a95b9bf00014bc201bf37",
+          "objSha256": "5c4851a59f6f90bf1e8c5d00afe6f665e8fcb4afb6eb276d5653afbba988a642",
+          "groups": 223,
+          "vertices": 3872,
+          "triangles": 5573
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_hoover_dam",
+      "sourceName": "HOOVRDAM",
+      "sourceSha256": "dd173a0f9d7fee05ee49e653b73ebabab7f3b3a5a7d31649592669d1e483b96e",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "8de6b12d2ff14d158ff96b16b65d2c49c6a482df65a5341799fe9188db19a38d",
+          "objSha256": "6d04de67110f34a74ecab7204b403f39ae399062fcebdcd85ceaa37a8f3d34ad",
+          "groups": 167,
+          "vertices": 2253,
+          "triangles": 3376
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_oil_fields",
+      "sourceName": "OILFIELD",
+      "sourceSha256": "9ee7eafc2bf77ea9f1742eab66eac6040a73a54a874c4bab6caa69e63fd96b33",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "29d71ea57dd13f5165a77de2278bdb4b8689f8758a9f61f8eee581a488137b5a",
+          "objSha256": "547cd465c2243d2593bb43fcf00a92c9002d4ed5df840a3d2c42511ef1870c51",
+          "groups": 165,
+          "vertices": 2354,
+          "triangles": 3472
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_sand_factory",
+      "sourceName": "SANDFACT",
+      "sourceSha256": "5c4b86473618456fad4c7aa06d08f0bd13ed60a4af4e3d06a7efa87bf1d6036c",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "6ab80b88ed78fd2dd146eeeeb497ed76b0debb0f48eb0db5f2f74d82321ccc94",
+          "objSha256": "e2ea027276a7ee87b8e43208330f6ead3340d057849a44f361433e637ef80b3a",
+          "groups": 139,
+          "vertices": 2325,
+          "triangles": 3334
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_secret_base",
+      "sourceName": "SCRTBASE",
+      "sourceSha256": "ebc6f53951c70a675993f5564dc9d05048d674c7638cd007824ffe9db10cd6ed",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "27e0e7f68525e83491f845e26e262fdeee9583eb38b12e963ee3d6ffc77deca5",
+          "objSha256": "e3ca4374bc164b6410b1a385510514136f10b583a19e0c667197889bc0626973",
+          "groups": 147,
+          "vertices": 2589,
+          "triangles": 3817
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_ski_resort",
+      "sourceName": "SKIRESRT",
+      "sourceSha256": "43b6771f7af026bcc27bd614236f3b889de5daf561d254a73cc848dec77d7f14",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "70101abb25e66ef8dbc84bbf043e16de9b249390f2324a2052f314944d54013c",
+          "objSha256": "3f778ffbe6236a37590d7b72d22635c79ff61d9af38aaa30a48b9babe4295d2d",
+          "groups": 148,
+          "vertices": 1417,
+          "triangles": 1898
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_valley_farms",
+      "sourceName": "VALLYFRM",
+      "sourceSha256": "ad1dd79f3cfa1b7ddda2ce771d27238531322b0be62ecc80cdf5ca20aa12815c",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "6f717c9c05f7862e031bd224523e7c0f8df9d7479180a41fe2eab821399ac65e",
+          "objSha256": "ddc0f8dcce635e3ab6449996687390fc00dc5a12d628ce9e38d412c00c08a67e",
+          "groups": 99,
+          "vertices": 1576,
+          "triangles": 2478
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    },
+    {
+      "stageId": "v8_ghost_town",
+      "sourceName": "WILDWEST",
+      "sourceSha256": "18c9920ee5b61c73753ab212515804e6f742761e4f4273d1e9348da7d3341fd1",
+      "objectBanks": [
+        {
+          "sourceIndex": 0,
+          "obj": "source_bank_00.obj",
+          "binSha256": "298dc49d5116a47ac1015afd68e000863d9de73e983b42f62edbc82ccc72dd97",
+          "objSha256": "8c5f7ca54837b53b757e4e8e97435c7d191334c4070346b81a8c192d1e8c940c",
+          "groups": 223,
+          "vertices": 3333,
+          "triangles": 4549
+        },
+        {
+          "sourceIndex": 1,
+          "obj": "source_bank_01.obj",
+          "binSha256": "e417d6e65938f58385332b03c4fb6e032d08d2ec105851e8c22960f9a0b1ed8b",
+          "objSha256": "8e9396e0bd4ec0322391db7a1dd2e3d9fe1a00f53fb237a2432a349a4f3b9d27",
+          "groups": 15,
+          "vertices": 214,
+          "triangles": 326
+        }
+      ]
+    }
+  ]
+}

@@ -11,18 +11,20 @@
 | Catálogo unificado | **23 personagens, 31 veículos, 19 arenas**; IDs únicos e aliases |
 | Código de combate | Direção arcade, tiros, dano, câmera, inimigos IA, controles e seleção dinâmica |
 | Pipeline Windows | Gerador de cena, validação de prefabs e empacotamento IL2CPP/ZIP/SHA-256 |
-| Modelos, texturas e arenas reais | **Acervo Unity original importado** para `LegacySources/Vigilante2Unity/Assets`: veículos, prefabs, texturas, áudios e cenas do 2nd Offense. **Migração para prefabs ativos Unity 6.6 ainda pendente** |
+| Modelos, texturas e arenas reais | Acervo Unity original do 2nd Offense, **13 malhas de corpos** e **20 bancos de objetos das dez arenas** do primeiro jogo extraídos dos BINs fornecidos. Migração para prefabs ativos Unity 6.6 ainda pendente |
 | Áudio, armas especiais e campanhas | Pendentes de implementação e homologação |
 | Build executável | **Ainda não compilado/homologado no Unity** |
 
 **Acervo original do Vigilante2Unity completo no repositório, 0 prefabs jogáveis Unity 6.6 homologados.** Além dos dois FBX de referência, agora há a árvore original completa do projeto Unity 2020 (scripts, texturas, armas, áudio, cenas e prefabs). Os arquivos foram preservados fora da pasta ativa `Assets/` para não introduzir erros de compilação no projeto Unity 6.6. Os recursos referenciados por caminhos legados devem ser associados na migração. **Catálogo ≠ asset integrado.** Os nomes e relações de veículos estão cadastrados; isso ainda não coloca suas malhas e texturas dentro do jogo. O script `python3 scripts/audit_content.py` informa exatamente quantos prefabs estão materialmente presentes. Não será publicada uma release com modelos fictícios ou arquivos inexistentes.
+
+**BINs adicionados em novembro de 2026:** as faixas de dados dos dois jogos foram verificadas e extraídas localmente. O primeiro jogo agora fornece malhas reais dos 13 corpos de veículos e 20 bancos de objetos de arenas. O 2nd Offense já possuía 18 modelos e fontes de oito arenas; o BIN europeu agora também fornece seus bancos XOBF em `Assets/GameContent/ExtractedV82Disc/` e `ExtractedV82DiscStages/`. As imagens de disco ficam privadas. Algumas ferramentas legadas exigem a edição americana `SLUS_008.68`, enquanto o BIN fornecido é `SLES_021.62`. Veja [o relatório da importação](docs/USER_DISC_IMPORT.md). Ainda não há prefabs finais nem EXE homologado.
 
 ## Conteúdo dos dois jogos
 
 - Cada personagem aparece **uma única vez** no seletor; veículos de jogos diferentes continuam disponíveis quando forem realmente diferentes.
 - O pipeline foi estruturado para empacotar os **31 veículos e 19 arenas** no executável Windows.
 - A referência de conteúdo abrange os dois jogos, sem depender deles no computador do jogador.
-- Você informou possuir os direitos/autorização para usar os arquivos. A próxima etapa de integração exige que os **arquivos de mídia reais estejam acessíveis no ambiente de desenvolvimento** (eles não aparecem automaticamente pela autorização).
+- Você informou possuir os direitos/autorização para usar os arquivos. As imagens dos dois jogos agora estão acessíveis localmente e já forneceram malhas do primeiro jogo; ainda precisam ser convertidas em conteúdo jogável.
 
 ## Ferramentas e verificação
 
@@ -105,9 +107,9 @@ a cena `OriginalVehicleReview.unity`. A galeria serve exclusivamente à
 inspeção visual e à migração. Consulte [o procedimento](docs/UNITY_ASSET_REVIEW.md).
 
 **Não confundir com uma release jogável:** a estrutura de peças, transformações,
-efeitos especiais, sistemas originais das armas, colisões, 13 modelos do primeiro
-jogo e arenas definitivas continuam pendentes. Os projetos públicos de origem
-não disponibilizam todos os dados 3D comerciais do primeiro jogo. Os testes Python
+efeitos especiais, sistemas originais das armas, colisões, prefabs dos 13 carros do primeiro
+jogo e arenas definitivas continuam pendentes. As malhas básicas dos 13 corpos já foram
+extraídas dos BINs locais, mas ainda não incluem toda a configuração visual e mecânica. Os testes Python
 verificam cópias e integridade do conteúdo; **ainda não houve compilação nem
 teste PlayMode/EditMode homologado com o Editor Unity 6.6**.
 
@@ -151,8 +153,8 @@ estrutura Unity e referências em
 LevelManager/VigMesh, objetos interativos, colisores e spawns ao Unity 6;
 inventariar as cenas não as torna jogáveis.
 
-**Não está tudo pronto para uma release:** os 13 modelos exclusivos do
-primeiro jogo não estão integrados como recursos Unity 6 e os 19
+**Não está tudo pronto para uma release:** as malhas dos 13 carros exclusivos do
+primeiro jogo ainda não formam prefabs dirigíveis Unity 6, e os 19
 cenários continuam sem prefabs jogáveis certificados. O CI automático
 confere o código e as fontes; a compilação/renderização real exige
 executar os testes no Editor Unity.
