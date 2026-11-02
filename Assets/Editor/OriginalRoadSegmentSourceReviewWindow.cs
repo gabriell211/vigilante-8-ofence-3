@@ -62,6 +62,11 @@ namespace Vigilante8.Editor
             // Original FUN_630C split of the unadjusted FUN_719C controls.
             // This deliberately excludes junction transitions and final meshes.
             public OriginalRoadAdaptiveSourceSubdivision.Leaf[] OriginalUnadjustedAdaptiveLeaves;
+            public Vector3Int OriginalFirstJunctionXYZ, OriginalLastJunctionXYZ;
+            public int[] OriginalPolynomialX, OriginalPolynomialZ;
+            public Vector3[] OriginalAdaptiveLeftEdgeFixedXYZ;
+            public Vector3[] OriginalAdaptiveRightEdgeFixedXYZ;
+            public int[] OriginalAdaptiveTimesFixed12;
             public int? SourceXrtpProfileIndex;
             public int SourceRoadFlags;
             // Present only for RSEG flags which directly specify height.
@@ -374,6 +379,18 @@ namespace Vigilante8.Editor
                     OriginalFixedXZExact = exactPoints.ToArray(),
                     OriginalFixedXZExactDense = denseComplete ? denseXZ.ToArray() : null,
                     OriginalUnadjustedAdaptiveLeaves = originalLeaves,
+                    OriginalFirstJunctionXYZ = start,
+                    OriginalLastJunctionXYZ = finish,
+                    OriginalPolynomialX = new[]
+                    {
+                        segment.Coeffs["DAT_20"], segment.Coeffs["DAT_28"],
+                        segment.Coeffs["DAT_30"]
+                    },
+                    OriginalPolynomialZ = new[]
+                    {
+                        segment.Coeffs["DAT_24"], segment.Coeffs["DAT_2C"],
+                        segment.Coeffs["DAT_34"]
+                    },
                     OriginalFixedTangentXZDense = denseComplete && allTangentsSafe &&
                         denseTangent.Count == DenseCurveSampleCount ? denseTangent.ToArray() : null,
                     SourceXrtpProfileIndex = segment.ProfileIndex,

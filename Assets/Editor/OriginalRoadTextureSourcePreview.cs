@@ -186,6 +186,30 @@ namespace Vigilante8.Editor
             if (left == null || right == null || left.Length != count ||
                 right.Length != count || divisor <= 0)
                 throw new InvalidDataException("Original RSEG source edges are incomplete");
+            return BuildSourceStrip(left, right, divisor, null);
+        }
+
+        public static Mesh BuildAdaptiveDiagnosticStrip(
+            Vector3[] left, Vector3[] right, int[] originalTimesFixed12, int divisor)
+        {
+            int count = originalTimesFixed12 == null ? 0 : originalTimesFixed12.Length;
+            if (left == null || right == null || count < 33 ||
+                count > OriginalRoadAdaptiveEdgeSampler.MaximumPreviewSamples ||
+                (count - 1) % OriginalRoadAdaptiveEdgeSampler.SectionsPerLeaf != 0 ||
+                left.Length != count || right.Length != count || divisor <= 0 ||
+                originalTimesFixed12[0] != 0 || originalTimesFixed12[count - 1] != 4096)
+                throw new InvalidDataException("Adaptive source preview sample count invalid");
+            for (int i = 1; i < count; i++)
+                if (originalTimesFixed12[i] <= originalTimesFixed12[i - 1] ||
+                    originalTimesFixed12[i] > 4096)
+                    throw new InvalidDataException("Original adaptive source t must increase");
+            return BuildSourceStrip(left, right, divisor, originalTimesFixed12);
+        }
+
+        private static Mesh BuildSourceStrip(
+            Vector3[] left, Vector3[] right, int divisor, int[] originalTimesFixed12)
+        {
+            int count = left.Length;
             var vertices = new Vector3[count * 2];
             var uvs = new Vector2[vertices.Length];
             var triangles = new int[(count - 1) * 6];
@@ -198,7 +222,11 @@ namespace Vigilante8.Editor
                 if (!Finite(vertices[2 * i]) || !Finite(vertices[2 * i + 1]) ||
                     (vertices[2 * i] - vertices[2 * i + 1]).sqrMagnitude < 1e-9f)
                     throw new InvalidDataException("Source road width or coordinates invalid");
-                float v = (float)i / (count - 1);
+                // Both modes use explicitly provisional UVs. The adaptive
+                // surface uses original source t rather than row index so
+                // distinct leaf sizes do not distort texture interpolation.
+                float v = originalTimesFixed12 == null ? (float)i / (count - 1) :
+                    originalTimesFixed12[i] / 4096f;
                 uvs[2 * i] = new Vector2(0f, v);
                 uvs[2 * i + 1] = new Vector2(1f, v);
             }
@@ -217,7 +245,12 @@ namespace Vigilante8.Editor
                 triangles[j + 4] = d;
                 triangles[j + 5] = c;
             }
-            var mesh = new Mesh { name = "RSEG/XRTP SOURCE REVIEW - PROVISIONAL UV / NO COLLISION" };
+            var mesh = new Mesh
+            {
+                name = originalTimesFixed12 == null
+                    ? "RSEG/XRTP SOURCE REVIEW - PROVISIONAL UV / NO COLLISION"
+                    : "RSEG/XRTP ADAPTIVE SOURCE REVIEW - PRE-JUNCTION / PROVISIONAL UV / NO COLLISION"
+            };
             mesh.vertices = vertices;
             mesh.uv = uvs;
             mesh.triangles = triangles;
@@ -231,13 +264,16 @@ namespace Vigilante8.Editor
             !float.IsInfinity(point.x) && !float.IsInfinity(point.y) && !float.IsInfinity(point.z);
 
         public static void AppendDiagnosticStrip(Transform root, string stage, string roadId,
-            Vector3[] left, Vector3[] right, int divisor, Material material)
+            Vector3[] left, Vector3[] right, int divisor, Material material,
+            int[] originalTimesFixed12 = null)
         {
             if (root == null || material == null ||
                 !Regex.IsMatch(stage ?? "", @"^v82_[a-z0-9_]+$") ||
                 !Regex.IsMatch(roadId ?? "", @"^-?\d{1,20}$"))
                 throw new InvalidDataException("Original road preview identity invalid");
-            Mesh source = BuildDiagnosticStrip(left, right, divisor);
+            Mesh source = originalTimesFixed12 == null
+                ? BuildDiagnosticStrip(left, right, divisor)
+                : BuildAdaptiveDiagnosticStrip(left, right, originalTimesFixed12, divisor);
             Folder(MeshFolder);
             string meshPath = MeshFolder + "/" + stage + "-" + roadId + ".asset";
             Mesh asset = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
