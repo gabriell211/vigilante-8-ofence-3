@@ -21,6 +21,9 @@ namespace Vigilante8.Gameplay
         private DropdownField catalogCategory;
         private DropdownField catalogOrigin;
         private Label garageSummary;
+        private Offence3VehicleShowroom showroom;
+        private Image showroomImage;
+        private Label showroomStatus;
         private Label readinessLabel, resultsTitle, resultsDetails;
         private Button startCombat;
         private bool finished;
@@ -58,6 +61,8 @@ namespace Vigilante8.Gameplay
             if (root == null) throw new InvalidOperationException("Missing UI Toolkit panel");
             root.style.flexGrow = 1;
             root.style.backgroundColor = Ink;
+            showroom = GetComponent<Offence3VehicleShowroom>();
+            if (showroom == null) showroom = gameObject.AddComponent<Offence3VehicleShowroom>();
             restoringSelections = true;
             try
             {
@@ -153,6 +158,30 @@ namespace Vigilante8.Gameplay
             garageSummary.style.marginTop = 7;
             garageSummary.style.marginBottom = 8;
             menu.Add(garageSummary);
+
+            var showroomCard = Offence3MenuTheme.ContentPanel();
+            showroomCard.name = "original-vehicle-3d-showroom";
+            menu.Add(showroomCard);
+            var showroomTitle = new Label("VEÍCULO OFICIAL  /  VISUALIZAÇÃO 3D");
+            showroomTitle.style.color = Offence3MenuTheme.Gold;
+            showroomTitle.style.fontSize = 14;
+            showroomTitle.style.unityFontStyleAndWeight = FontStyle.Bold;
+            showroomCard.Add(showroomTitle);
+            showroomImage = new Image
+            {
+                image = showroom.Texture,
+                scaleMode = ScaleMode.ScaleToFit
+            };
+            showroomImage.style.width = Length.Percent(100);
+            showroomImage.style.height = 275;
+            showroomImage.style.marginTop = 12;
+            showroomImage.style.marginBottom = 12;
+            showroomCard.Add(showroomImage);
+            showroomStatus = new Label("Modelo original ainda não homologado para exibição em tempo real.");
+            showroomStatus.style.color = Muted;
+            showroomStatus.style.fontSize = 13;
+            showroomStatus.style.whiteSpace = WhiteSpace.Normal;
+            showroomCard.Add(showroomStatus);
 
             readinessLabel = new Label();
             readinessLabel.style.color = new Color(1f, 0.72f, 0.42f);
@@ -740,6 +769,7 @@ namespace Vigilante8.Gameplay
                 if (pages[i] != null) pages[i].style.display =
                     target == ids[i] ? DisplayStyle.Flex : DisplayStyle.None;
             root.style.backgroundColor = target == ScreenPage.Playing ? Color.clear : Ink;
+            if (showroom != null) showroom.SetVisible(target == ScreenPage.Garage);
 
             // Keep focus on an actionable element when navigating by keyboard/gamepad.
             VisualElement focusTarget = target switch
@@ -861,6 +891,16 @@ namespace Vigilante8.Gameplay
                     arenaIds[arenaSelector.index] : null;
                 VehicleEntry chosen = catalog.vehicles.FirstOrDefault(v => v.id == vehicleId);
                 ArenaEntry selectedArena = catalog.arenas.FirstOrDefault(a => a.id == arenaId);
+                if (showroom != null && showroomImage != null && showroomStatus != null)
+                {
+                    bool hasRealModel = showroom.ShowOfficialVehicle(chosen);
+                    showroomImage.style.display = hasRealModel ? DisplayStyle.Flex : DisplayStyle.None;
+                    showroomStatus.text = hasRealModel
+                        ? "PRÉVIA 3D DO MODELO OFICIAL • rotação automática"
+                        : "Prévia indisponível: o modelo oficial precisa estar integrado e validado. Nenhum veículo substituto será exibido.";
+                    showroomStatus.style.color = hasRealModel ?
+                        Offence3MenuTheme.Ready : Offence3MenuTheme.Gold;
+                }
                 if (chosen != null && selectedArena != null)
                 {
                     CharacterEntry pilot = catalog.characters.FirstOrDefault(c => c.id == chosen.characterId);
