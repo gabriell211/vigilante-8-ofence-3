@@ -64,6 +64,18 @@ No repositório original, o arquivo se chama `Bearhug.cs`, mas a classe preserva
 
 Os cálculos espaciais do PlayStation usam inteiros e `VigTerrain`; a busca de 35 m, as velocidades, o impulso e a distribuição física dos fragmentos desta implementação são **adaptações provisórias do teste**, não valores originais homologados. `Brearhug` não recebeu dano de vida inventado, `Hovermine` não recebeu modelos visuais genéricos apresentados como oficiais e os fragmentos `Mine` do `CactusPatch` também são colliders invisíveis. O registro global de até 16 minas de teste continua válido. Nenhuma destas variantes entra no build Windows final: o gate recusa `OriginalSpecialMineSourceBehavior` nos prefabs oficiais.
 
+## Munição e dano da RocketL diretamente da fonte
+
+O script arquivado `LegacySources/Vigilante2Unity/Assets/Scripts/RocketL.cs` prova os valores necessários para eliminar os disparos ilimitados dos protótipos:
+
+- `UpdateW(1)` inicializa `maxHalfHealth = 10`: **10 cargas por veículo**.
+- O tiro padrão `UpdateW(12)` reduz **uma carga**. A opção `UpdateW(10, 0x422)`, usada para criar um foguete com `flags |= 0x41000000`, exige pelo menos 2 e reduz **duas cargas**. Este modo está associado ao teste de aderência RoadRunner.
+- `FUN_4336C` cria o foguete com **80 pontos de dano-base** (160 com dano duplo, ainda não integrado) e **240 ciclos de vida** durante o voo normal.
+
+`OriginalRocketSourceInventory` é agora o único inventário para as duas modalidades de foguetes de desenvolvimento nos **18 carros TMD originais**; a UI mostra as cargas restantes e impede gastar valores negativos ou disparar sem recursos. O comportamento Bastion de teste usa a carga unitária do disparo padrão como convenção provisória enquanto o mapeamento completo da opção de salvas (`0x424`) não estiver homologado. O RoadRunner preserva os 240 ciclos para a fase aérea e, **somente quando adere**, inicia um segundo contador original de 360 ciclos até a explosão retardada de -40.
+
+Os valores 10/1/2/80/240/360 são da fonte, não dados inventados. A frequência real dos ciclos, balística, efeitos, escudos e geometria oficial continuam pendentes, e as fontes são expressamente limitadas ao Unity Editor de teste. Nenhuma geração de EXE final é desbloqueada.
+
 ## Foguete RoadRunner com aderência e explosão retardada (código original)
 
 `LegacySources/Vigilante2Unity/Assets/Scripts/Rocket.cs` possui o estado `RoadRunner`, ativado quando o foguete da variante especial atinge um veículo (`flags & 0x1000000`). O foguete é preso ao transform do alvo, `physics2.M2` recebe **360 ciclos** e, ao terminar, chama `Vehicle.FUN_3A020(-40, ... , true)`. A rotina `FUN_3A020` usa o sistema real de escudos e subdivisões dos carros antigos, ainda não convertido totalmente para `VehicleDrive`.

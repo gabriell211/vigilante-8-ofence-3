@@ -5,7 +5,8 @@ namespace Vigilante8.Gameplay
 {
     /// <summary>
     /// Separate source Rocket.RoadRunner mode for original V82 TMD cars.
-    /// No invented ammo count, sticky rocket mesh or PS1 sound.
+    /// Uses exactly the archived RocketL initial charges and 0x422 cost,
+    /// without inventing sticky rocket meshes, pickups or PS1 sounds.
     /// </summary>
     [RequireComponent(typeof(VehicleDrive))]
     [DisallowMultipleComponent]
@@ -27,7 +28,12 @@ namespace Vigilante8.Gameplay
                 !vehicle.HasWeapon)
                 return false;
 
-            if (!vehicle.LaunchSourceRoadRunner()) return false;
+            var inventory = GetComponent<OriginalRocketSourceInventory>();
+            if (inventory == null || !inventory.CanSpend(
+                OriginalRocketSourceInventory.RoadRunnerCost) ||
+                !vehicle.LaunchSourceRoadRunner() ||
+                !inventory.TrySpend(OriginalRocketSourceInventory.RoadRunnerCost))
+                return false;
             launches++;
             return true;
         }

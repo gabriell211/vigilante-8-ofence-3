@@ -5,8 +5,8 @@ namespace Vigilante8.Gameplay
 {
     /// <summary>
     /// Launches the archived Rocket/Bastion homing state during source-car
-    /// inspection only. The actual rocket mesh, exact PS1 damage and ammunition
-    /// table are not available in the certified Unity runtime.
+    /// inspection only. The source RocketL charge count is preserved, while
+    /// original meshes, physics conversion and per-mode dispatch need review.
     /// </summary>
     [RequireComponent(typeof(VehicleDrive))]
     [DisallowMultipleComponent]
@@ -33,8 +33,8 @@ namespace Vigilante8.Gameplay
         }
 
         /// <summary>
-        /// Invoked on a distinct input press. There is no invented ammo count:
-        /// this is a single-purpose Editor test of a real Rocket.cs state.
+        /// Invoked on a distinct input press. Shares RocketL's actual ten-charge
+        /// inventory with the separate 0x422 RoadRunner mode.
         /// </summary>
         public bool TryLaunch()
         {
@@ -45,7 +45,11 @@ namespace Vigilante8.Gameplay
                 !vehicle.HasWeapon)
                 return false;
 
-            if (!vehicle.LaunchBastionSourceRocket(lockedTarget))
+            var inventory = GetComponent<OriginalRocketSourceInventory>();
+            if (inventory == null || !inventory.CanSpend(
+                OriginalRocketSourceInventory.StandardRocketCost) ||
+                !vehicle.LaunchBastionSourceRocket(lockedTarget) ||
+                !inventory.TrySpend(OriginalRocketSourceInventory.StandardRocketCost))
                 return false;
             shotsLaunched++;
             return true;

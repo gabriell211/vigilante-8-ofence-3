@@ -62,9 +62,11 @@ namespace Vigilante8.Gameplay
                 return false;
 
             Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+            shot.impactDamage = OriginalRocketSourceInventory.RocketDamage;
+            shot.lifetimeSeconds =
+                OriginalRocketSourceInventory.OriginalRocketLifeTicks * Time.fixedDeltaTime;
             var flight = shot.gameObject.AddComponent<OriginalBastionRocketFlight>();
-            int ticks = Mathf.Max(1, Mathf.CeilToInt(
-                shot.lifetimeSeconds / Mathf.Max(0.001f, Time.fixedDeltaTime)));
+            int ticks = OriginalRocketSourceInventory.OriginalRocketLifeTicks;
             flight.Configure(target, ticks);
             shot.Launch(this, muzzle.forward);
             flight.EnterBastion();
@@ -109,9 +111,13 @@ namespace Vigilante8.Gameplay
                 return false;
 
             Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
-            shot.impactDamage = OriginalRoadRunnerSourceCharge.OriginalDamageMagnitude;
+            // RocketL creates an 80-damage, 240-tick rocket; RoadRunner's
+            // separate 360-tick -40 effect only applies after attachment.
+            shot.impactDamage = OriginalRocketSourceInventory.RocketDamage;
             shot.lifetimeSeconds =
-                OriginalRoadRunnerSourceCharge.AttachedSourceTicks * Time.fixedDeltaTime + 2f;
+                (OriginalRocketSourceInventory.OriginalRocketLifeTicks +
+                    OriginalRoadRunnerSourceCharge.AttachedSourceTicks) *
+                Time.fixedDeltaTime + 2f;
             shot.gameObject.AddComponent<OriginalRoadRunnerSourceCharge>().Configure(this);
             shot.Launch(this, muzzle.forward);
             return true;
