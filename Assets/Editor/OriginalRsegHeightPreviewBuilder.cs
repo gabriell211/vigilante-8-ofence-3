@@ -92,6 +92,28 @@ namespace Vigilante8.Editor
             // JUNC .meta script IDs and original RSEG source are also validated.
             var plan = OriginalRoadSegmentSourceReviewWindow.LoadVerified(stageId);
             int divisor = OriginalJunctionSourceReviewBuilder.VerifiedDebugScale();
+            OriginalVigTerrainSourceGrid originalGrid = plan.Roads.Any(x => x.NeedsVigTerrainHeight)
+                ? OriginalVigTerrainSourceGrid.LoadVerified(stageId) : null;
+            foreach (var road in plan.Roads)
+            {
+                if (road.OriginalFixedXYZ != null || !road.NeedsVigTerrainHeight ||
+                    road.OriginalFixedXZExact == null || road.OriginalFixedXZExact.Length != 5)
+                    continue;
+                var samples = new Vector3[road.OriginalFixedXZExact.Length];
+                bool resolved = true;
+                for (int i = 0; i < samples.Length; i++)
+                {
+                    Vector2Int original = road.OriginalFixedXZExact[i];
+                    if (originalGrid == null ||
+                        !originalGrid.TrySampleHeight(original.x, original.y, out int y))
+                    {
+                        resolved = false;
+                        break;
+                    }
+                    samples[i] = new Vector3(original.x, y, original.y);
+                }
+                if (resolved) road.OriginalFixedXYZ = samples;
+            }
             var onlyKnownHeight = plan.Roads.Where(x => x.OriginalFixedXYZ != null).ToArray();
             Material material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
             if (material == null)

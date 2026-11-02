@@ -337,3 +337,25 @@ atual é um relatório independente, verificável e testado, que fornece
 a referência de altura para portar a mesma rotina em C#.
 Não comprova terreno deformado em execução, largura/malhas de estrada,
 colisão ou posições de spawn do jogo final.
+
+
+## Integração Unity Editor: altura original VigTerrain para RSEG
+
+\`OriginalVigTerrainSourceGrid\` lê os arrays \`chunks\` e \`vertices\` da
+componente \`VigTerrain\` de cenas originais com hash Git verificado,
+GUID original e \`zoneCount\` consistente. O cálculo C# reimplementa
+\`FUN_1B750\` sem Raycast nem geometria inventada. A prévia das curvas
+RSEG do teste de combate agora também aceita alturas amostradas do
+terreno original quando as flags da via exigirem \`VigTerrain\`.
+
+As amostras de X/Z agora ficam também em \`Vector2Int\` para preservar
+os inteiros fixos exatos antes de amostrar a altura (os \`Vector2\`
+de visualização poderiam arredondar coordenadas acima de 2^24).
+O teste de regressão exige que o ponto real de Steel Mill com origem
+\`(59919356,90376320)\` retorne **Y=3006532**, idêntico ao valor
+arquivado em JUNC. As duas metades da interpolação têm testes
+independentes, além da verificação de dados incompletos.
+
+Os traçados continuam \`LineRenderer\` de inspeção, não malhas de
+estrada, colisão original, spawns oficiais nem arena pronta para
+release. Homologação visual e EditMode dependem do Editor Unity.

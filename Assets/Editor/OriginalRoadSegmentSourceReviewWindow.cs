@@ -47,6 +47,7 @@ namespace Vigilante8.Editor
         {
             public string RsegFileId, FirstJuncFileId, SecondJuncFileId;
             public Vector2[] OriginalFixedXZ;
+            public Vector2Int[] OriginalFixedXZExact;
             // Present only for RSEG flags which directly specify height.
             // Null when VigTerrain sampling is required or fixed-point math is unsafe.
             public Vector3[] OriginalFixedXYZ;
@@ -250,6 +251,7 @@ namespace Vigilante8.Editor
                     continue;
 
                 var points = new List<Vector2>();
+                var exactPoints = new List<Vector2Int>();
                 var knownHeights = new List<Vector3>();
                 bool allHeightsKnown = true;
                 foreach (int t in SampleTimes)
@@ -263,6 +265,7 @@ namespace Vigilante8.Editor
                         break;
                     }
                     points.Add(new Vector2(x, z));
+                    exactPoints.Add(new Vector2Int(x, z));
                     if (TrySampleKnownHeight(start, finish, segment.Flags.Value, t, out int y))
                         knownHeights.Add(new Vector3(x, y, z));
                     else
@@ -275,6 +278,7 @@ namespace Vigilante8.Editor
                     FirstJuncFileId = segment.Endpoints[0],
                     SecondJuncFileId = segment.Endpoints[1],
                     OriginalFixedXZ = points.ToArray(),
+                    OriginalFixedXZExact = exactPoints.ToArray(),
                     OriginalFixedXYZ = allHeightsKnown && knownHeights.Count == SampleTimes.Length
                         ? knownHeights.ToArray() : null,
                     NeedsVigTerrainHeight = (segment.Flags.Value & 9) == 0
