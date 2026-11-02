@@ -51,6 +51,14 @@ jobs:
         run: python3 scripts/verify_legacy_stages.py
       - name: Extract original Unity scene local transforms with parent file IDs
         run: python3 scripts/audit_legacy_v82_scene_layouts.py --json > v82-original-local-transform-evidence.json
+      - name: Resolve original parent-rotation-scale hierarchy to world translation evidence
+        run: python3 scripts/resolve_v82_scene_hierarchy.py --json > v82-original-world-transform-evidence.json
+      - name: Store original world translations (NOT verified prop placement or spawns)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-world-transform-evidence
+          path: v82-original-world-transform-evidence.json
+          if-no-files-found: error
       - name: Store authentic local-transform evidence (NOT a playable stage)
         uses: actions/upload-artifact@v4
         with:
