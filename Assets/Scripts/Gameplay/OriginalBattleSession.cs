@@ -198,7 +198,7 @@ namespace Vigilante8.Gameplay
         {
             if (!ready || !Application.isPlaying) return;
             float width = Mathf.Clamp(Screen.width - 36f, 260f, 440f);
-            float height = 235f + TotalOpponents * 24f;
+            float height = 258f + TotalOpponents * 24f;
             GUI.Box(new Rect(16f, 16f, width, height), GUIContent.none);
             var title = new GUIStyle(GUI.skin.label)
             {
@@ -243,6 +243,9 @@ namespace Vigilante8.Gameplay
             y += 23f;
             GUI.Label(new Rect(28f, y, width - 24f, 22f),
                 "E / LB: ROCKET BASTION (TESTE, SEM MALHA/ARMA OFICIAL)", regular);
+            y += 23f;
+            GUI.Label(new Rect(28f, y, width - 24f, 22f),
+                "Q / D-PAD CIMA: MISSILE (TESTE, FISICA PROVISORIA)", regular);
             if (paused)
                 GUI.Label(new Rect(28f, y + 22f, width - 24f, 22f), "PAUSADO (TESTE)", title);
         }
