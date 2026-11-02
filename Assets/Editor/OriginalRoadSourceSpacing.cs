@@ -120,7 +120,7 @@ namespace Vigilante8.Editor
             int tCount = 0, count = 0;
             do
             {
-                if (count >= MaxSourcePoints || !Step(tCount, out int delta) ||
+                if (count >= MaxSourcePoints - 1 || !Step(tCount, out int delta) ||
                     !Int32((long)tCount + delta))
                     return false;
                 tCount += delta;

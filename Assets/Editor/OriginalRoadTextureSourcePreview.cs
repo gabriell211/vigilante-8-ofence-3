@@ -193,9 +193,8 @@ namespace Vigilante8.Editor
             Vector3[] left, Vector3[] right, int[] originalTimesFixed12, int divisor)
         {
             int count = originalTimesFixed12 == null ? 0 : originalTimesFixed12.Length;
-            if (left == null || right == null || count < 33 ||
+            if (left == null || right == null || count < 2 ||
                 count > OriginalRoadAdaptiveEdgeSampler.MaximumPreviewSamples ||
-                (count - 1) % OriginalRoadAdaptiveEdgeSampler.SectionsPerLeaf != 0 ||
                 left.Length != count || right.Length != count || divisor <= 0 ||
                 originalTimesFixed12[0] != 0 || originalTimesFixed12[count - 1] != 4096)
                 throw new InvalidDataException("Adaptive source preview sample count invalid");
@@ -265,15 +264,19 @@ namespace Vigilante8.Editor
 
         public static void AppendDiagnosticStrip(Transform root, string stage, string roadId,
             Vector3[] left, Vector3[] right, int divisor, Material material,
-            int[] originalTimesFixed12 = null)
+            int[] originalTimesFixed12 = null, bool sourceDat28Stepping = false)
         {
             if (root == null || material == null ||
                 !Regex.IsMatch(stage ?? "", @"^v82_[a-z0-9_]+$") ||
                 !Regex.IsMatch(roadId ?? "", @"^-?\d{1,20}$"))
                 throw new InvalidDataException("Original road preview identity invalid");
+            if (sourceDat28Stepping && originalTimesFixed12 == null)
+                throw new InvalidDataException("Original DAT_28 step claim requires source parameters");
             Mesh source = originalTimesFixed12 == null
                 ? BuildDiagnosticStrip(left, right, divisor)
                 : BuildAdaptiveDiagnosticStrip(left, right, originalTimesFixed12, divisor);
+            if (sourceDat28Stepping)
+                source.name = "RSEG/XRTP FUN_5850 DAT_28 SOURCE STEP REVIEW - PROVISIONAL UV / NO COLLISION";
             Folder(MeshFolder);
             string meshPath = MeshFolder + "/" + stage + "-" + roadId + ".asset";
             Mesh asset = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
@@ -288,7 +291,9 @@ namespace Vigilante8.Editor
                 EditorUtility.SetDirty(asset);
                 UnityEngine.Object.DestroyImmediate(source);
             }
-            var obj = new GameObject("SOURCE BMP ROAD STRIP - PROVISIONAL UV / NO COLLISION");
+            var obj = new GameObject(sourceDat28Stepping
+                ? "SOURCE BMP ROAD DAT_28 SPACING - PROVISIONAL UV / NO COLLISION"
+                : "SOURCE BMP ROAD STRIP - PROVISIONAL UV / NO COLLISION");
             obj.transform.SetParent(root, false);
             obj.AddComponent<MeshFilter>().sharedMesh = asset;
             var renderer = obj.AddComponent<MeshRenderer>();
