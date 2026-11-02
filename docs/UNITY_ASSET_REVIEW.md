@@ -554,3 +554,30 @@ Ainda **não** reproduz a correção de junção \`FUN_6604\`, a
 triangulação, espaçamento \`DAT_28\` e as UVs oficiais de
 \`FUN_5850\` / \`Junction.FUN_4F828\`. Nenhum Collider,
 Rigidbody, spawn ou pista de produção é gerado.
+
+
+## DAT_28: passo longitudinal da função original FUN_5850
+
+O Editor agora reproduz as **duas passagens** de
+\`LevelManager.FUN_5850\` para calcular os parâmetros locais de cada
+folha pré-junção \`FUN_630C\`: derivadas X/Z da Bézier original em
+aritmética inteira, raiz quadrada inteira, incremento por
+\`XRTP.DAT_28 / normaDaTangente\`, contagem de intervalos e ponto
+terminal forçado \`t=4096\`. Os valores são mapeados ao intervalo
+fixo16 daquela folha e reavaliados em \`RSEG_DB.FUN_285E4\`;
+**não** são interpolados a partir dos 33 pontos anteriores.
+
+O renderer URP pode exibir o BMP original com uma malha de número
+variável de vértices. Os nomes dos assets de inspeção distinguem
+\`DAT_28 SOURCE STEP\` de amostras alternativas de 32 intervalos
+por folha. Se o passo original não puder ser verificado — tangente
+nula, incremento zero, overflow, parâmetro repetido, intervalo de
+origem inválido ou limite de 4097 amostras — a prévia adaptativa
+de 32 intervalos por folha continua disponível como **aproximação
+explicitamente identificada**. Nunca é promovida a malha final.
+
+Essa rotina não resolve os ajustes de junções \`FUN_719C/FUN_6604\`,
+materiais de múltiplas faixas, UV oficiais, nem colisão em runtime.
+Os testes Python no CI verificam contratos de origem e os testes
+NUnit no Unity Editor verificam aritmética e geometria (estes últimos
+ainda dependem de execução na instalação Unity).

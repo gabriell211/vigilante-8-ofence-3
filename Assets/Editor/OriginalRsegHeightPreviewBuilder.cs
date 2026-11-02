@@ -102,7 +102,8 @@ namespace Vigilante8.Editor
                                     adaptive ? road.OriginalAdaptiveRightEdgeFixedXYZ :
                                         road.OriginalRightEdgeFixedXYZDense,
                                     divisor, sourceRoadMaterials[profileId.Value],
-                                    adaptive ? road.OriginalAdaptiveTimesFixed12 : null);
+                                    adaptive ? road.OriginalAdaptiveTimesFixed12 : null,
+                                    adaptive && road.OriginalAdaptiveUsesDat28Stepping);
                             }
                             catch (InvalidDataException)
                             {
@@ -234,6 +235,7 @@ namespace Vigilante8.Editor
             // SHA verification is shared with original JUNC builder. RSEG and
             // JUNC .meta script IDs and original RSEG source are also validated.
             var plan = OriginalRoadSegmentSourceReviewWindow.LoadVerified(stageId);
+            OriginalRoadSourceSpacing.VerifySourceMethod();
             int divisor = OriginalJunctionSourceReviewBuilder.VerifiedDebugScale();
             OriginalXrtpSourceProfileReview.SourceProfile[] originalProfiles =
                 OriginalXrtpSourceProfileReview.LoadVerified(stageId);
@@ -294,6 +296,7 @@ namespace Vigilante8.Editor
                     road.OriginalAdaptiveLeftEdgeFixedXYZ = adaptive.Left;
                     road.OriginalAdaptiveRightEdgeFixedXYZ = adaptive.Right;
                     road.OriginalAdaptiveTimesFixed12 = adaptive.TimesFixed12;
+                    road.OriginalAdaptiveUsesDat28Stepping = adaptive.SourceDat28Stepping;
                 }
             }
             var onlyKnownHeight = plan.Roads.Where(x => x.OriginalFixedXYZ != null &&

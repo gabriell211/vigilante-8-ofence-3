@@ -21,6 +21,7 @@ namespace Vigilante8.Editor
         {
             public Vector3[] Left, Right;
             public int[] TimesFixed12;
+            public bool SourceDat28Stepping;
         }
 
         private static bool Int32(long value) =>
@@ -81,9 +82,16 @@ namespace Vigilante8.Editor
             if (road == null || profile == null || profile.FullWidthFixed <= 0 ||
                 (road.SourceRoadFlags & 0x10) != 0 ||
                 road.OriginalPolynomialX == null || road.OriginalPolynomialZ == null ||
-                road.OriginalPolynomialX.Length != 3 || road.OriginalPolynomialZ.Length != 3 ||
-                !TryBuildSourceParameterSamples(road.OriginalUnadjustedAdaptiveLeaves,
-                    out int[] times))
+                road.OriginalPolynomialX.Length != 3 || road.OriginalPolynomialZ.Length != 3)
+                return false;
+            // Prefer the actual FUN_5850 DAT_28 step calculation per
+            // archived FUN_630C leaf. If an original step cannot be represented
+            // safely, retain clearly-labelled 32-per-leaf inspection only.
+            bool actualDat28 = OriginalRoadSourceSpacing.TryBuildOriginalParameters(
+                road.OriginalUnadjustedAdaptiveLeaves,
+                profile.LongitudinalStepFixed, out int[] times);
+            if (!actualDat28 && !TryBuildSourceParameterSamples(
+                    road.OriginalUnadjustedAdaptiveLeaves, out times))
                 return false;
             var left = new Vector3[times.Length];
             var right = new Vector3[times.Length];
@@ -127,7 +135,11 @@ namespace Vigilante8.Editor
                 left[i] = new Vector3((int)lx, ly, (int)lz);
                 right[i] = new Vector3((int)rx, ry, (int)rz);
             }
-            samples = new EdgeSamples { Left = left, Right = right, TimesFixed12 = times };
+            samples = new EdgeSamples
+            {
+                Left = left, Right = right, TimesFixed12 = times,
+                SourceDat28Stepping = actualDat28
+            };
             return true;
         }
     }

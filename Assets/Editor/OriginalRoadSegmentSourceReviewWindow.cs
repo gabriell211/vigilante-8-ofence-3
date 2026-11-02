@@ -67,6 +67,7 @@ namespace Vigilante8.Editor
             public Vector3[] OriginalAdaptiveLeftEdgeFixedXYZ;
             public Vector3[] OriginalAdaptiveRightEdgeFixedXYZ;
             public int[] OriginalAdaptiveTimesFixed12;
+            public bool OriginalAdaptiveUsesDat28Stepping;
             public int? SourceXrtpProfileIndex;
             public int SourceRoadFlags;
             // Present only for RSEG flags which directly specify height.
