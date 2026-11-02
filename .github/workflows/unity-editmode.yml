@@ -1,4 +1,4 @@
-name: Unity 6.6 actual Editor compilation and EditMode tests
+name: Unity 6.6 real Editor and PlayMode tests
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  unity-editmode:
+  unity-full-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -31,7 +31,7 @@ jobs:
             exit 1
           fi
 
-      - name: Compile Unity 6.6.7f1 project and run actual Editor NUnit tests
+      - name: Compile Unity 6.6.7f1 project and execute actual EditMode plus PlayMode tests
         id: unity-tests
         uses: game-ci/unity-test-runner@v4.4.0
         env:
@@ -42,15 +42,15 @@ jobs:
         with:
           projectPath: .
           unityVersion: 6000.6.7f1
-          testMode: editmode
+          testMode: all
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          artifactsPath: unity-editmode-artifacts
-          checkName: Real Unity 6.6 EditMode tests
+          artifactsPath: unity-editor-and-playmode-artifacts
+          checkName: Real Unity 6.6 EditMode and PlayMode tests
 
       - name: Store actual Unity test logs (never a fabricated release)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unity-66-editor-test-results
-          path: unity-editmode-artifacts
+          name: unity-66-full-test-results
+          path: unity-editor-and-playmode-artifacts
           if-no-files-found: ignore
