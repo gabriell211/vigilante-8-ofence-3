@@ -171,6 +171,14 @@ def apply_ptbr(source, translated):
     }
 
 
+def verify_binary_provenance(source, v8_quest: Path, v82_quest: Path):
+    """Verify real decoded QUEST bytes, not just a user-editable audit digest."""
+    for path, key in ((v8_quest, "original_sha256"),
+                      (v82_quest, "sequel_sha256")):
+        if not path.is_file() or path.stat().st_size < 16 or                 digest(path.read_bytes()) != source.get(key):
+            raise ValueError("QUEST.BIN original SHA-256 mismatch or file missing")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--audit", type=Path, required=True)
@@ -178,11 +186,18 @@ def main():
     mode.add_argument("--template", type=Path)
     mode.add_argument("--translations", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--v8-quest-bin", type=Path,
+                        help="original extracted V8 QUEST.BIN bytes")
+    parser.add_argument("--v82-quest-bin", type=Path,
+                        help="original extracted 2nd Offense QUEST.BIN bytes")
     args = parser.parse_args()
-    if args.translations and not args.output:
-        parser.error("--output is required with --translations")
+    if args.translations and (not args.output or not args.v8_quest_bin or
+                              not args.v82_quest_bin):
+        parser.error("--translations requires --output and BOTH original QUEST.BIN files")
     source = json.loads(args.audit.read_text("utf-8"))
     records(source)
+    if args.translations:
+        verify_binary_provenance(source, args.v8_quest_bin, args.v82_quest_bin)
     if args.template:
         path, data = args.template, worksheet(source)
     else:

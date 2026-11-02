@@ -56,3 +56,15 @@ O serviço `OfficialMenuSelections` define a ordenação e resolve o piloto
 original de cada carro por `PilotForCar`. Os testes Unity EditMode verificam
 os **31 carros**, as **23 identidades de piloto** e as **19 arenas**, inclusive
 a rejeição de vínculos de piloto adulterados.
+
+## Missões originais em PT-BR (fonte obrigatória)
+
+O menu **MISSÕES ORIGINAIS / QUEST** apresenta o acervo de campanhas dos dois jogos
+somente após validar a importação dos dados Quest autênticos e de suas traduções.
+A fonte recompilada documenta 48 missões do V8 e 120 do V8:2, mas os arquivos
+originais `QUEST.BIN` e seus briefings completos não estão no Git; portanto
+a interface mostra um estado explícito de importação pendente em vez de
+substituir as campanhas por missões inventadas. A tela é somente leitura,
+não permite iniciar uma missão sem suas regras, inimigos e objetivos originais.
+
+Consulte `docs/ORIGINAL_QUEST_PTBR.md` para instruções e limites.

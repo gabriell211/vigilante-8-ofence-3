@@ -103,6 +103,26 @@ class OriginalQuestTranslationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             q.records(modified)
 
+    def test_original_binary_bytes_required_for_verified_translation(self):
+        import tempfile
+        source = sample_source()
+        v8_source = b"EXTRACTED ORIGINAL QUEST PS1 SOURCE"
+        v82_source = b"EXTRACTED ORIGINAL SEQUEL QUEST PS1 SOURCE"
+        source["original_sha256"] = hashlib.sha256(v8_source).hexdigest()
+        source["sequel_sha256"] = hashlib.sha256(v82_source).hexdigest()
+        with tempfile.TemporaryDirectory() as folder:
+            first = Path(folder) / "v8-quest.bin"
+            second = Path(folder) / "v82-quest.bin"
+            first.write_bytes(v8_source)
+            second.write_bytes(v82_source)
+            q.verify_binary_provenance(source, first, second)
+            second.write_bytes(v82_source + b"MODIFIED")
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                q.verify_binary_provenance(source, first, second)
+            second.unlink()
+            with self.assertRaisesRegex(ValueError, "file missing"):
+                q.verify_binary_provenance(source, first, second)
+
     def test_catalog_and_ui_contract_require_original_source_before_showing_missions(self):
         runtime = (ROOT / "Assets/Scripts/Gameplay/OriginalQuestArchive.cs").read_text("utf-8")
         menu = (ROOT / "Assets/Scripts/Gameplay/MatchBootstrap.cs").read_text("utf-8")
