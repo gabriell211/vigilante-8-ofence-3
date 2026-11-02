@@ -49,6 +49,27 @@ namespace Vigilante8.Gameplay
             muzzle = sourceMuzzle;
             projectilePrefab = projectile;
         }
+        /// <summary>
+        /// A source-informed Rocket/Bastion physics experiment. Reuses the
+        /// existing INVISIBLE diagnostic projectile, not an official rocket
+        /// model or verified damage number. Never available in player builds.
+        /// </summary>
+        public bool LaunchBastionSourceRocket(VehicleDrive target)
+        {
+            if (!Application.isPlaying || Time.timeScale <= 0f ||
+                !IsAlive || !HasWeapon || target == null || target == this ||
+                !target.IsAlive || GetComponent<OriginalBastionRocketLauncher>() == null)
+                return false;
+
+            Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+            var flight = shot.gameObject.AddComponent<OriginalBastionRocketFlight>();
+            int ticks = Mathf.Max(1, Mathf.CeilToInt(
+                shot.lifetimeSeconds / Mathf.Max(0.001f, Time.fixedDeltaTime)));
+            flight.Configure(target, ticks);
+            shot.Launch(this, muzzle.forward);
+            flight.EnterBastion();
+            return true;
+        }
 #endif
 
         private void Awake()

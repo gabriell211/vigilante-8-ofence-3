@@ -154,6 +154,8 @@ namespace Vigilante8.Editor
                     // on authentic, nonrelease 2nd Offense vehicle prefabs.
                     if (instance.GetComponent<OriginalMachineGunSourceTest>() == null)
                         instance.AddComponent<OriginalMachineGunSourceTest>();
+                    if (instance.GetComponent<OriginalBastionRocketLauncher>() == null)
+                        instance.AddComponent<OriginalBastionRocketLauncher>();
                     if (!drive.HasWeapon)
                         throw new InvalidOperationException("Test drive loadout invalid: " + vehicle.id);
 
@@ -165,7 +167,7 @@ namespace Vigilante8.Editor
             AssetDatabase.SaveAssets();
             Debug.Log("18 real source-derived vehicle *physics prototypes* generated outside Resources. " +
                       "Each uses its own authentic GameManager stats and provisional Unity tuning. " +
-                      "Source MGun cadence is reconstructed; special weapons, exact PS1 tick rate, final handling and car part transforms NOT certified.");
+                      "Source MGun cadence and Rocket/Bastion homing phases are under inspection; exact PS1 physics, rocket damage/mesh, remaining specials and final handling NOT certified.");
         }
 
         private static Projectile EnsureProjectile()
