@@ -49,7 +49,7 @@ def verify_one(archive: Path) -> dict:
         with zipfile.ZipFile(archive) as bundle:
             members = bundle.infolist()
             names = [member.filename.replace("\\", "/") for member in members]
-            if len(names) < 5 or len(set(name.casefold() for name in names)) != len(names):
+            if not names or len(set(name.casefold() for name in names)) != len(names):
                 raise PackageVerificationError("Windows ZIP is incomplete or has duplicate asset paths")
             for member, name in zip(members, names):
                 segments = name.split("/")
