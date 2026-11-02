@@ -26,3 +26,6 @@
 
 # Final authorized Resources/Vehicles and Resources/Arenas assets are
 # intentionally tracked and compiled into the standalone Windows release.
+
+# Local original Quest source audits and reviewed translation workspace
+/QuestImportWork/

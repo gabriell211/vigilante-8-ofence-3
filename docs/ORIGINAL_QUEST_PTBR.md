@@ -19,6 +19,65 @@ origem e o resultado `quest-source-audit.json` **não estão versionados neste
 repositório**, portanto ainda não é possível apresentar todos os textos ou
 afirmar que as 168 missões estão integradas/jogáveis no Unity.
 
+## Extração direta, sem depender de BIN/CUE na build
+
+Para concluir as **traduções reais**, são necessários os **dois `QUEST.BIN`
+originais já extraídos**. A estrutura Quest do segundo jogo também depende
+da tabela nativa personagem/equipe presente em `SLUS_008.68` da mesma
+edição: apenas os dois QUEST não bastam para reconstruir essas relações sem
+suposições. Tudo isso é **ferramenta de desenvolvimento**, não conteúdo de
+runtime nem requisito para o jogador.
+
+A partir da raiz do repositório, execute:
+
+```sh
+python3 scripts/prepare_original_quest_ptbr.py \
+  --v8-quest-bin "originais/V8/QUEST.BIN" \
+  --v82-quest-bin "originais/V82/QUEST.BIN" \
+  --v82-executable "originais/V82/SLUS_008.68"
+```
+
+O comando registra hashes SHA-256 e valida 12 + 15 campanhas, 48 + 120 missões,
+personagens elegíveis, atores e rotas; gera localmente em `QuestImportWork/`:
+
+- `quest-source-audit.json`: origem decodificada com hashes, incluindo os briefings;
+- `quest-ptbr-template.json`: **somente as frases distintas**, cada qual
+  identificada pelo SHA-256 do texto original; inicialmente `ptBr` vazio.
+
+Revise cada campo `ptBr` com português brasileiro natural, preservando
+nomes próprios, objetivos, direção DESTROY/PROTECT e quebras relevantes.
+Não traduza hashes, índices, equipe, atores ou registros de rota. A revisão
+linguística é humana: SHA-256 identifica os bytes fornecidos, mas **não atesta
+sozinho a autenticidade da mídia**, nem a qualidade semântica da tradução.
+
+Para aproveitar traduções anteriores por hash/texto de origem:
+
+```sh
+python3 scripts/prepare_original_quest_ptbr.py \
+  --v8-quest-bin "originais/V8/QUEST.BIN" \
+  --v82-quest-bin "originais/V82/QUEST.BIN" \
+  --v82-executable "originais/V82/SLUS_008.68" \
+  --previous-translations "minhas-traducoes-revisadas.json"
+```
+
+Quando **todos os briefings** estiverem traduzidos/revisados, compile:
+
+```sh
+python3 scripts/prepare_original_quest_ptbr.py \
+  --v8-quest-bin "originais/V8/QUEST.BIN" \
+  --v82-quest-bin "originais/V82/QUEST.BIN" \
+  --v82-executable "originais/V82/SLUS_008.68" \
+  --translations "QuestImportWork/quest-ptbr-template.json" \
+  --catalog "Assets/Resources/Missions/original_quests_ptbr.json"
+```
+
+O script lê e autentica a planilha concluída **antes** de escrever saídas;
+nunca a substitui por campos vazios. Se qualquer entrada estiver faltando
+ou não validada, **não cria o catálogo**. O build Windows distribui apenas
+o JSON no Unity, sem `QUEST.BIN`, `SLUS_008.68`, BIN/CUE ou emulador.
+O catálogo ainda é somente leitura; objetivos e progressão jogável exigem
+portar e testar a máquina de estados Quest no Unity.
+
 ## Importação fiel dos arquivos originais
 
 1. Em um ambiente com seus arquivos autorizados, executar o decodificador
