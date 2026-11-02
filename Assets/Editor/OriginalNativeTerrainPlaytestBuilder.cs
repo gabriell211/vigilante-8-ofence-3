@@ -74,6 +74,12 @@ namespace Vigilante8.Editor
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var ground = new GameObject("GENUINE V82 TERRAIN MESH - UNVERIFIED COLLISION");
             ground.AddComponent<MeshFilter>().sharedMesh = sourceTerrain;
+            // The original geometry is visible with a clearly labeled *diagnostic*
+            // material. This is not a port of the stage's original PS1 textures.
+            var terrainRenderer = ground.AddComponent<MeshRenderer>();
+            Material diagnostic = EnsureDiagnosticTerrainMaterial();
+            terrainRenderer.sharedMaterials = Enumerable.Repeat(
+                diagnostic, sourceTerrain.subMeshCount).ToArray();
             // This is collision against the actual archived native mesh, not a
             // synthetic floor, but it is NOT original VigTerrain collision behavior.
             var collider = ground.AddComponent<MeshCollider>();
@@ -124,6 +130,23 @@ namespace Vigilante8.Editor
                 " terrain battle ready: " + stageId + " / " + playerVehicleId +
                 " vs " + string.Join(", ", enemyVehicleIds) +
                 ". Original special weapons, exact collision and official spawn points NOT ready.");
+        }
+
+        private static Material EnsureDiagnosticTerrainMaterial()
+        {
+            const string materialFolder = "Assets/GameContent/PreviewTerrainMaterialsV82";
+            const string materialPath = materialFolder + "/Diagnostic.mat";
+            Material existing = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (existing != null) return existing;
+            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (shader == null)
+                throw new InvalidOperationException("URP inspection shader is missing");
+            if (!AssetDatabase.IsValidFolder(materialFolder))
+                AssetDatabase.CreateFolder("Assets/GameContent", "PreviewTerrainMaterialsV82");
+            var material = new Material(shader) { name = "SOURCE TERRAIN - NOT ORIGINAL TEXTURE" };
+            material.SetColor("_BaseColor", new Color(0.73f, 0.81f, 0.91f));
+            AssetDatabase.CreateAsset(material, materialPath);
+            return material;
         }
 
         private static int CountTriangles(Mesh mesh)
