@@ -25,11 +25,13 @@ namespace Vigilante8.Gameplay
         private Rigidbody body;
         private bool configured;
         private int remainingTicks;
+        private int rocketFlightTicks;
         private SourceState state;
 
         public SourceState State => state;
         public VehicleDrive AttachedTarget => attachedTarget;
         public int RemainingTicks => remainingTicks;
+        public int RocketFlightTicks => rocketFlightTicks;
         public bool IsReleaseApproved => false;
 
         public void Configure(VehicleDrive source)
@@ -42,6 +44,7 @@ namespace Vigilante8.Gameplay
             owner = source;
             body = GetComponent<Rigidbody>();
             state = SourceState.Rocket;
+            rocketFlightTicks = OriginalRocketSourceInventory.OriginalRocketLifeTicks;
             configured = true;
         }
 
@@ -71,7 +74,16 @@ namespace Vigilante8.Gameplay
 
         private void FixedUpdate()
         {
-            if (!configured || state != SourceState.RoadRunner) return;
+            if (!configured) return;
+            if (state == SourceState.Rocket)
+            {
+                // RocketL.FUN_4336C sets physics2.M2=240 for the flying
+                // rocket, before RoadRunner's own 360-tick sticky countdown.
+                rocketFlightTicks--;
+                if (rocketFlightTicks <= 0) Expire();
+                return;
+            }
+            if (state != SourceState.RoadRunner) return;
             if (attachedTarget == null || !attachedTarget.IsAlive)
             {
                 Expire();
