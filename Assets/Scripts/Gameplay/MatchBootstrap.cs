@@ -14,6 +14,7 @@ namespace Vigilante8.Gameplay
         private enum ScreenPage { Home, Garage, Catalog, Options, Controls, About, Playing, Pause, Results }
         private ScreenPage activePage;
         private ScreenPage optionsReturn = ScreenPage.Home;
+        private ScreenPage catalogReturn = ScreenPage.Home;
         private readonly GameMenuSettings preferences = new GameMenuSettings();
         private VisualElement homePage, catalogPage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage;
         private ScrollView garagePage;
@@ -190,7 +191,7 @@ namespace Vigilante8.Gameplay
             menu.Add(readinessLabel);
             startCombat = CreateButton("ENTRAR NA ARENA  /  COMBATE ARCADE", StartMatch, true);
             menu.Add(startCombat);
-            menu.Add(CreateButton("TROCAR JOGO / CARRO / FASE", () => Show(ScreenPage.Catalog)));
+            menu.Add(CreateButton("TROCAR JOGO / CARRO / FASE", () => OpenCatalog(ScreenPage.Garage)));
             menu.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
             var instructions = new Label("◀ / ▶ NAVEGAR    •    ENTER / A CONFIRMAR    •    ESC / B VOLTAR");
             instructions.style.color = Muted;
@@ -357,17 +358,19 @@ namespace Vigilante8.Gameplay
 
         private void Update()
         {
-            bool pressedBack = (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
+            bool pressedStart = (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
                 (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame);
-            if (pressedBack)
+            bool pressedCancel = Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame;
+            if (pressedStart || (pressedCancel && activePage != ScreenPage.Playing))
             {
                 switch (activePage)
                 {
                     case ScreenPage.Playing: PauseGame(); return;
                     case ScreenPage.Pause: ResumeGame(); return;
                     case ScreenPage.Options: Show(optionsReturn); return;
+                    case ScreenPage.Catalog: Show(catalogReturn); return;
+                    case ScreenPage.Results: BackToMenu(); return;
                     case ScreenPage.Garage:
-                    case ScreenPage.Catalog:
                     case ScreenPage.Controls:
                     case ScreenPage.About: Show(ScreenPage.Home); return;
                 }
@@ -508,7 +511,7 @@ namespace Vigilante8.Gameplay
             panel.Add(pillars);
             panel.Add(CreateButton("UM JOGADOR  /  MODO ARCADE", () => Show(ScreenPage.Garage), true));
             panel.Add(CreateButton("GARAGEM  /  31 CARROS E 19 ARENAS",
-                () => Show(ScreenPage.Catalog)));
+                () => OpenCatalog(ScreenPage.Home)));
             var coming = Offence3MenuTheme.ContentPanel();
             panel.Add(coming);
             AddHeading(coming, "MODOS CLÁSSICOS DO 2ND OFFENSE", 16);
@@ -524,6 +527,12 @@ namespace Vigilante8.Gameplay
             panel.Add(CreateButton("CONTROLES", () => Show(ScreenPage.Controls)));
             panel.Add(CreateButton("SOBRE O ACERVO", () => Show(ScreenPage.About)));
             panel.Add(CreateButton("SAIR DO JOGO", ExitGame));
+        }
+
+        private void OpenCatalog(ScreenPage origin)
+        {
+            catalogReturn = origin;
+            Show(ScreenPage.Catalog);
         }
 
         private void BuildCatalogBrowser()
@@ -549,7 +558,7 @@ namespace Vigilante8.Gameplay
             catalogEntries = new VisualElement();
             catalogEntries.style.marginTop = 14;
             panel.Add(catalogEntries);
-            panel.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
+            panel.Add(CreateButton("VOLTAR", () => Show(catalogReturn)));
             catalogOrigin.RegisterValueChangedCallback(_ => RefreshCatalogBrowser());
             catalogCategory.RegisterValueChangedCallback(_ => RefreshCatalogBrowser());
             RefreshCatalogBrowser();
@@ -713,7 +722,7 @@ namespace Vigilante8.Gameplay
             note.style.marginBottom = 18;
             panel.Add(note);
             panel.Add(CreateButton("CONSULTAR TODOS OS CARROS E FASES",
-                () => Show(ScreenPage.Catalog)));
+                () => OpenCatalog(ScreenPage.About)));
             panel.Add(CreateButton("MENU PRINCIPAL", () => Show(ScreenPage.Home), true));
         }
 
