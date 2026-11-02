@@ -162,6 +162,8 @@ namespace Vigilante8.Editor
                         instance.AddComponent<OriginalMineSourceLauncher>();
                     if (instance.GetComponent<OriginalRoadRunnerSourceLauncher>() == null)
                         instance.AddComponent<OriginalRoadRunnerSourceLauncher>();
+                    if (instance.GetComponent<OriginalMissileSourceInventory>() == null)
+                        instance.AddComponent<OriginalMissileSourceInventory>();
                     if (instance.GetComponent<OriginalRocketSourceInventory>() == null)
                         instance.AddComponent<OriginalRocketSourceInventory>();
                     if (!drive.HasWeapon)
