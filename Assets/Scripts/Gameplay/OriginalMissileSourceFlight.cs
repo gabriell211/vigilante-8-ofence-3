@@ -67,7 +67,7 @@ namespace Vigilante8.Gameplay
         {
             if (!Finite(currentVelocity) || !Finite(desiredVelocity))
                 throw new ArgumentException("Nonfinite projectile velocity");
-            float speed = Mathf.Max(1f, currentVelocity.magnitude, desiredVelocity.magnitude);
+            float speed = Mathf.Max(1f, Mathf.Max(currentVelocity.magnitude, desiredVelocity.magnitude));
             float horizontalLimit = speed / HorizontalErrorDivisor;
             return new Vector3(
                 Mathf.Clamp((desiredVelocity.x - currentVelocity.x) /
