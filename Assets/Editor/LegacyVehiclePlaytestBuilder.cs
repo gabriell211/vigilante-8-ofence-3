@@ -150,6 +150,10 @@ namespace Vigilante8.Editor
                         Mathf.Max(0.05f, box.size.y * 0.1f), box.size.z * 0.53f);
                     muzzle.localRotation = Quaternion.identity;
                     drive.ConfigurePlaytestLoadout(muzzle, testProjectile);
+                    // The preserved MGun.UpdateW state machine is available only
+                    // on authentic, nonrelease 2nd Offense vehicle prefabs.
+                    if (instance.GetComponent<OriginalMachineGunSourceTest>() == null)
+                        instance.AddComponent<OriginalMachineGunSourceTest>();
                     if (!drive.HasWeapon)
                         throw new InvalidOperationException("Test drive loadout invalid: " + vehicle.id);
 
@@ -161,7 +165,7 @@ namespace Vigilante8.Editor
             AssetDatabase.SaveAssets();
             Debug.Log("18 real source-derived vehicle *physics prototypes* generated outside Resources. " +
                       "Each uses its own authentic GameManager stats and provisional Unity tuning. " +
-                      "Original special weapons, final handling and car part transforms NOT certified.");
+                      "Source MGun cadence is reconstructed; special weapons, exact PS1 tick rate, final handling and car part transforms NOT certified.");
         }
 
         private static Projectile EnsureProjectile()
