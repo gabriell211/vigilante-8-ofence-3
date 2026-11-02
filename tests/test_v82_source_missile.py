@@ -37,7 +37,7 @@ class OfficialMissileSourceContract(unittest.TestCase):
         self.assertIn("uVar8 = 60", launcher)
         for signal in (
             "#if UNITY_EDITOR",
-            "public enum SourceState { Shell, Projectile }",
+            "public enum SourceState { Shell, Projectile, Halo }",
             "public const int OriginalDamage = 60;",
             "public const int OriginalLifeTicks = 480;",
             "public const int HorizontalErrorDivisor = 16;",

@@ -15,12 +15,15 @@ namespace Vigilante8.Gameplay
     [DisallowMultipleComponent]
     public sealed class OriginalMissileSourceFlight : MonoBehaviour
     {
-        public enum SourceState { Shell, Projectile }
+        public enum SourceState { Shell, Projectile, Halo }
 
         public const int OriginalDamage = 60; // MissileL.UpdateW(arg1=12)
         public const int OriginalLifeTicks = 480; // Missile.UpdateW(arg1=5)
         public const int HorizontalErrorDivisor = 16; // Missile.Projectile
         public const int VerticalErrorDivisor = 8; // Missile.Projectile
+        public const int HaloYawSourceAngle = 0x100; // Missile.Halo FUN_24700(0,0x100,0)
+        // Diagnostic assumption: original angle domain uses 4096 units/revolution.
+        public const float HaloYawDegreesPerTick = 360f * HaloYawSourceAngle / 4096f;
 
         private VehicleDrive lockedTarget;
         private Rigidbody body;
@@ -57,6 +60,22 @@ namespace Vigilante8.Gameplay
         }
 
         /// <summary>
+        /// Missile.UpdateW(5) creates Halo from a shell when the source
+        /// 0x1000000 mode flag is set by MissileL.UpdateW(10,0x442).
+        /// This mode does not use DAT_84 guided target steering.
+        /// </summary>
+        public void ActivateHalo()
+        {
+            if (!initialized || state != SourceState.Shell)
+                throw new InvalidOperationException("Only a fresh Missile Shell can enter Halo");
+            state = SourceState.Halo;
+        }
+
+        public bool IgnoreDiagnosticProjectileContact(Collider other) =>
+            initialized && state == SourceState.Halo && other != null &&
+            other.GetComponentInParent<Projectile>() != null;
+
+        /// <summary>
         /// The source applies vertical error /8 and horizontal error /16,
         /// clamping the original horizontal integer increments to +/-0x100.
         /// Here the limit is normalized by Unity speed rather than mislabelled
@@ -84,10 +103,31 @@ namespace Vigilante8.Gameplay
 
         private void FixedUpdate()
         {
-            if (!initialized || state != SourceState.Projectile) return;
-            if (ticksRemaining <= 0 || lockedTarget == null || !lockedTarget.IsAlive)
+            if (!initialized ||
+                (state != SourceState.Projectile && state != SourceState.Halo)) return;
+            if (ticksRemaining <= 0 ||
+                (state == SourceState.Projectile &&
+                    (lockedTarget == null || !lockedTarget.IsAlive)))
             {
                 Destroy(gameObject);
+                return;
+            }
+
+            if (state == SourceState.Halo)
+            {
+                // Source rotates yaw by 0x100 per update and steers towards
+                // orientation. Fixed-point acceleration, linked owner effects,
+                // particles and precise update frequency remain unported.
+                Vector3 velocity = body.linearVelocity;
+                if (velocity.sqrMagnitude > 0.001f)
+                {
+                    Vector3 rotated = Quaternion.AngleAxis(
+                        HaloYawDegreesPerTick, Vector3.up) * velocity;
+                    body.linearVelocity = rotated;
+                    body.MoveRotation(Quaternion.LookRotation(rotated, Vector3.up));
+                }
+                ticksRemaining--;
+                if (ticksRemaining <= 0) Destroy(gameObject);
                 return;
             }
 

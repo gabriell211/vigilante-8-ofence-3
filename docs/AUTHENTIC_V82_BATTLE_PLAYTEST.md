@@ -86,6 +86,14 @@ Durante a batalha de diagnóstico, pressione **Y** (teclado) ou **X** (botão oe
 
 **Limites:** o formato 3D oficial do foguete não foi importado, as regras de escudos, segmentação de carcaça, movimento e tempo original dos ciclos PS1 ainda não estão homologadas. Portanto, o valor de dano é preservado do código fonte, mas sua aplicação direta a `VehicleDrive.Health` é uma aproximação de desenvolvimento, não arma final certificada.
 
+## Míssil Halo (variante oficial MissileL 0x442) — estado de desenvolvimento
+
+O `MissileL.cs` original inicializa `maxHalfHealth = 12`. Sua ramificação `UpdateW(10, 0x442)` exige **mais de uma carga restante**, reduz `maxHalfHealth` em **uma unidade** e gera um projétil com flag especial `0x1000000`. A transição `Missile.UpdateW(5)` o coloca no estado **Halo**, com duração original de **480 ciclos**. O código `Missile.UpdateW(0)` usa rotação de yaw `FUN_24700(0, 0x100, 0)` e colisão com `type == 8` não aciona a destruição comum.
+
+Nos 18 carros originais de teste, **H** (teclado) ou **D-pad direita** (controle) lança o Halo diagnóstico. `OriginalMissileSourceInventory` registra as doze cargas iniciais e só consome uma para `0x442` quando há pelo menos duas, sem permitir valores negativos. O `OriginalMissileSourceFlight` adiciona o estado Halo separado do projétil guiado; a trajetória varia em yaw por `0x100` unidades de ângulo fonte por ciclo (aproximação de **22,5°** em espaço Unity), e o collider ignora outros `Projectile` de teste como correspondência provisória da classe `type 8`. Não cria malha, munição, som ou efeitos falsamente oficiais.
+
+**Detalhe importante de fidelidade:** em `MissileL.UpdateW(12)`, o tiro **comum** não decrementa explicitamente `maxHalfHealth` nessa função. Como seu consumo efetivo ainda não foi identificado em toda a cadeia original, o disparo normal da tecla **Q** não utiliza esse contador de forma inventada. A regra de consumo verificada aqui é somente a do especial `0x442`. A vinculação de `DAT_84`, impulso sobre o dono, trajetória fixed-point original, natureza exata dos objetos `type 8`, FX e ajuste de frequência de ciclos ainda precisam de homologação. O build comercial continua bloqueando o componente experimental.
+
 ## Eliminações reais entre carros originais
 
 O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.

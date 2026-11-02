@@ -123,6 +123,8 @@ namespace Vigilante8.Editor
                     throw new BuildFailedException("Source-only RoadRunner rocket cannot be released: " + vehicle.id);
                 if (prefab.GetComponent<OriginalRocketSourceInventory>() != null)
                     throw new BuildFailedException("Source-only RocketL ammunition cannot be released: " + vehicle.id);
+                if (prefab.GetComponent<OriginalMissileSourceInventory>() != null)
+                    throw new BuildFailedException("Source-only MissileL ammunition cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(vehicle.id, vehicle.game))

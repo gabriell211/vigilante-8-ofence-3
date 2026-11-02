@@ -98,6 +98,32 @@ namespace Vigilante8.Gameplay
         }
 
         /// <summary>
+        /// MissileL.UpdateW(10,0x442) launches a Halo shell; Missile.UpdateW(5)
+        /// switches it into its original source Halo state. The graphics,
+        /// linked owner motion and integer PS1 steering are still not ported.
+        /// </summary>
+        public bool LaunchHaloSourceMissile()
+        {
+            if (!Application.isPlaying || Time.timeScale <= 0f ||
+                !IsAlive || !HasWeapon ||
+                GetComponent<LegacyVehiclePlaytest>() == null ||
+                GetComponent<OriginalMissileSourceLauncher>() == null ||
+                GetComponent<OriginalMissileSourceInventory>() == null)
+                return false;
+
+            Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+            shot.impactDamage = OriginalMissileSourceFlight.OriginalDamage;
+            shot.lifetimeSeconds =
+                OriginalMissileSourceFlight.OriginalLifeTicks * Time.fixedDeltaTime;
+            var flight = shot.gameObject.AddComponent<OriginalMissileSourceFlight>();
+            // A Halo's DAT_84 is the owning vehicle, not an enemy target.
+            flight.Configure(this);
+            shot.Launch(this, muzzle.forward);
+            flight.ActivateHalo();
+            return true;
+        }
+
+        /// <summary>
         /// Rocket.RoadRunner source mode: stick to the victim for 360 engine
         /// events then apply -40 through the vehicle health model. Both
         /// timing and damage-body segmentation remain provisional in Unity.

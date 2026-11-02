@@ -198,7 +198,7 @@ namespace Vigilante8.Gameplay
         {
             if (!ready || !Application.isPlaying) return;
             float width = Mathf.Clamp(Screen.width - 36f, 260f, 440f);
-            float height = 350f + TotalOpponents * 24f;
+            float height = 397f + TotalOpponents * 24f;
             GUI.Box(new Rect(16f, 16f, width, height), GUIContent.none);
             var title = new GUIStyle(GUI.skin.label)
             {
@@ -263,6 +263,15 @@ namespace Vigilante8.Gameplay
                 "CARGAS ROCKETL ORIGINAIS: " +
                 (rockets == null ? "-" : rockets.RemainingCharges.ToString()) +
                 " / 10", regular);
+            y += 23f;
+            var haloAmmo = player.GetComponent<OriginalMissileSourceInventory>();
+            GUI.Label(new Rect(28f, y, width - 24f, 22f),
+                "H / D-PAD DIREITA: HALO 0x442 (TESTE)", regular);
+            y += 23f;
+            GUI.Label(new Rect(28f, y, width - 24f, 22f),
+                "MISSALEL 0x442: " +
+                (haloAmmo == null ? "-" : haloAmmo.RemainingCharges.ToString()) +
+                " / 12 (MIN 2 P/ DISPARAR)", regular);
             if (paused)
                 GUI.Label(new Rect(28f, y + 22f, width - 24f, 22f), "PAUSADO (TESTE)", title);
         }
