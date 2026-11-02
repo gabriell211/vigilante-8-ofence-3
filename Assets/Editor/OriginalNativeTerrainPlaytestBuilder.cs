@@ -35,7 +35,7 @@ namespace Vigilante8.Editor
         /// original spawn points, weapon effects or stage gameplay.
         /// </summary>
         public static void CreateBattle(string stageId, string playerVehicleId,
-            IEnumerable<string> opponentVehicleIds)
+            IEnumerable<string> opponentVehicleIds, bool includeOriginalJunctionVisuals = false)
         {
             if (string.IsNullOrWhiteSpace(stageId) ||
                 string.IsNullOrWhiteSpace(playerVehicleId) || opponentVehicleIds == null)
@@ -66,6 +66,12 @@ namespace Vigilante8.Editor
                 sourceTerrain.subMeshCount < 1)
                 throw new InvalidOperationException("Authentic native source terrain not imported");
 
+            // All JUNC provenance and mesh checks complete before replacing the scene.
+            // Optional real TMD scenery remains visual-only and non-colliding.
+            OriginalJunctionSourceReviewBuilder.PreparedVisuals originalJunctions =
+                includeOriginalJunctionVisuals
+                    ? OriginalJunctionSourceReviewBuilder.Prepare(stageId)
+                    : null;
             GameObject playerPrefab = VerifiedCar(playerVehicleId);
             GameObject[] enemyPrefabs = enemyVehicleIds.Select(VerifiedCar).ToArray();
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
@@ -91,6 +97,14 @@ namespace Vigilante8.Editor
             originalIdentity.AddComponent<OriginalTerrainPreviewIdentity>().Configure(
                 stageId, AssetDatabase.AssetPathToGUID(MeshDir + stageId + ".asset"),
                 sourceTerrain.vertexCount, CountTriangles(sourceTerrain));
+
+            int sourceJunctionCount = 0;
+            if (originalJunctions != null)
+            {
+                var sourceRoot = new GameObject(
+                    "ARCHIVED JUNC/TMD OBJECTS - VISUAL ONLY / NO COLLISION");
+                sourceJunctionCount = originalJunctions.AppendTo(sourceRoot.transform);
+            }
 
             Physics.SyncTransforms();
             Vector3[] points = FindGroundSpawns(collider, participants.Length);
@@ -139,7 +153,10 @@ namespace Vigilante8.Editor
             Debug.Log("Source-derived 1-v-" + enemyVehicleIds.Length +
                 " terrain battle ready: " + stageId + " / " + playerVehicleId +
                 " vs " + string.Join(", ", enemyVehicleIds) +
-                ". Rocket/Bastion steering is source-informed, but the actual rocket meshes, original weapon effects, exact collision and official spawn points are NOT ready.");
+                ". Extra original JUNC/TMD visual source pieces: " + sourceJunctionCount +
+                " (no colliders / DEBUG-scale positions; original terrain deformation NOT ported). " +
+                "Rocket/Bastion steering is source-informed, but actual weapon meshes, original effects, " +
+                "exact collision and official spawn points are NOT ready.");
         }
 
         private static Material EnsureDiagnosticTerrainMaterial()
@@ -245,6 +262,7 @@ namespace Vigilante8.Editor
     public sealed class OriginalNativeTerrainPlaytestWindow : EditorWindow
     {
         private int stageIndex, carIndex, opponentIndex = 1, opponentCount = 1;
+        private bool includeOriginalJunctionVisuals;
         [MenuItem("Vigilante 8/Migração/Dirigir em terreno real V82 (teste, não release)")]
         public static void ShowWindow() =>
             GetWindow<OriginalNativeTerrainPlaytestWindow>("V8 original terrain test");
@@ -275,6 +293,13 @@ namespace Vigilante8.Editor
                 Mathf.Clamp(opponentIndex, 0, vehicles.Length - 1),
                 vehicles.Select(v => v.officialName).ToArray());
             opponentCount = EditorGUILayout.IntSlider("Adversários (1 a 3)", opponentCount, 1, 3);
+            includeOriginalJunctionVisuals = EditorGUILayout.ToggleLeft(
+                "Mostrar estruturas JUNC/TMD originais (sem colisão)", includeOriginalJunctionVisuals);
+            if (includeOriginalJunctionVisuals)
+                EditorGUILayout.HelpBox(
+                    "JUNC usa a escala serializada de DEBUG.unity. Não há deformação original " +
+                    "de terreno, colisores de objetos ou validação da posição final no jogo.",
+                    MessageType.Warning);
             VehicleEntry selected = vehicles[carIndex];
             VehicleEntry firstOpponent = vehicles[opponentIndex];
             VehicleEntry[] extraOpponents = vehicles.Where(v =>
@@ -292,7 +317,8 @@ namespace Vigilante8.Editor
                 if (GUILayout.Button("Criar combate real de teste (não release)"))
                     OriginalNativeTerrainPlaytestBuilder.CreateBattle(
                         terrains[stageIndex].id, selected.id,
-                        new[] { firstOpponent.id }.Concat(extraOpponents.Select(v => v.id)));
+                        new[] { firstOpponent.id }.Concat(extraOpponents.Select(v => v.id)),
+                        includeOriginalJunctionVisuals);
             }
             EditorGUILayout.LabelField(
                 "1 a 3 adversários com carros/pilotos próprios. Cena excluída do build Windows.");

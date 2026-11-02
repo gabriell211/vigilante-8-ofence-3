@@ -64,7 +64,7 @@ namespace Vigilante8.Editor
             public string objPath;
         }
 
-        private sealed class Mono
+        internal sealed class Mono
         {
             public string FileId, Owner, ScriptGuid, BankGuid, LinkedMeshId;
             public Vector3Int? Dat00;
@@ -79,12 +79,68 @@ namespace Vigilante8.Editor
             public readonly Dictionary<string, Mono> Components =
                 new Dictionary<string, Mono>();
         }
-        private sealed class Placement
+        internal sealed class Placement
         {
             public Mono Junction;
             public Mono Mesh;
             public string MeshGroup;
             public string OriginalName;
+        }
+
+        /// <summary>
+        /// A verified set of archived JUNC/TMD visuals ready to append to an
+        /// Editor-only diagnostic scene. Import and source-hash checks happen
+        /// before an existing scene is replaced. Never adds physical colliders.
+        /// </summary>
+        public sealed class PreparedVisuals
+        {
+            private readonly string stageId;
+            private readonly List<Placement> candidates;
+            private readonly Dictionary<string, Mesh> models;
+            private readonly Material diagnostic;
+            private readonly int divisor;
+
+            internal PreparedVisuals(string stageId, List<Placement> candidates,
+                Dictionary<string, Mesh> models, Material diagnostic, int divisor)
+            {
+                this.stageId = stageId;
+                this.candidates = candidates;
+                this.models = models;
+                this.diagnostic = diagnostic;
+                this.divisor = divisor;
+            }
+
+            public int AppendTo(Transform parent)
+            {
+                if (Application.isPlaying || parent == null ||
+                    parent.gameObject.scene != SceneManager.GetActiveScene() ||
+                    parent.childCount != 0 ||
+                    parent.position != Vector3.zero ||
+                    parent.rotation != Quaternion.identity ||
+                    parent.lossyScale != Vector3.one)
+                    throw new InvalidOperationException(
+                        "JUNC inspection requires a new empty origin-aligned scene root");
+
+                foreach (Placement candidate in candidates)
+                {
+                    var entity = new GameObject(candidate.OriginalName +
+                        " / JUNC " + candidate.Junction.FileId + " / " + candidate.MeshGroup);
+                    entity.transform.SetParent(parent, false);
+                    entity.transform.localPosition =
+                        SourceJunctionLocal(candidate.Junction.Dat00.Value, divisor);
+                    entity.AddComponent<MeshFilter>().sharedMesh = models[candidate.MeshGroup];
+                    entity.AddComponent<MeshRenderer>().sharedMaterial = diagnostic;
+                    entity.AddComponent<OriginalJunctionSourcePreviewIdentity>().Configure(
+                        stageId, candidate.Junction.FileId, candidate.MeshGroup,
+                        candidate.Junction.Dat00.Value, divisor);
+                }
+
+                if (parent.GetComponentsInChildren<Collider>(true).Length != 0 ||
+                    parent.GetComponentsInChildren<Rigidbody>(true).Length != 0)
+                    throw new InvalidOperationException(
+                        "JUNC source-only preview must not add gameplay physics");
+                return candidates.Count;
+            }
         }
 
         private string[] stageIds = Array.Empty<string>();
@@ -342,7 +398,7 @@ namespace Vigilante8.Editor
             return linked.OrderBy(x => long.Parse(x.Junction.FileId, CultureInfo.InvariantCulture)).ToList();
         }
 
-        public static void Build(string stageId)
+        public static PreparedVisuals Prepare(string stageId)
         {
             if (!SceneBlobs.ContainsKey(stageId) ||
                 !CatalogRepository.Load().arenas.Any(x => x.game == "v82" && x.id == stageId))
@@ -369,29 +425,24 @@ namespace Vigilante8.Editor
                     throw new InvalidDataException("Genuine extracted TMD mesh missing: " + path);
                 models.Add(candidate.MeshGroup, original);
             }
+            return new PreparedVisuals(stageId, candidates, models, diagnostic, divisor);
+        }
+
+        public static void Build(string stageId)
+        {
+            PreparedVisuals preview = Prepare(stageId);
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var parent = new GameObject("SOURCE JUNC INSPECTION - NO ORIGINAL TERRAIN DEFORMATION");
-            Bounds bounds = default;
-            bool hasBounds = false;
-            foreach (Placement candidate in candidates)
-            {
-                var entity = new GameObject(candidate.OriginalName +
-                    " / JUNC " + candidate.Junction.FileId + " / " + candidate.MeshGroup);
-                entity.transform.SetParent(parent.transform, false);
-                entity.transform.localPosition =
-                    SourceJunctionLocal(candidate.Junction.Dat00.Value, divisor);
-                entity.AddComponent<MeshFilter>().sharedMesh = models[candidate.MeshGroup];
-                entity.AddComponent<MeshRenderer>().sharedMaterial = diagnostic;
-                entity.AddComponent<OriginalJunctionSourcePreviewIdentity>().Configure(
-                    stageId, candidate.Junction.FileId, candidate.MeshGroup,
-                    candidate.Junction.Dat00.Value, divisor);
-                Bounds meshBounds = entity.GetComponent<MeshRenderer>().bounds;
-                if (!hasBounds) { bounds = meshBounds; hasBounds = true; }
-                else bounds.Encapsulate(meshBounds);
-            }
+            int junctionCount = preview.AppendTo(parent.transform);
+            Renderer[] renderers = parent.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length == 0)
+                throw new InvalidOperationException("No original junction visuals for inspection");
+            Bounds bounds = renderers[0].bounds;
+            foreach (Renderer renderer in renderers.Skip(1))
+                bounds.Encapsulate(renderer.bounds);
             var sunlight = new GameObject("Inspection-only sunlight").AddComponent<Light>();
             sunlight.type = LightType.Directional;
             sunlight.intensity = 1.1f;
@@ -414,7 +465,7 @@ namespace Vigilante8.Editor
             if (EditorBuildSettings.scenes.Any(s => s.enabled && s.path == ScenePath))
                 throw new InvalidOperationException("Source diagnostic scene cannot ship");
             Debug.Log("JUNC source inspection created: " + stageId + " / " +
-                candidates.Count + " root JUNC references to original TMD pieces. " +
+                junctionCount + " root JUNC references to original TMD pieces. " +
                 "The original terrain deformation, fixed-point runtime context, physics, " +
                 "materials and spawn points are NOT ported. No release output.");
         }

@@ -38,6 +38,32 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void OriginalJunctionVisualsCanJoinNativeTerrainEncounterWithoutNewPhysics()
+        {
+            var preview = OriginalJunctionSourceReviewBuilder.Prepare("v82_steel_mill");
+            var root = new GameObject("original scene JUNC inspection only");
+            try
+            {
+                int count = preview.AppendTo(root.transform);
+                Assert.That(count, Is.GreaterThan(0));
+                Assert.That(root.GetComponentsInChildren<Collider>(true), Is.Empty);
+                Assert.That(root.GetComponentsInChildren<Rigidbody>(true), Is.Empty);
+                var sources = root.GetComponentsInChildren<OriginalJunctionSourcePreviewIdentity>(true);
+                Assert.That(sources.Length, Is.EqualTo(count));
+                Assert.That(root.GetComponentsInChildren<MeshFilter>(true).Length,
+                    Is.EqualTo(count));
+                foreach (var source in sources)
+                {
+                    Assert.That(source.StageId, Is.EqualTo("v82_steel_mill"));
+                    Assert.That(source.OriginalTmdGroup, Does.StartWith("v82_steel_mill_tmd_"));
+                    Assert.That(source.IsReleaseApproved, Is.False);
+                }
+                Assert.Throws<InvalidOperationException>(() => preview.AppendTo(root.transform));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [Test]
         public void DiagnosticsAreAlwaysRejectedAsProductionAssets()
         {
             var obj = new GameObject("source-only");
