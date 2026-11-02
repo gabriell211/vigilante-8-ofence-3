@@ -113,6 +113,14 @@ jobs:
           name: v82-original-road-material-textures
           path: v82-original-road-material-textures.json
           if-no-files-found: error
+      - name: Audit original FUN_630C pre-junction adaptive road subdivision
+        run: python3 scripts/audit_v82_road_adaptive_subdivision.py --json > v82-original-road-adaptive-leaves.json
+      - name: Store genuine pre-junction road subdivision evidence (NOT road meshes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-road-adaptive-leaves
+          path: v82-original-road-adaptive-leaves.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage

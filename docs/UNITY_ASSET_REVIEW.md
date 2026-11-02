@@ -500,3 +500,31 @@ inexistentes não recebem substituto genérico: só são exibidos os
 traços geométricos verificáveis. Testes Unity Editor ficam pendentes
 de execução real; o CI verifica sintaxe C#, auditoria de fontes e
 contratos estruturais.
+
+
+## Subdivisão adaptativa original das pistas — FUN_57AC/FUN_630C
+
+O Editor agora extrai os **dois inteiros assinados little-endian** de
+\`RSEG.DAT_10\` e \`DAT_14\`, constrói os quatro controles iniciais
+X/Z do código preservado \`LevelManager.FUN_719C\` (antes de alterar
+junções) e executa a rotina \`FUN_57AC\` (maior extensão X/Z).
+\`FUN_630C\` divide os controles exatamente quando a extensão não
+está abaixo de \`0x100000\`, preserva a ordem das médias inteiras
+assinadas, as alturas dos endpoints e os controles intermediários
+de altura zero, tal como o fonte. A auditoria tem proteção contra
+overflow int32, 16 níveis de recursão e 4096 folhas de inspeção.
+
+Na janela **Visualizar estradas RSEG originais em planta XZ**,
+selecionar um trecho mostra a quantidade de folhas adaptativas
+pré-junção e, quando há até 256 folhas, sobrepõe os polígonos
+de controle para inspeção. O CI gera
+\`v82-original-road-adaptive-leaves\` para as oito cenas com os
+intervalos fixos 16-bit de cada folha e estados explícitos de
+trechos não verificáveis.
+
+**Limite:** é a subdivisão inicial **antes** de
+\`LevelManager.FUN_719C\` alterar controles nas junções. Ainda
+faltam \`FUN_6604\` e a integração da subdivisão com
+\`FUN_5850\`, as UVs \`Junction.FUN_4F828\` e as malhas
+e colisões finais. O relatório e os polígonos não são conteúdo
+de release, nem comprovam uma pista jogável.
