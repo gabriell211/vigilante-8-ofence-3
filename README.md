@@ -156,3 +156,17 @@ primeiro jogo não estão integrados como recursos Unity 6 e os 19
 cenários continuam sem prefabs jogáveis certificados. O CI automático
 confere o código e as fontes; a compilação/renderização real exige
 executar os testes no Editor Unity.
+
+### Estado da extração das oito fases originais
+
+As cenas Unity 2020 do 2nd Offense estão preservadas e foram lidas
+integralmente para gerar `docs/v82-stage-geometry-probe.json`. Sete
+cenas expõem streams serializados de vértices/faces, e **Nuclear Plant**
+não apresenta esses streams nesse formato. Todas contêm componentes
+`MeshFilter` e referências a outros assets legados. Esses são
+**dados de origem**, não oito arenas já reconstruídas em Unity 6.
+
+O CI confere que o relatório é reproduzível a partir das cenas reais.
+A migração das malhas/terreno, objetos interativos, scripts e colisões
+das oito arenas continua necessária. Não se criaram arenas genéricas
+para compensar essa falta.
