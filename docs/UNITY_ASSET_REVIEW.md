@@ -64,6 +64,14 @@ utilização como arena jogável e como asset de release.
 O CI regular valida integridade e sintaxe; os testes Unity EditMode de importação,
 geometria e galeria ainda exigem o Editor/licença real.
 
+## Bancos WAV originais nas oito fases V82
+
+A importação `Vigilante 8 > Migração > Importar objetos 3D reais das 8 fases V82` agora **também vincula** os bancos de amostras WAV originais (`OriginalAudioBank`) aos oito prefabs de inspeção `Assets/GameContent/PreviewStageObjectsV82/<id>.prefab`. Antes de escrever, a rotina confere IDs oficiais, índices distintos, paths, GUIDs originais e importação de cada `AudioClip`. Nenhum som genérico é sintetizado, e o banco de cada fase preserva seus índices de origem.
+
+Para conferir uma amostra, abra **Vigilante 8 > Migração > Inspecionar WAVs reais das 8 fases V82**. Se necessário, clique em **Importar objetos e anexar os 8 bancos WAV originais**. Escolha a fase e **Abrir WAV** em uma amostra; o clipe será selecionado no Inspector do Unity, onde o preview nativo permite a audição.
+
+Esta é uma **ligação fiel entre fonte de áudio e banco da fase**, não um mapeamento verificado das funções de som durante o jogo. Motor, armas, explosões, ambientação, posição espacial, disparos automáticos e trilhas originais ainda exigem estudo da execução de origem. Os bancos permanecem fora de `Assets/Resources/Arenas`, não criam fases jogáveis e não liberam a build Windows. O manifesto contempla 26 bancos (18 carros, 8 fases) com 142 referências de índices, entre 235 WAV originais arquivados, incluindo outros sons compartilhados.
+
 ## Malhas nativas de terreno original do 2nd Offense
 
 Novo comando Unity: Vigilante 8 > Migração > Gerar galeria 3D de 7 terrenos V82 originais.
