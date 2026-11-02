@@ -156,6 +156,8 @@ namespace Vigilante8.Editor
                         instance.AddComponent<OriginalMachineGunSourceTest>();
                     if (instance.GetComponent<OriginalBastionRocketLauncher>() == null)
                         instance.AddComponent<OriginalBastionRocketLauncher>();
+                    if (instance.GetComponent<OriginalMissileSourceLauncher>() == null)
+                        instance.AddComponent<OriginalMissileSourceLauncher>();
                     if (!drive.HasWeapon)
                         throw new InvalidOperationException("Test drive loadout invalid: " + vehicle.id);
 
