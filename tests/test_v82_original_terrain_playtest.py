@@ -12,7 +12,7 @@ class OriginalTerrainPlaytestContracts(unittest.TestCase):
             "OriginalTerrainSourceImporter.ImportAll()",
             "LegacyVehiclePlaytestBuilder.PrepareAll()",
             "AssetDatabase.LoadAssetAtPath<Mesh>",
-            "new MeshCollider",
+            "ground.AddComponent<MeshCollider>()",
             "collider.sharedMesh = sourceTerrain",
             "Physics.SyncTransforms()",
             "FindGroundSpawns(collider)",
