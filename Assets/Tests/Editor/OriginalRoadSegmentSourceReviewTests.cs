@@ -159,6 +159,33 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void OriginalWidthOffsetIsNotInventedAndFollowsUnadjustedSourceSigns()
+        {
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                256, 0, 65536, out Vector2Int delta), Is.True);
+            Assert.That(delta, Is.EqualTo(new Vector2Int(0, 32768)));
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                0, 256, 65536, out Vector2Int rotated), Is.True);
+            Assert.That(rotated, Is.EqualTo(new Vector2Int(32768, 0)));
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                0, 0, 65536, out _), Is.False);
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                256, 0, 0, out _), Is.False);
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                int.MaxValue, int.MaxValue, int.MaxValue, out _), Is.False);
+        }
+
+        [Test]
+        public void VerifiedSteelMillOriginalXrtpWidthMatchesSerializedPrefab()
+        {
+            var source = OriginalXrtpSourceProfileReview.LoadVerified("v82_steel_mill");
+            Assert.That(source.Length, Is.EqualTo(1));
+            Assert.That(source[0], Is.Not.Null);
+            Assert.That(source[0].FullWidthFixed, Is.EqualTo(65536));
+            Assert.That(source[0].LongitudinalStepFixed, Is.EqualTo(81920));
+        }
+
+        [Test]
         public void SourceDebugAxisMappingRequiresPositiveScale()
         {
             Assert.That(OriginalRsegHeightPreviewBuilder.ToSourceReviewPosition(

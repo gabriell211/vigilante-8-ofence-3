@@ -11,8 +11,9 @@ using Vigilante8.Content;
 namespace Vigilante8.Editor
 {
     /// <summary>
-    /// Diagnostic non-colliding lines for authentic RSEG segments whose source
-    /// FUN_285E4 height branch does NOT need VigTerrain.
+    /// Non-colliding source RSEG centerline and optional authentic-XRTP-width
+    /// edge guides. Edge guides are a diagnostic cross-section only and DO NOT
+    /// reproduce original adaptive splitting or junction-adjusted road meshes.
     /// Source coefficients and all fileIDs come from the SHA-checked scene.
     /// </summary>
     public static class OriginalRsegHeightPreviewBuilder
@@ -68,6 +69,17 @@ namespace Vigilante8.Editor
                     line.positionCount = road.OriginalFixedXYZDense.Length;
                     for (int i = 0; i < road.OriginalFixedXYZDense.Length; i++)
                         line.SetPosition(i, ToSourceReviewPosition(road.OriginalFixedXYZDense[i], divisor));
+                    // Optional sides use the authentic XRTP width and source
+                    // tangent. Their source Y is independently resolved per edge.
+                    // Parent identity excludes ALL these guides from release.
+                    if (road.OriginalLeftEdgeFixedXYZDense != null &&
+                        road.OriginalRightEdgeFixedXYZDense != null)
+                    {
+                        AppendGuide(item.transform, "SOURCE LEFT EDGE (NOT A ROAD MESH)",
+                            road.OriginalLeftEdgeFixedXYZDense, divisor, material);
+                        AppendGuide(item.transform, "SOURCE RIGHT EDGE (NOT A ROAD MESH)",
+                            road.OriginalRightEdgeFixedXYZDense, divisor, material);
+                    }
                     item.AddComponent<OriginalRoadSourcePreviewIdentity>().Configure(
                         stage, road.RsegFileId, road.FirstJuncFileId,
                         road.SecondJuncFileId, divisor);
@@ -88,13 +100,115 @@ namespace Vigilante8.Editor
                 -fixedPoint.y / divisor, fixedPoint.z / divisor);
         }
 
+        /// <summary>
+        /// Translates FUN_5850's unadjusted perpendicular offset using its
+        /// source signed integer division order. The junction transition,
+        /// adaptive t-step and triangulation have not yet been ported.
+        /// </summary>
+        public static bool TrySourceHalfWidthOffset(int derivativeX, int derivativeZ,
+            int fullWidth, out Vector2Int offset)
+        {
+            offset = Vector2Int.zero;
+            if (fullWidth <= 0) return false;
+            long squared = (long)derivativeX * derivativeX +
+                (long)derivativeZ * derivativeZ;
+            if (squared < 1 || squared > int.MaxValue) return false;
+            int magnitude = (int)Math.Sqrt(squared);
+            // Integer sqrt correction avoids platform floating-point uncertainty.
+            while ((long)(magnitude + 1) * (magnitude + 1) <= squared) magnitude++;
+            while ((long)magnitude * magnitude > squared) magnitude--;
+            if (magnitude <= 0) return false;
+            long horizontal = (long)derivativeZ * fullWidth;
+            long vertical = (long)derivativeX * fullWidth;
+            if (horizontal < int.MinValue || horizontal > int.MaxValue ||
+                vertical < int.MinValue || vertical > int.MaxValue) return false;
+            offset = new Vector2Int((int)((horizontal / 2) / magnitude),
+                (int)((vertical / 2) / magnitude));
+            return true;
+        }
+
+        private static bool IsInt32(long value) =>
+            value >= int.MinValue && value <= int.MaxValue;
+
+        private static void AppendGuide(Transform parent, string name, Vector3[] positions,
+            int divisor, Material shared)
+        {
+            if (positions.Length != OriginalRoadSegmentSourceReviewWindow.DenseCurveSampleCount)
+                throw new InvalidDataException("Partial source edge guide rejected");
+            var item = new GameObject(name);
+            item.transform.SetParent(parent, false);
+            var line = item.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
+            line.sharedMaterial = shared;
+            line.widthMultiplier = 0.04f; // diagnostic marker, not physical curb width
+            line.receiveShadows = false;
+            line.shadowCastingMode = ShadowCastingMode.Off;
+            line.positionCount = positions.Length;
+            for (int i = 0; i < positions.Length; i++)
+                line.SetPosition(i, ToSourceReviewPosition(positions[i], divisor));
+        }
+
+        private static void TryAddSourceEdges(
+            OriginalRoadSegmentSourceReviewWindow.SourceRoad road,
+            OriginalXrtpSourceProfileReview.SourceProfile profile,
+            OriginalVigTerrainSourceGrid originalGrid)
+        {
+            if (profile == null || (road.SourceRoadFlags & 0x10) != 0 ||
+                road.OriginalFixedXYZDense == null ||
+                road.OriginalFixedTangentXZDense == null ||
+                road.OriginalFixedTangentXZDense.Length !=
+                    OriginalRoadSegmentSourceReviewWindow.DenseCurveSampleCount)
+                return;
+            var left = new Vector3[road.OriginalFixedXYZDense.Length];
+            var right = new Vector3[left.Length];
+            for (int i = 0; i < left.Length; i++)
+            {
+                Vector2Int tangent = road.OriginalFixedTangentXZDense[i];
+                if (!TrySourceHalfWidthOffset(tangent.x, tangent.y,
+                        profile.FullWidthFixed, out Vector2Int delta))
+                    return;
+                // Keep integer XZ source precision: Unity Vector3 is a float
+                // and rounds large original fixed-point coordinates.
+                if (road.OriginalFixedXZExactDense == null ||
+                    road.OriginalFixedXZExactDense.Length != left.Length)
+                    return;
+                Vector2Int originalXZ = road.OriginalFixedXZExactDense[i];
+                long lx = (long)originalXZ.x - delta.x;
+                long rx = (long)originalXZ.x + delta.x;
+                long lz = (long)originalXZ.y + delta.y;
+                long rz = (long)originalXZ.y - delta.y;
+                if (!IsInt32(lx) || !IsInt32(rx) || !IsInt32(lz) || !IsInt32(rz))
+                    return;
+
+                int ly, ry;
+                if ((road.SourceRoadFlags & 1) != 0)
+                    ly = ry = (int)road.OriginalFixedXYZDense[i].y; // FUN_5850 bridge/non-terrain height branch
+                else if (originalGrid != null &&
+                    originalGrid.TrySampleHeight((int)lx, (int)lz, out ly) &&
+                    originalGrid.TrySampleHeight((int)rx, (int)rz, out ry))
+                {
+                    // FUN_5850 actually samples each terrain-side Y independently.
+                }
+                else
+                    return;
+                left[i] = new Vector3((int)lx, ly, (int)lz);
+                right[i] = new Vector3((int)rx, ry, (int)rz);
+            }
+            road.OriginalLeftEdgeFixedXYZDense = left;
+            road.OriginalRightEdgeFixedXYZDense = right;
+        }
+
         public static PreparedSourceLines Prepare(string stageId)
         {
             // SHA verification is shared with original JUNC builder. RSEG and
             // JUNC .meta script IDs and original RSEG source are also validated.
             var plan = OriginalRoadSegmentSourceReviewWindow.LoadVerified(stageId);
             int divisor = OriginalJunctionSourceReviewBuilder.VerifiedDebugScale();
-            OriginalVigTerrainSourceGrid originalGrid = plan.Roads.Any(x => x.NeedsVigTerrainHeight)
+            OriginalXrtpSourceProfileReview.SourceProfile[] originalProfiles =
+                OriginalXrtpSourceProfileReview.LoadVerified(stageId);
+            OriginalVigTerrainSourceGrid originalGrid = plan.Roads.Any(x =>
+                x.NeedsVigTerrainHeight ||
+                (x.SourceXrtpProfileIndex.HasValue && (x.SourceRoadFlags & 1) == 0))
                 ? OriginalVigTerrainSourceGrid.LoadVerified(stageId) : null;
             foreach (var road in plan.Roads)
             {
@@ -135,6 +249,14 @@ namespace Vigilante8.Editor
                     dense[i] = new Vector3(raw.x, y, raw.y);
                 }
                 if (resolved) road.OriginalFixedXYZDense = dense;
+            }
+            foreach (var road in plan.Roads)
+            {
+                int? originalIndex = road.SourceXrtpProfileIndex;
+                if (!originalIndex.HasValue || originalIndex.Value < 0 ||
+                    originalIndex.Value >= originalProfiles.Length)
+                    continue;
+                TryAddSourceEdges(road, originalProfiles[originalIndex.Value], originalGrid);
             }
             var onlyKnownHeight = plan.Roads.Where(x => x.OriginalFixedXYZ != null &&
                 x.OriginalFixedXYZDense != null).ToArray();
