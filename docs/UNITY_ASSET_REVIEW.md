@@ -124,3 +124,28 @@ se é spawn de jogador, nem validam colisão ou prefab overrides. É
 necessário cruzar GUIDs de MeshFilter/MonoBehaviour com o banco da fase
 antes de instanciar objetos oficiais em uma arena Unity 6; o artefato
 não é usado automaticamente no build e não desbloqueia a release Windows.
+
+
+## Evidência de vínculo entre cena VigMesh e banco XOBF/TMD
+
+A ferramenta de leitura \`python3 scripts/audit_v82_scene_mesh_references.py --json\`
+cruza agora as **oito cenas arquivadas** com o \`VigMesh.cs.meta\`, cada
+\`XOBF00.prefab.meta\` verdadeiro e os grupos \`_tmd_###\` que foram extraídos
+dos bancos de objetos. Nenhuma ligação é criada só por semelhança de nomes:
+ela exige o **GUID exato do componente VigMesh**, o **GUID exato do banco
+XOBF**, o **tmdID** original e a existência real da malha exportada.
+
+Para cada componente, o relatório conserva \`GameObject\`, \`fileID\`,
+\`tmdId\`, \`originalTmdGroup\`, \`referencedXobfGuid\`, transformações
+serializadas e um \`referenceStatus\` distinto para a referência correta,
+peça ausente, banco divergente, parent não resolvido ou componente incompleto.
+Os hashes Git de cena e banco são conferidos novamente antes da análise.
+O resultado fica disponível no CI como artefato
+\`v82-original-scene-mesh-crosswalk\`.
+
+**Importante:** as transformações da cena Unity 2020 não provam as posições
+reais da simulação PS1. \`VigObject.DAT_00\` contém coordenadas fixed-point
+próprias, ainda não convertidas e aplicadas. A auditoria **não instancia
+props nas arenas**, não afirma que os objetos tenham colisão ou áudio prontos
+e não supõe pontos de spawn. Serve como vínculo de origem para a
+próxima etapa de reconstrução em Unity 6.
