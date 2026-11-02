@@ -756,7 +756,8 @@ namespace Vigilante8.Gameplay
         {
             var prefab = CatalogRepository.LoadArenaPrefab(arena);
             if (prefab == null || prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null ||
-                prefab.GetComponentInChildren<OriginalStageObjectPreviewIdentity>(true) != null)
+                prefab.GetComponentInChildren<OriginalStageObjectPreviewIdentity>(true) != null ||
+                prefab.GetComponentInChildren<OriginalTerrainPreviewIdentity>(true) != null)
                 return false;
             var identity = prefab.GetComponent<OfficialAssetIdentity>();
             var spawns = prefab.GetComponentInChildren<ArenaSpawnPoints>(true);

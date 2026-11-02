@@ -63,3 +63,13 @@ utilização como arena jogável e como asset de release.
 
 O CI regular valida integridade e sintaxe; os testes Unity EditMode de importação,
 geometria e galeria ainda exigem o Editor/licença real.
+
+## Malhas nativas de terreno original do 2nd Offense
+
+Novo comando Unity: Vigilante 8 > Migração > Gerar galeria 3D de 7 terrenos V82 originais.
+Importa sete arquivos Geo.asset originais, preservando SHA Git, bytes e GUIDs. Gera
+prefabs em Assets/GameContent/PreviewTerrainV82 e a galeria de inspeção em
+Assets/Scenes/OriginalTerrainReview.unity. A etapa exige execução real no Editor.
+Não são fases completas: faltam posicionamento de objetos, materiais PS1,
+colisões, scripts e pontos de spawn. O terreno de Meteor Crater não foi
+identificado e não é substituído por um modelo genérico.
