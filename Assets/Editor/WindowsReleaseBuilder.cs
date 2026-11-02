@@ -108,6 +108,9 @@ namespace Vigilante8.Editor
                     throw new BuildFailedException("Development-only TMD physics prototype cannot be released: " + vehicle.id);
                 if (prefab.GetComponent<OriginalMachineGunSourceTest>() != null)
                     throw new BuildFailedException("Source-only MGun prototype cannot be released: " + vehicle.id);
+                if (prefab.GetComponent<OriginalBastionRocketLauncher>() != null ||
+                    prefab.GetComponentInChildren<OriginalBastionRocketFlight>(true) != null)
+                    throw new BuildFailedException("Source-only Rocket/Bastion test cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(vehicle.id, vehicle.game))
