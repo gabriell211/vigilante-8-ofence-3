@@ -100,7 +100,7 @@ namespace Vigilante8.Editor
             for (int i = 1; i < points.Length; i++)
             {
                 GameObject opponent = SpawnVehicle(enemyPrefabs[i - 1], points[i], points[0], scene);
-                opponent.AddComponent<BotVehicleInput>().target = player.transform;
+                opponent.AddComponent<BotVehicleInput>();
                 opponentDrives.Add(opponent.GetComponent<VehicleDrive>());
             }
 
@@ -108,6 +108,8 @@ namespace Vigilante8.Editor
             var session = sessionObject.AddComponent<OriginalBattleSession>();
             session.Configure(stageId, playerVehicleId, player.GetComponent<VehicleDrive>(),
                 enemyVehicleIds, opponentDrives.ToArray());
+            var targeting = sessionObject.AddComponent<OriginalBattleTargetCoordinator>();
+            targeting.Configure(player.GetComponent<VehicleDrive>(), opponentDrives.ToArray());
 
             var cameraObject = new GameObject("Original terrain chase camera");
             cameraObject.tag = "MainCamera";
