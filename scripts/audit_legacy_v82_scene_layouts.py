@@ -112,7 +112,10 @@ def inspect_scene(path: Path) -> dict:
     roots = []
     named = 0
     nonzero_local = 0
-    for owner, local, father in transforms.values():
+    records = []
+    for transform_id, (owner, local, father) in sorted(
+        transforms.items(), key=lambda item: int(item[0])
+    ):
         name = objects.get(owner)
         if name:
             named += 1
@@ -120,6 +123,13 @@ def inspect_scene(path: Path) -> dict:
             nonzero_local += 1
         if father == "0" and name:
             roots.append(name)
+        records.append({
+            "transformFileId": transform_id,
+            "gameObjectFileId": owner,
+            "gameObjectName": name,
+            "parentTransformFileId": father,
+            "localPosition": {"x": local[0], "y": local[1], "z": local[2]},
+        })
     return {
         "yamlSections": section_count,
         "namedGameObjects": len(objects),
@@ -129,6 +139,7 @@ def inspect_scene(path: Path) -> dict:
         "prefabInstances": prefab_count,
         "referencedSourcePrefabs": len(prefab_guids),
         "rootNamesSample": sorted(set(roots))[:12],
+        "localTransformRecords": records,
         "note": "Unity LOCAL positions only, prefab modifications unresolved; not certified world placements.",
     }
 
