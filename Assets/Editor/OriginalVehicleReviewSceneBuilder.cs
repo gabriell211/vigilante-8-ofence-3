@@ -20,11 +20,17 @@ namespace Vigilante8.Editor
     {
         private const string ScenePath = "Assets/Scenes/OriginalVehicleReview.unity";
         private const string PreviewFolder = "Assets/GameContent/PreviewPrefabsV82";
+        private const string GalleryMenu = "Vigilante 8/Migração/Gerar galeria 3D dos 18 carros oficiais";
         private const int Columns = 6;
 
-        [MenuItem("Vigilante 8/Migração/Gerar galeria 3D dos 18 carros oficiais")]
+        [MenuItem(GalleryMenu)]
         public static void BuildGallery()
         {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                Debug.LogWarning("Saia do modo Play antes de gerar a galeria dos carros.");
+                return;
+            }
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
@@ -124,6 +130,9 @@ namespace Vigilante8.Editor
                       " (18 distinct model sources, 18 original audio banks). " +
                       "PS1 parts/UVs require visual QA; this is NOT a playable PC release.");
         }
+
+        [MenuItem(GalleryMenu, true)]
+        private static bool CanBuildGallery() => !EditorApplication.isPlayingOrWillChangePlaymode;
     }
 }
 #endif
