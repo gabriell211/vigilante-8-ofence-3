@@ -48,6 +48,13 @@ PrefabInstance:
         self.assertEqual(audit["prefabInstances"], 1)
         self.assertEqual(audit["referencedSourcePrefabs"], 1)
         self.assertEqual(audit["rootNamesSample"], ["Original Stage Root"])
+        by_name = {row["gameObjectName"]: row for row in audit["localTransformRecords"]}
+        self.assertEqual(by_name["Original Stage Root"]["localPosition"],
+                         {"x": 12.5, "y": -2.0, "z": 10.0})
+        self.assertEqual(by_name["Original Stage Root"]["parentTransformFileId"], "0")
+        self.assertEqual(by_name["Child"]["parentTransformFileId"], "200")
+        self.assertEqual(by_name["Child"]["localPosition"],
+                         {"x": 0.0, "y": 0.0, "z": 0.0})
         self.assertIn("LOCAL", audit["note"])
 
     def test_real_eight_scenes_are_exact_official_catalog_and_original_git_blobs(self):
@@ -66,6 +73,8 @@ PrefabInstance:
             self.assertGreater(row["sourceBytes"], 100000, stage)
             self.assertGreater(row["yamlSections"], 1, stage)
             self.assertGreater(row["explicitTransforms"], 0, stage)
+            self.assertEqual(len(row["localTransformRecords"]),
+                             row["explicitTransforms"], stage)
             self.assertGreaterEqual(row["namedGameObjects"], 0)
             self.assertGreaterEqual(row["prefabInstances"], 0)
             self.assertEqual(len(row["originalGitBlobSha"]), 40)
