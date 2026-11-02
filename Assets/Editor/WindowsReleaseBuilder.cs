@@ -121,6 +121,8 @@ namespace Vigilante8.Editor
                 if (prefab.GetComponent<OriginalRoadRunnerSourceLauncher>() != null ||
                     prefab.GetComponentInChildren<OriginalRoadRunnerSourceCharge>(true) != null)
                     throw new BuildFailedException("Source-only RoadRunner rocket cannot be released: " + vehicle.id);
+                if (prefab.GetComponentInChildren<OriginalBotSourceWeaponAI>(true) != null)
+                    throw new BuildFailedException("Source-only AI weapons test cannot be released: " + vehicle.id);
                 if (prefab.GetComponent<OriginalRocketSourceInventory>() != null)
                     throw new BuildFailedException("Source-only RocketL ammunition cannot be released: " + vehicle.id);
                 if (prefab.GetComponent<OriginalMissileSourceInventory>() != null)
@@ -164,6 +166,7 @@ namespace Vigilante8.Editor
                 if (prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null ||
                     prefab.GetComponentInChildren<OriginalBattleSession>(true) != null ||
                     prefab.GetComponentInChildren<OriginalBattleTargetCoordinator>(true) != null ||
+                    prefab.GetComponentInChildren<OriginalBotSourceWeaponAI>(true) != null ||
                     prefab.GetComponentInChildren<OriginalStageObjectPreviewIdentity>(true) != null ||
                     prefab.GetComponentInChildren<OriginalTerrainPreviewIdentity>(true) != null)
                     throw new BuildFailedException("Source-only preview embedded in an official arena: " + arena.id);

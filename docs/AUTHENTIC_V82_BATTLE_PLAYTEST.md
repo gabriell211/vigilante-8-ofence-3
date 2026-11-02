@@ -120,3 +120,27 @@ A heurística de alvo mais próximo **não afirma replicar o algoritmo oficial**
 - A homologação real exige executar `.github/workflows/unity-editmode.yml` com licença Unity configurada. O CI normal verifica apenas sintaxe e contratos estruturais; um resultado verde não implica build do jogo.
 
 **Não publicar** a cena, os protótipos ou um pacote como versão final. O gate estrito de `WindowsReleaseBuilder.ValidateContent()` continua exigindo 31 prefabs de veículos e 19 de arenas oficiais completos.
+
+
+## Adversários usando as armas de origem (teste de IA, não release)
+
+Os carros originais dos **1–3 adversários** no combate de desenvolvimento agora recebem
+`OriginalBotSourceWeaponAI` diretamente na cena, sem modificar os 18 prefabs oficiais
+nem gerar outro carro. A IA mantém a seleção dinâmica de um participante **vivo** do
+`OriginalBattleTargetCoordinator` e só tenta usar os lançadores experimentais
+`OriginalBastionRocketLauncher` / `OriginalMissileSourceLauncher` quando o alvo
+ainda corresponde ao selecionado, está na frente (cone horizontal de 12°),
+dentro do alcance existente de `BotVehicleInput` e sem obstáculos entre os carros.
+
+Os intervalos de **7 s (foguete)** e **9 s (míssil)** são restrições
+**provisórias do protótipo**, não valores do jogo original. O foguete continua
+consumindo exclusivamente as dez cargas e o custo real de `RocketL`; o míssil
+normal permanece com a semântica de carga ainda não homologada, sem inventar
+consumo. Oponentes derrotados e partidas pausadas não disparam; quando o
+alvo morre, a coordenação seleciona outro carro de origem vivo.
+
+O componente é compilado apenas no Editor (`#if UNITY_EDITOR`), não entra em
+nenhum prefab certificado nem no build PC, e `WindowsReleaseBuilder` o recusa
+explicitamente caso seja inserido em um veículo ou arena final. O combate
+ainda depende da Unity para homologação PlayMode e mantém física, visuais,
+colisões e comportamento de IA **não idênticos ao PlayStation**.
