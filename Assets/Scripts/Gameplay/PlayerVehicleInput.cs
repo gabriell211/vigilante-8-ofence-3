@@ -42,6 +42,8 @@ namespace Vigilante8.Gameplay
                 if (keyboard.vKey.wasPressedThisFrame)
                     GetComponent<OriginalMineSourceLauncher>()?.TryDeployVariant(
                         OriginalSpecialMineSourceBehavior.SourceVariant.CactusPatch);
+                if (keyboard.yKey.wasPressedThisFrame)
+                    GetComponent<OriginalRoadRunnerSourceLauncher>()?.TryLaunch();
 #endif
             }
 
@@ -62,6 +64,8 @@ namespace Vigilante8.Gameplay
                     GetComponent<OriginalMissileSourceLauncher>()?.TryLaunch();
                 if (gamepad.dpad.down.wasPressedThisFrame)
                     GetComponent<OriginalMineSourceLauncher>()?.TryDeploy();
+                if (gamepad.buttonWest.wasPressedThisFrame)
+                    GetComponent<OriginalRoadRunnerSourceLauncher>()?.TryLaunch();
 #endif
             }
             vehicle.SetControls(gas, steer, brake, fire);
