@@ -41,7 +41,7 @@ namespace Vigilante8.Gameplay
             if (explosionRadius <= 0f)
             {
                 var victim = collision.collider.GetComponentInParent<VehicleDrive>();
-                if (victim != null && victim != owner) victim.TakeDamage(impactDamage);
+                if (victim != null && victim != owner) victim.TakeDamage(impactDamage, owner);
             }
             else
             {
@@ -52,7 +52,7 @@ namespace Vigilante8.Gameplay
                     if (victim == null || victim == owner || !affected.Add(victim)) continue;
                     float distance = Vector3.Distance(transform.position, victim.transform.position);
                     float falloff = 1f - Mathf.Clamp01(distance / explosionRadius);
-                    victim.TakeDamage(impactDamage * falloff);
+                    victim.TakeDamage(impactDamage * falloff, owner);
                 }
             }
 
