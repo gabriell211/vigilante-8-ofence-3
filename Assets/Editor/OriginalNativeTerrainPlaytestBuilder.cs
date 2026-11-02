@@ -180,6 +180,7 @@ namespace Vigilante8.Editor
                 original.GetComponent<LegacyVehiclePlaytest>().OriginalVehicleId != id ||
                 original.GetComponent<OfficialAssetIdentity>() != null ||
                 original.GetComponent<LegacyVehicleHandlingProfile>() == null ||
+                original.GetComponent<OriginalMachineGunSourceTest>() == null ||
                 original.GetComponent<OriginalAudioBank>() == null ||
                 original.GetComponent<Rigidbody>() == null ||
                 original.GetComponent<VehicleDrive>()?.HasWeapon != true ||

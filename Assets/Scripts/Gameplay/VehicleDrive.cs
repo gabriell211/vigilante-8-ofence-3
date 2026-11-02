@@ -37,6 +37,8 @@ namespace Vigilante8.Gameplay
         private float nextShot;
 
 #if UNITY_EDITOR
+        private OriginalMachineGunSourceTest sourceMachineGun;
+
         /// <summary>Development-only loadout for imported test meshes.
         /// Never represents a verified original special weapon.</summary>
         public void ConfigurePlaytestLoadout(Transform sourceMuzzle, Projectile projectile)
@@ -56,6 +58,9 @@ namespace Vigilante8.Gameplay
             body.interpolation = RigidbodyInterpolation.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             Health = maximumHealth;
+#if UNITY_EDITOR
+            sourceMachineGun = GetComponent<OriginalMachineGunSourceTest>();
+#endif
         }
 
         public void SetControls(float gas, float turning, float braking, bool shoot)
@@ -90,10 +95,28 @@ namespace Vigilante8.Gameplay
                     0f, steer * turningSpeed * steeringFactor * reverse * Time.fixedDeltaTime, 0f));
             }
 
-            if (firing && HasWeapon && Time.time >= nextShot)
+            bool shouldShoot = firing && HasWeapon && Time.time >= nextShot;
+#if UNITY_EDITOR
+            // On genuine source-car test prefabs only, honor the original
+            // MGun tag/heat state machine instead of the placeholder cooldown.
+            if (sourceMachineGun != null)
+                shouldShoot = HasWeapon && sourceMachineGun.TryFire(firing);
+#endif
+            if (shouldShoot)
             {
                 nextShot = Time.time + fireCooldown;
                 Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+#if UNITY_EDITOR
+                if (sourceMachineGun != null)
+                {
+                    // The original Bullet.cs uses 45 source update ticks and
+                    // MGun.cs uses a 7-point base hit. Mapping ticks to
+                    // Unity fixedDeltaTime is explicitly a provisional choice.
+                    shot.impactDamage = OriginalMachineGunSourceTest.NormalBulletDamage;
+                    shot.lifetimeSeconds =
+                        OriginalMachineGunSourceTest.BulletLifeSourceTicks * Time.fixedDeltaTime;
+                }
+#endif
                 shot.Launch(this, muzzle.forward);
             }
         }

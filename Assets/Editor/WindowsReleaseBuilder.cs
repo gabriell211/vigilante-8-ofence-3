@@ -106,6 +106,8 @@ namespace Vigilante8.Editor
 
                 if (prefab.GetComponent<LegacyVehiclePlaytest>() != null)
                     throw new BuildFailedException("Development-only TMD physics prototype cannot be released: " + vehicle.id);
+                if (prefab.GetComponent<OriginalMachineGunSourceTest>() != null)
+                    throw new BuildFailedException("Source-only MGun prototype cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(vehicle.id, vehicle.game))
