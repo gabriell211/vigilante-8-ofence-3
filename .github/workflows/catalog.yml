@@ -89,6 +89,14 @@ jobs:
           name: v82-original-road-segment-graph
           path: v82-original-road-segment-graph.json
           if-no-files-found: error
+      - name: Audit archived VigTerrain fixed-point heights against RSEG source curves
+        run: python3 scripts/audit_v82_vigterrain_heights.py --json > v82-original-vigterrain-road-heights.json
+      - name: Store source-authentic VigTerrain RSEG heights (NOT release roads)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-vigterrain-road-heights
+          path: v82-original-vigterrain-road-heights.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage
