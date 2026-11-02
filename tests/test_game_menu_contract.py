@@ -61,7 +61,7 @@ class InGameMenuWiringTests(unittest.TestCase):
         self.assertIn('Camera has no ChaseCamera component.', self.menu)
         self.assertIn('CleanupMatch();', self.menu)
     def test_all_catalog_pages_have_filters_and_real_selection_actions(self):
-        for signal in ("BuildCatalogBrowser();", "CATÁLOGO OFICIAL",
+        for signal in ("BuildCatalogBrowser();", "SELECIONE SEU COMBATENTE",
                        "RefreshCatalogBrowser", "SelectPilotFromCatalog",
                        "SelectArenaFromCatalog", "OfficialMenuSelections.Cars(catalog, game)",
                        "OfficialMenuSelections.Pilots(catalog, game)",
