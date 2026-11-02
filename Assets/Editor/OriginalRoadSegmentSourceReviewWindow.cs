@@ -25,7 +25,6 @@ namespace Vigilante8.Editor
         private static readonly Regex RefId = new Regex(@"\bfileID: (-?\d+)\b");
         private static readonly Regex RawVector = new Regex(
             @"^  DAT_00: \{x: (-?\d+), y: (-?\d+), z: (-?\d+)\}$");
-        private static readonly Regex HexPair = new Regex(@"^[a-fA-F0-9]{16}$");
         private static readonly string[] Coefficients =
         {
             "DAT_20", "DAT_24", "DAT_28", "DAT_2C", "DAT_30", "DAT_34"
@@ -42,6 +41,7 @@ namespace Vigilante8.Editor
             public Vector3Int? FixedPosition;
             public readonly List<string> Endpoints = new List<string>();
             public bool EndpointsPresent, TangentX, TangentZ;
+            public int[] SourceTangentX, SourceTangentZ;
             public int? Flags, ProfileIndex;
             public readonly Dictionary<string, int> Coeffs =
                 new Dictionary<string, int>(StringComparer.Ordinal);
@@ -59,6 +59,9 @@ namespace Vigilante8.Editor
             public Vector3[] OriginalFixedXYZDense;
             public Vector3[] OriginalLeftEdgeFixedXYZDense;
             public Vector3[] OriginalRightEdgeFixedXYZDense;
+            // Original FUN_630C split of the unadjusted FUN_719C controls.
+            // This deliberately excludes junction transitions and final meshes.
+            public OriginalRoadAdaptiveSourceSubdivision.Leaf[] OriginalUnadjustedAdaptiveLeaves;
             public int? SourceXrtpProfileIndex;
             public int SourceRoadFlags;
             // Present only for RSEG flags which directly specify height.
@@ -265,9 +268,15 @@ namespace Vigilante8.Editor
                             currentMono.Flags = flags;
                     }
                     else if (line.StartsWith("  DAT_10: ", StringComparison.Ordinal))
-                        currentMono.TangentX = HexPair.IsMatch(line.Substring("  DAT_10: ".Length).Trim());
+                        currentMono.TangentX =
+                            OriginalRoadAdaptiveSourceSubdivision.TryReadOriginalTangentPair(
+                                line.Substring("  DAT_10: ".Length).Trim(),
+                                out currentMono.SourceTangentX);
                     else if (line.StartsWith("  DAT_14: ", StringComparison.Ordinal))
-                        currentMono.TangentZ = HexPair.IsMatch(line.Substring("  DAT_14: ".Length).Trim());
+                        currentMono.TangentZ =
+                            OriginalRoadAdaptiveSourceSubdivision.TryReadOriginalTangentPair(
+                                line.Substring("  DAT_14: ".Length).Trim(),
+                                out currentMono.SourceTangentZ);
                     else
                     {
                         foreach (string key in Coefficients)
@@ -350,6 +359,12 @@ namespace Vigilante8.Editor
                         denseYKnown = false;
                 }
                 bool denseComplete = denseXZ.Count == DenseCurveSampleCount;
+                OriginalRoadAdaptiveSourceSubdivision.Leaf[] originalLeaves = null;
+                if (OriginalRoadAdaptiveSourceSubdivision.TryCreateOriginalUnadjustedControls(
+                        start, finish, segment.SourceTangentX, segment.SourceTangentZ,
+                        out Vector3Int[] unadjustedControls))
+                    OriginalRoadAdaptiveSourceSubdivision.TrySplitOriginalUnadjustedCurve(
+                        unadjustedControls, out originalLeaves);
                 accepted.Add(new SourceRoad
                 {
                     RsegFileId = segment.Id,
@@ -358,6 +373,7 @@ namespace Vigilante8.Editor
                     OriginalFixedXZ = points.ToArray(),
                     OriginalFixedXZExact = exactPoints.ToArray(),
                     OriginalFixedXZExactDense = denseComplete ? denseXZ.ToArray() : null,
+                    OriginalUnadjustedAdaptiveLeaves = originalLeaves,
                     OriginalFixedTangentXZDense = denseComplete && allTangentsSafe &&
                         denseTangent.Count == DenseCurveSampleCount ? denseTangent.ToArray() : null,
                     SourceXrtpProfileIndex = segment.ProfileIndex,
@@ -402,6 +418,7 @@ namespace Vigilante8.Editor
             // eight official catalog IDs, and archived script .meta GUIDs.
             string yamlFile = OriginalJunctionSourceReviewBuilder.VerifiedOriginalScenePath(stageId);
             VerifyOriginalCurveCode();
+            OriginalRoadAdaptiveSourceSubdivision.VerifyArchivedSource();
             string rsegGuid = OriginalJunctionSourceReviewBuilder.VerifiedScriptGuid(RsegMeta);
             string juncGuid = OriginalJunctionSourceReviewBuilder.VerifiedScriptGuid(JuncMeta);
             return ParseSource(File.ReadAllText(yamlFile), rsegGuid, juncGuid);
@@ -441,7 +458,19 @@ namespace Vigilante8.Editor
                 " | altura via VigTerrain: " + current.TerrainDependentSegments +
                 " | Y de origem conhecido: " + current.HeightKnownSegments);
             if (selectedRoad != null)
+            {
+                var segment = current.Roads.FirstOrDefault(r => r.RsegFileId == selectedRoad);
                 EditorGUILayout.LabelField("fileID do trecho selecionado: " + selectedRoad);
+                int count = segment?.OriginalUnadjustedAdaptiveLeaves?.Length ?? 0;
+                EditorGUILayout.LabelField(count > 0
+                    ? "FUN_630C inicial (sem ajustes JUNC): " + count +
+                      " segmentos adaptativos de origem"
+                    : "FUN_630C inicial: sem reconstrução segura para este trecho");
+                EditorGUILayout.HelpBox(
+                    "Subdivisão pré-junção, somente auditoria dos controles Bézier. " +
+                    "Não substitui a malha UV e triangulação do código original.",
+                    MessageType.Info);
+            }
             Rect rect = GUILayoutUtility.GetRect(100f, Mathf.Max(320f, position.height - 210f),
                 GUILayout.ExpandWidth(true));
             EditorGUI.DrawRect(rect, new Color(0.06f, 0.08f, 0.11f));
@@ -494,6 +523,20 @@ namespace Vigilante8.Editor
                     ? new Color(0.98f, 0.68f, 0.27f, 0.95f)
                     : new Color(0.29f, 0.82f, 0.94f, 0.95f);
                 Handles.DrawAAPolyLine(road.RsegFileId == selectedRoad ? 4f : 2f, points);
+                // For the selected road ONLY, draw the source unadjusted leaf
+                // control polygons, not the final post-JUNC original geometry.
+                if (road.RsegFileId == selectedRoad &&
+                    road.OriginalUnadjustedAdaptiveLeaves != null &&
+                    road.OriginalUnadjustedAdaptiveLeaves.Length <= 256)
+                {
+                    Handles.color = new Color(0.57f, 0.95f, 0.44f, 0.75f);
+                    foreach (var leaf in road.OriginalUnadjustedAdaptiveLeaves)
+                    {
+                        Vector3[] originalControls = leaf.SourceControlPoints.Select(p =>
+                            (Vector3)ToScreen(new Vector2(p.x, p.z))).ToArray();
+                        Handles.DrawAAPolyLine(1f, originalControls);
+                    }
+                }
                 if (Event.current.type == EventType.MouseDown &&
                     area.Contains(Event.current.mousePosition))
                 {
