@@ -209,3 +209,28 @@ Build Settings da release Windows.
 
 Os testes Python/Roslyn verificam contratos e sintaxe; verificação
 visual, compilação Unity e EditMode continuam exigindo Editor real.
+
+
+## Combate de inspeção com estruturas reais JUNC/TMD (opcional)
+
+No Unity Editor, a janela **Vigilante 8 > Migração > Dirigir em terreno real
+V82 (teste, não release)** agora oferece **Mostrar estruturas JUNC/TMD
+originais (sem colisão)**. Com a opção marcada, a cena de teste existente
+recebe um conjunto de objetos de origem real sobre um dos **sete** terrenos
+\`Geo.asset\` preservados (o \`v82_meteor_crater\` ainda não possui o terreno).
+
+A integração reutiliza o validador de hashes/GUIDs e \`DAT_18\`/TMD da
+\`OriginalJunctionSourceReviewBuilder\`: tudo é verificado **antes** da cena
+de combate ser substituída. As instâncias mantêm
+\`OriginalJunctionSourcePreviewIdentity\`, possuem apenas \`MeshFilter\`
+e \`MeshRenderer\` da geometria autêntica e **não criam Collider,
+Rigidbody, componentes de arma ou personagens**. A opção começa desligada.
+A colisão já existente dos testes contra o terreno nativo não muda.
+
+**Limitação importante:** essas instâncias usam a conversão de
+\`JUNC_DB.DAT_00\` com a escala preservada em \`DEBUG.unity\`, mas não
+receberam a transformação dos vértices por \`JUNC_DB.LoadDB()\` e
+\`VigTerrain.FUN_1B750()\`. A sobreposição espacial é **exploratória**:
+não é aprovação da posição final de edifícios ou pontes, geometria
+dinâmica, física do jogo original ou fase homologada. O Windows release
+continua bloqueando qualquer prefab que contenha esses marcadores.
