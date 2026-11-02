@@ -764,8 +764,7 @@ namespace Vigilante8.Gameplay
         private static bool IsVehicleReady(VehicleEntry vehicle)
         {
             var prefab = CatalogRepository.LoadVehiclePrefab(vehicle);
-            if (prefab == null || prefab.GetComponent<LegacyVehiclePlaytest>() != null ||
-                prefab.GetComponentInChildren<OriginalVehiclePreviewIdentity>(true) != null)
+            if (prefab == null || prefab.GetComponent<LegacyVehiclePlaytest>() != null)
                 return false;
 
             var identity = prefab.GetComponent<OfficialAssetIdentity>();
@@ -812,8 +811,19 @@ namespace Vigilante8.Gameplay
                 reason = "Escolha um piloto, um veículo e uma arena.";
                 return false;
             }
+            if (characterSelector == null || characterSelector.index < 0 ||
+                characterSelector.index >= characterIds.Length)
+            {
+                reason = "Selecione um piloto oficial antes do combate.";
+                return false;
+            }
             var selected = catalog.vehicles.First(v => v.id == vehicleIds[vehicleSelector.index]);
             var arena = catalog.arenas.First(a => a.id == arenaIds[arenaSelector.index]);
+            if (selected.characterId != characterIds[characterSelector.index])
+            {
+                reason = "O veículo selecionado não pertence ao piloto atual.";
+                return false;
+            }
             if (!IsVehicleReady(selected))
             {
                 reason = "Este carro oficial ainda não possui mesh, física e armas prontas no Unity.";
