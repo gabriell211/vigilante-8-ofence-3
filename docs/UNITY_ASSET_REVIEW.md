@@ -424,3 +424,31 @@ As linhas são **somente diagnóstico**: faltam as transições \`FUN_719C\`,
 \`FUN_6604\`, subdivisão adaptativa \`FUN_630C\`, triangulação e UV
 originais, além de materiais e colisão de release. A inspeção de bordas
 não equivale a uma malha oficial e não é embutida no pacote Windows.
+
+
+## Melhoria 4× das texturas originais dos 18 veículos V82
+
+A importação dos 18 veículos por \`OriginalVehiclePreviewBuilder\` agora
+prepara automaticamente texturas de prévia em **quatro vezes a largura e
+altura de origem** usando interpolação bicúbica Catmull–Rom com RGBA
+pré-multiplicado. O propósito é melhorar a filtragem no Unity moderno,
+sem tentar recriar detalhes desconhecidos ou alucinar arte. Todas as
+**790 texturas BMP originais** continuam intactas: cada entrada exige o
+GUID e os hashes SHA-256 do BMP original e da cópia do banco.
+
+As novas texturas PNG ficam em
+\`Assets/GameContent/EnhancedSourceTexturesV82/<guid>.png\`, são
+reimportadas com trilinear, mipmaps, anisotropia 8× e sem compressão
+com perda. O importador grava GUID original, SHA-256 de entrada e
+SHA-256 de saída nos metadados do PNG. Qualquer alteração invalida a
+proveniência e exige uma nova renderização; a própria malha/UV original
+não é modificada.
+
+Além da geração sob demanda na importação dos 18 carros, o menu
+\`Vigilante 8 > Migração > Melhorar texturas originais V82 (790 BMP / 4x)\`
+gera o banco inteiro. PNGs são derivados durante a importação pelo
+Unity Editor, não por downloads ou substituições genéricas; os binários
+não são embutidos no repositório previamente. Aumento de resolução
+**não** representa novos detalhes 3D ou certificação visual da versão
+final. Testes C# de pixels exigem o Editor Unity; os testes Python no
+CI auditam a fonte e os contratos de código.
