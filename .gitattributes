@@ -2,3 +2,4 @@ Assets/GameContent/ExtractedV8/** text eol=lf
 Assets/GameContent/ExtractedV8Stages/** text eol=lf
 Assets/GameContent/ExtractedV82Disc/** text eol=lf
 Assets/GameContent/ExtractedV82DiscStages/** text eol=lf
+ProjectSettings/*.asset whitespace=-blank-at-eol
