@@ -121,6 +121,14 @@ jobs:
           name: v82-original-road-adaptive-leaves
           path: v82-original-road-adaptive-leaves.json
           if-no-files-found: error
+      - name: Audit original FUN_719C junction transition radius and block unsafe FUN_6604
+        run: python3 scripts/audit_v82_junction_transition_selection.py --json > v82-original-junction-transition-decisions.json
+      - name: Store original junction transition decisions (NOT physical roads)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-junction-transition-decisions
+          path: v82-original-junction-transition-decisions.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage
