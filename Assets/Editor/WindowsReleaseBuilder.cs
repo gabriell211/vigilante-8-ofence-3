@@ -118,6 +118,9 @@ namespace Vigilante8.Editor
                     prefab.GetComponentInChildren<OriginalMineSourceTrap>(true) != null ||
                     prefab.GetComponentInChildren<OriginalSpecialMineSourceBehavior>(true) != null)
                     throw new BuildFailedException("Source-only Mine test cannot be released: " + vehicle.id);
+                if (prefab.GetComponent<OriginalRoadRunnerSourceLauncher>() != null ||
+                    prefab.GetComponentInChildren<OriginalRoadRunnerSourceCharge>(true) != null)
+                    throw new BuildFailedException("Source-only RoadRunner rocket cannot be released: " + vehicle.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(vehicle.id, vehicle.game))
