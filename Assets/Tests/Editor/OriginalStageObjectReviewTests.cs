@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Vigilante8.Content;
 using Vigilante8.Editor;
+using Vigilante8.Gameplay;
 namespace Vigilante8.EditorTests
 {
     public sealed class OriginalStageObjectReviewTests
