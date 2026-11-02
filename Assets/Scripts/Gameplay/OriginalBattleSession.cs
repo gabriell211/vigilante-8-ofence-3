@@ -108,6 +108,15 @@ namespace Vigilante8.Gameplay
             return vehicle.officialName + " / " + pilot.name;
         }
 
+        /// <summary>Deterministic result evaluation; defeat takes precedence on simultaneous KOs.</summary>
+        public static BattleOutcome EvaluateOutcome(bool playerAlive, int activeOpponents)
+        {
+            if (activeOpponents < 0)
+                throw new ArgumentOutOfRangeException(nameof(activeOpponents));
+            if (!playerAlive) return BattleOutcome.Defeat;
+            return activeOpponents == 0 ? BattleOutcome.Victory : BattleOutcome.InProgress;
+        }
+
         private void Update()
         {
             if (!ready) return;
@@ -118,8 +127,7 @@ namespace Vigilante8.Gameplay
                 Time.timeScale = paused ? 0f : 1f;
             }
             if (paused || outcome != BattleOutcome.InProgress) return;
-            if (!player.IsAlive) outcome = BattleOutcome.Defeat;
-            else if (RemainingOpponents == 0) outcome = BattleOutcome.Victory;
+            outcome = EvaluateOutcome(player.IsAlive, RemainingOpponents);
         }
 
         private void OnGUI()
