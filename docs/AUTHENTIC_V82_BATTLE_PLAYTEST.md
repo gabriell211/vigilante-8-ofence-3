@@ -14,6 +14,12 @@ O HUD e suas condições de resultado **não substituem** as regras originais de
 
 A detecção de obstáculos distingue superfícies dirigíveis de paredes por inclinação da normal da malha; usa consultas físicas sem alocação por decisão. IA interrompe os controles quando o veículo-alvo foi destruído e evita disparos com geometria entre os carros. Estas são **correções de comportamento na física Unity de desenvolvimento**, não equivalência confirmada com a IA, navegação ou armas do PlayStation. A verificação completa depende de PlayMode no Unity Editor com as sete malhas importadas.
 
+## Combate livre com seleção de alvos
+
+`OriginalBattleTargetCoordinator` verifica todos os veículos **originais efetivamente instanciados** e atribui a cada adversário controlado pela IA o veículo adversário vivo mais próximo. Portanto, dois bots podem combater entre si, e a destruição de um alvo provoca troca dinâmica para outro participante. Distâncias iguais respeitam a ordem estável do elenco da cena. Carros repetidos e pilotos duplicados continuam proibidos, e o componente é exclusivo do Editor e bloqueado pelo gate Windows.
+
+A heurística de alvo mais próximo **não afirma replicar o algoritmo oficial** do 2nd Offense; ela é uma etapa funcional para testar o combate e a integridade dos veículos com física Unity provisória.
+
 ## Limitações de homologação
 
 - **18** veículos V82 têm geometria original disponível no teste. Os **13** veículos do primeiro jogo ainda dependem de mídia e migração final.
