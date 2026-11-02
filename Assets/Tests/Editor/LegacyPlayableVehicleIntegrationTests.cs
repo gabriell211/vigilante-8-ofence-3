@@ -83,6 +83,52 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void OriginalTerrainBattleUsesFourDistinctSourceCarsAndThreeBots()
+        {
+            const string stage = "v82_winter_games";
+            OriginalNativeTerrainPlaytestBuilder.CreateBattle(stage, "v82_tsunami",
+                new[] { "v82_thunderbolt", "v82_blue_burro_bus", "v82_moon_trekker" });
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var roots = scene.GetRootGameObjects();
+            var drivers = roots.SelectMany(root =>
+                root.GetComponentsInChildren<LegacyVehiclePlaytest>(true)).ToArray();
+            Assert.That(drivers.Select(x => x.OriginalVehicleId).Distinct().Count(),
+                Is.EqualTo(4), "All combatants must use different genuine original meshes");
+            Assert.That(roots.SelectMany(root =>
+                root.GetComponentsInChildren<PlayerVehicleInput>(true)).Count(),
+                Is.EqualTo(1));
+            Assert.That(roots.SelectMany(root =>
+                root.GetComponentsInChildren<BotVehicleInput>(true)).Count(),
+                Is.EqualTo(3));
+            var terrain = roots.SelectMany(root =>
+                root.GetComponentsInChildren<OriginalTerrainPreviewIdentity>(true))
+                .SingleOrDefault();
+            Assert.That(terrain, Is.Not.Null);
+            Assert.That(terrain.StageId, Is.EqualTo(stage));
+            Assert.That(terrain.IsReleaseApproved, Is.False);
+            Assert.That(roots.SelectMany(root =>
+                root.GetComponentsInChildren<MeshCollider>(true))
+                .Any(c => c.sharedMesh != null && c.sharedMesh.vertexCount > 2),
+                Is.True, "Physics must come from the source mesh, not a synthetic floor");
+            Assert.That(EditorBuildSettings.scenes.Any(x =>
+                x.enabled && x.path == OriginalNativeTerrainPlaytestBuilder.ScenePath), Is.False);
+        }
+
+        [Test]
+        public void OriginalTerrainBattleRejectsDuplicateCarsAndPilots()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                OriginalNativeTerrainPlaytestBuilder.CreateBattle("v82_winter_games",
+                    "v82_tsunami", new[] { "v82_tsunami" }));
+            Assert.Throws<ArgumentException>(() =>
+                OriginalNativeTerrainPlaytestBuilder.CreateBattle("v82_winter_games",
+                    "v82_tsunami", new[] { "v82_thunderbolt", "v82_thunderbolt" }));
+            Assert.Throws<ArgumentException>(() =>
+                OriginalNativeTerrainPlaytestBuilder.CreateBattle("v82_meteor_crater",
+                    "v82_tsunami", new[] { "v82_thunderbolt" }));
+        }
+
+        [Test]
         public void DevelopmentSceneCanBeGeneratedWithoutReleasingAFakeArena()
         {
             LegacyVehiclePlaytestBuilder.CreateScene("v82_tsunami");

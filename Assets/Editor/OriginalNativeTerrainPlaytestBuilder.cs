@@ -26,17 +26,38 @@ namespace Vigilante8.Editor
 
         public static void Create(string stageId, string playerVehicleId, string enemyVehicleId)
         {
+            CreateBattle(stageId, playerVehicleId, new[] { enemyVehicleId });
+        }
+
+        /// <summary>
+        /// Builds a development-only 1-v-1 to 1-v-3 encounter using only original
+        /// 2nd Offense vehicle meshes and original source terrain. Never certifies
+        /// original spawn points, weapon effects or stage gameplay.
+        /// </summary>
+        public static void CreateBattle(string stageId, string playerVehicleId,
+            IEnumerable<string> opponentVehicleIds)
+        {
             if (string.IsNullOrWhiteSpace(stageId) ||
-                string.IsNullOrWhiteSpace(playerVehicleId) ||
-                string.IsNullOrWhiteSpace(enemyVehicleId) ||
-                playerVehicleId == enemyVehicleId)
-                throw new ArgumentException("Choose two different official V82 cars and a source terrain");
+                string.IsNullOrWhiteSpace(playerVehicleId) || opponentVehicleIds == null)
+                throw new ArgumentException("A preserved terrain and source cars are required");
+            string[] enemyVehicleIds = opponentVehicleIds.ToArray();
+            if (enemyVehicleIds.Length < 1 || enemyVehicleIds.Length > 3 ||
+                enemyVehicleIds.Any(string.IsNullOrWhiteSpace) ||
+                enemyVehicleIds.Contains(playerVehicleId) ||
+                enemyVehicleIds.Distinct(StringComparer.Ordinal).Count() != enemyVehicleIds.Length)
+                throw new ArgumentException("Choose one to three different original opponents");
+
             GameCatalog catalog = CatalogRepository.Load();
             if (!catalog.arenas.Any(a => a.game == "v82" && a.id == stageId) ||
-                stageId == "v82_meteor_crater" ||
-                !catalog.vehicles.Any(v => v.game == "v82" && v.id == playerVehicleId) ||
-                !catalog.vehicles.Any(v => v.game == "v82" && v.id == enemyVehicleId))
-                throw new ArgumentException("Only the 7 preserved terrains and 18 original cars are allowed");
+                stageId == "v82_meteor_crater")
+                throw new ArgumentException("Only the 7 preserved original terrains are allowed");
+            string[] selectedIds = new[] { playerVehicleId }.Concat(enemyVehicleIds).ToArray();
+            VehicleEntry[] participants = selectedIds.Select(id =>
+                catalog.vehicles.SingleOrDefault(v => v.game == "v82" && v.id == id)).ToArray();
+            if (participants.Any(v => v == null) ||
+                participants.Select(v => v.characterId).Distinct(StringComparer.Ordinal).Count()
+                    != participants.Length)
+                throw new ArgumentException("All vehicles must be original and have distinct official pilots");
 
             OriginalTerrainSourceImporter.ImportAll();
             LegacyVehiclePlaytestBuilder.PrepareAll();
@@ -46,13 +67,19 @@ namespace Vigilante8.Editor
                 throw new InvalidOperationException("Authentic native source terrain not imported");
 
             GameObject playerPrefab = VerifiedCar(playerVehicleId);
-            GameObject enemyPrefab = VerifiedCar(enemyVehicleId);
+            GameObject[] enemyPrefabs = enemyVehicleIds.Select(VerifiedCar).ToArray();
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var ground = new GameObject("GENUINE V82 TERRAIN MESH - UNVERIFIED COLLISION");
             ground.AddComponent<MeshFilter>().sharedMesh = sourceTerrain;
+            // The original geometry is visible with a clearly labeled *diagnostic*
+            // material. This is not a port of the stage's original PS1 textures.
+            var terrainRenderer = ground.AddComponent<MeshRenderer>();
+            Material diagnostic = EnsureDiagnosticTerrainMaterial();
+            terrainRenderer.sharedMaterials = Enumerable.Repeat(
+                diagnostic, sourceTerrain.subMeshCount).ToArray();
             // This is collision against the actual archived native mesh, not a
             // synthetic floor, but it is NOT original VigTerrain collision behavior.
             var collider = ground.AddComponent<MeshCollider>();
@@ -66,11 +93,14 @@ namespace Vigilante8.Editor
                 sourceTerrain.vertexCount, CountTriangles(sourceTerrain));
 
             Physics.SyncTransforms();
-            Vector3[] points = FindGroundSpawns(collider);
+            Vector3[] points = FindGroundSpawns(collider, participants.Length);
             GameObject player = SpawnVehicle(playerPrefab, points[0], points[1], scene);
-            GameObject enemy = SpawnVehicle(enemyPrefab, points[1], points[0], scene);
             player.AddComponent<PlayerVehicleInput>();
-            enemy.AddComponent<BotVehicleInput>().target = player.transform;
+            for (int i = 1; i < points.Length; i++)
+            {
+                GameObject opponent = SpawnVehicle(enemyPrefabs[i - 1], points[i], points[0], scene);
+                opponent.AddComponent<BotVehicleInput>().target = player.transform;
+            }
 
             var cameraObject = new GameObject("Original terrain chase camera");
             cameraObject.tag = "MainCamera";
@@ -96,9 +126,27 @@ namespace Vigilante8.Editor
                 throw new InvalidOperationException("Failed to save genuine terrain physics test");
             if (EditorBuildSettings.scenes.Any(s => s.enabled && s.path == ScenePath))
                 throw new InvalidOperationException("Development terrain physics test must not ship");
-            Debug.Log("Source-derived terrain driving test ready: " + stageId +
-                " / " + playerVehicleId + " vs " + enemyVehicleId +
+            Debug.Log("Source-derived 1-v-" + enemyVehicleIds.Length +
+                " terrain battle ready: " + stageId + " / " + playerVehicleId +
+                " vs " + string.Join(", ", enemyVehicleIds) +
                 ". Original special weapons, exact collision and official spawn points NOT ready.");
+        }
+
+        private static Material EnsureDiagnosticTerrainMaterial()
+        {
+            const string materialFolder = "Assets/GameContent/PreviewTerrainMaterialsV82";
+            const string materialPath = materialFolder + "/Diagnostic.mat";
+            Material existing = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (existing != null) return existing;
+            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (shader == null)
+                throw new InvalidOperationException("URP inspection shader is missing");
+            if (!AssetDatabase.IsValidFolder(materialFolder))
+                AssetDatabase.CreateFolder("Assets/GameContent", "PreviewTerrainMaterialsV82");
+            var material = new Material(shader) { name = "SOURCE TERRAIN - NOT ORIGINAL TEXTURE" };
+            material.SetColor("_BaseColor", new Color(0.73f, 0.81f, 0.91f));
+            AssetDatabase.CreateAsset(material, materialPath);
+            return material;
         }
 
         private static int CountTriangles(Mesh mesh)
@@ -132,14 +180,16 @@ namespace Vigilante8.Editor
             return original;
         }
 
-        private static Vector3[] FindGroundSpawns(MeshCollider source)
+        private static Vector3[] FindGroundSpawns(MeshCollider source, int count)
         {
             // Locations are inferred from the genuine triangles, never claimed
             // as official stage spawns. Fail closed if no safe surface is found.
             Bounds area = source.bounds;
             if (area.size.x < 3f || area.size.z < 3f)
                 throw new InvalidOperationException("Imported source mesh has no suitable ground area");
-            var chosen = new List<Vector3>(2);
+            if (count < 2 || count > 4)
+                throw new ArgumentOutOfRangeException(nameof(count));
+            var chosen = new List<Vector3>(count);
             float required = Mathf.Max(8f, Mathf.Min(area.size.x, area.size.z) * 0.1f);
             for (int zi = 1; zi <= 11; zi++)
             for (int xi = 1; xi <= 11; xi++)
@@ -152,7 +202,7 @@ namespace Vigilante8.Editor
                     chosen.Any(p => Vector3.Distance(p, hit.point) < required))
                     continue;
                 chosen.Add(hit.point);
-                if (chosen.Count == 2) return chosen.ToArray();
+                if (chosen.Count == count) return chosen.ToArray();
             }
             throw new InvalidOperationException(
                 "Original terrain could not provide two safe source-derived driving positions");
@@ -177,7 +227,7 @@ namespace Vigilante8.Editor
 
     public sealed class OriginalNativeTerrainPlaytestWindow : EditorWindow
     {
-        private int stageIndex, carIndex, opponentIndex = 1;
+        private int stageIndex, carIndex, opponentIndex = 1, opponentCount = 1;
         [MenuItem("Vigilante 8/Migração/Dirigir em terreno real V82 (teste, não release)")]
         public static void ShowWindow() =>
             GetWindow<OriginalNativeTerrainPlaytestWindow>("V8 original terrain test");
@@ -207,13 +257,28 @@ namespace Vigilante8.Editor
             opponentIndex = EditorGUILayout.Popup("Carro adversário",
                 Mathf.Clamp(opponentIndex, 0, vehicles.Length - 1),
                 vehicles.Select(v => v.officialName).ToArray());
-            using (new EditorGUI.DisabledScope(carIndex == opponentIndex))
+            opponentCount = EditorGUILayout.IntSlider("Adversários (1 a 3)", opponentCount, 1, 3);
+            VehicleEntry selected = vehicles[carIndex];
+            VehicleEntry firstOpponent = vehicles[opponentIndex];
+            VehicleEntry[] extraOpponents = vehicles.Where(v =>
+                v.characterId != selected.characterId &&
+                v.characterId != firstOpponent.characterId)
+                .OrderBy(v => v.id, StringComparer.Ordinal)
+                .Take(opponentCount - 1).ToArray();
+            bool validSelection = selected.characterId != firstOpponent.characterId &&
+                extraOpponents.Length == opponentCount - 1;
+            if (!validSelection)
+                EditorGUILayout.HelpBox("Choose a different official vehicle/pilot for the opponent.",
+                    MessageType.Error);
+            using (new EditorGUI.DisabledScope(!validSelection))
             {
-                if (GUILayout.Button("Criar cena jogável de teste com assets reais"))
-                    OriginalNativeTerrainPlaytestBuilder.Create(
-                        terrains[stageIndex].id, vehicles[carIndex].id, vehicles[opponentIndex].id);
+                if (GUILayout.Button("Criar combate real de teste (não release)"))
+                    OriginalNativeTerrainPlaytestBuilder.CreateBattle(
+                        terrains[stageIndex].id, selected.id,
+                        new[] { firstOpponent.id }.Concat(extraOpponents.Select(v => v.id)));
             }
-            EditorGUILayout.LabelField("A cena nunca entra na release Windows.");
+            EditorGUILayout.LabelField(
+                "1 a 3 adversários com carros/pilotos próprios. Cena excluída do build Windows.");
         }
     }
 }
