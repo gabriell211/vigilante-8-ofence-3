@@ -29,12 +29,24 @@ namespace Vigilante8.Gameplay
         private string playerName;
         private string[] opponentNames;
         private BattleOutcome outcome = BattleOutcome.InProgress;
+        private int playerEliminations;
+        private int[] opponentEliminations = Array.Empty<int>();
+        private string lastElimination = "SEM ELIMINACOES";
 
         public string OriginalArenaId => originalArenaId;
         public string OriginalPlayerId => originalPlayerId;
         public int RemainingOpponents => opponents?.Count(v => v != null && v.IsAlive) ?? 0;
         public int TotalOpponents => opponents?.Length ?? 0;
         public BattleOutcome Outcome => outcome;
+        public int PlayerEliminations => playerEliminations;
+        public int TotalEliminations => playerEliminations + opponentEliminations.Sum();
+        public string LastElimination => lastElimination;
+        public int GetOpponentEliminations(int index)
+        {
+            if (index < 0 || index >= opponentEliminations.Length)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            return opponentEliminations[index];
+        }
         public bool IsReleaseApproved => false;
 
         public void Configure(string arenaId, string vehicleId, VehicleDrive playerDrive,
@@ -74,6 +86,9 @@ namespace Vigilante8.Gameplay
             player = playerDrive;
             opponents = (VehicleDrive[])enemyDrives.Clone();
             opponentIds = (string[])enemyIds.Clone();
+            opponentEliminations = new int[enemyIds.Length];
+            playerEliminations = 0;
+            lastElimination = "SEM ELIMINACOES";
             CacheLabels(catalog);
         }
 
@@ -88,8 +103,14 @@ namespace Vigilante8.Gameplay
                 return;
             }
             CacheLabels(CatalogRepository.Load());
+            opponentEliminations = new int[opponents.Length];
+            playerEliminations = 0;
+            lastElimination = "SEM ELIMINACOES";
             outcome = BattleOutcome.InProgress;
             ready = true;
+            player.Eliminated += OnVehicleEliminated;
+            foreach (VehicleDrive opponent in opponents)
+                opponent.Eliminated += OnVehicleEliminated;
         }
 
         private void CacheLabels(GameCatalog catalog)
@@ -117,6 +138,39 @@ namespace Vigilante8.Gameplay
             return activeOpponents == 0 ? BattleOutcome.Victory : BattleOutcome.InProgress;
         }
 
+        /// <summary>
+        /// Counts only a fatal projectile hit from a participant in this exact
+        /// battle. Environment deaths and external attackers never earn points.
+        /// </summary>
+        private void OnVehicleEliminated(VehicleDrive victim, VehicleDrive killer)
+        {
+            if (!ready || victim == null) return;
+            bool member = victim == player || Array.IndexOf(opponents, victim) >= 0;
+            if (!member) return;
+            string victimName = victim == player ? playerName :
+                opponentNames[Array.IndexOf(opponents, victim)];
+            string killerName = "SEM AUTOR";
+            if (killer != victim && killer != null)
+            {
+                if (killer == player)
+                {
+                    playerEliminations++;
+                    killerName = playerName;
+                }
+                else
+                {
+                    int index = Array.IndexOf(opponents, killer);
+                    if (index >= 0)
+                    {
+                        opponentEliminations[index]++;
+                        killerName = opponentNames[index];
+                    }
+                }
+            }
+            lastElimination = killerName + " > " + victimName;
+            outcome = EvaluateOutcome(player.IsAlive, RemainingOpponents);
+        }
+
         private void Update()
         {
             if (!ready) return;
@@ -134,7 +188,7 @@ namespace Vigilante8.Gameplay
         {
             if (!ready || !Application.isPlaying) return;
             float width = Mathf.Clamp(Screen.width - 36f, 260f, 440f);
-            float height = 154f + TotalOpponents * 24f;
+            float height = 212f + TotalOpponents * 24f;
             GUI.Box(new Rect(16f, 16f, width, height), GUIContent.none);
             var title = new GUIStyle(GUI.skin.label)
             {
@@ -153,7 +207,8 @@ namespace Vigilante8.Gameplay
             GUI.Label(new Rect(28f, y, width - 24f, 22f), "TERRENO: " + arenaName, regular);
             y += 23f;
             GUI.Label(new Rect(28f, y, width - 24f, 22f),
-                "JOGADOR: " + playerName + "  |  HP " + Mathf.CeilToInt(player.Health), regular);
+                "JOGADOR: " + playerName + "  |  HP " + Mathf.CeilToInt(player.Health) +
+                "  |  KOs " + playerEliminations, regular);
             y += 23f;
             for (int i = 0; i < opponents.Length; i++)
             {
@@ -161,7 +216,8 @@ namespace Vigilante8.Gameplay
                 string hp = enemy == null ? "SEM REFERENCIA" :
                     enemy.IsAlive ? Mathf.CeilToInt(enemy.Health).ToString() : "DESTRUIDO";
                 GUI.Label(new Rect(28f, y, width - 24f, 22f),
-                    "IA " + (i + 1) + ": " + opponentNames[i] + "  |  HP " + hp, regular);
+                    "IA " + (i + 1) + ": " + opponentNames[i] + "  |  HP " + hp +
+                    "  |  KOs " + opponentEliminations[i], regular);
                 y += 24f;
             }
             string state = outcome == BattleOutcome.Victory ? "VITORIA (TESTE)" :
@@ -170,6 +226,9 @@ namespace Vigilante8.Gameplay
             GUI.Label(new Rect(28f, y, width - 24f, 22f), state, title);
             y += 25f;
             GUI.Label(new Rect(28f, y, width - 24f, 22f),
+                "ULTIMA ELIMINACAO: " + lastElimination, regular);
+            y += 24f;
+            GUI.Label(new Rect(28f, y, width - 24f, 22f),
                 "P: PAUSA  |  WASD: DIRIGIR  |  ESPACO: TIRO DE DIAGNOSTICO", regular);
             if (paused)
                 GUI.Label(new Rect(28f, y + 22f, width - 24f, 22f), "PAUSADO (TESTE)", title);
@@ -177,6 +236,11 @@ namespace Vigilante8.Gameplay
 
         private void OnDisable()
         {
+            ready = false;
+            if (player != null) player.Eliminated -= OnVehicleEliminated;
+            if (opponents != null)
+                foreach (VehicleDrive opponent in opponents)
+                    if (opponent != null) opponent.Eliminated -= OnVehicleEliminated;
             if (paused)
             {
                 paused = false;
