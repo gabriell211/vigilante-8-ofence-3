@@ -112,9 +112,17 @@ def audit(root: Path = ROOT, profiles: dict | None = None) -> dict:
     original = profile_audit(root) if profiles is None else profiles
     stages = {}
     for stage_id, (source, expected_scene_hash) in sorted(STAGES.items()):
-        stage_path = root / ASSETS / "LEVELS" / Path(source).parent.name
-        if not stage_path.is_dir():
-            raise ValueError("Original stage road material folder is missing")
+        stage_name = Path(source).parent.name
+        archive_root = root / ASSETS / "LEVELS"
+        candidates = [p for p in archive_root.iterdir() if p.is_dir() and
+                      p.name.lower() == stage_name.lower()]
+        exact = [p for p in candidates if p.name == stage_name]
+        # The archive intentionally contains both ROUTE66 and Route66.
+        # Prefer the scene's exact spelling; never select arbitrarily.
+        chosen = exact if exact else candidates
+        if len(chosen) != 1:
+            raise ValueError("Original stage road material folder missing or ambiguous")
+        stage_path = chosen[0]
         mats = indexed_guids(stage_path, ".mat.meta")
         images = indexed_guids(stage_path, ".bmp.meta")
         profiles_out = []
