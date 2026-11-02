@@ -121,12 +121,17 @@ namespace Vigilante8.Gameplay
         private void RefreshTargets()
         {
             nextRefresh = Time.time + Mathf.Max(0.05f, refreshSeconds);
+            var playerLauncher = player.GetComponent<OriginalBastionRocketLauncher>();
+            if (playerLauncher != null)
+                playerLauncher.SetTarget(SelectTarget(player, participants));
             for (int i = 0; i < opponents.Length; i++)
             {
                 BotVehicleInput bot = botInputs[i];
                 if (bot == null) continue;
                 VehicleDrive target = SelectTarget(opponents[i], participants);
                 bot.target = target == null ? null : target.transform;
+                var launcher = opponents[i].GetComponent<OriginalBastionRocketLauncher>();
+                if (launcher != null) launcher.SetTarget(target);
             }
         }
     }
