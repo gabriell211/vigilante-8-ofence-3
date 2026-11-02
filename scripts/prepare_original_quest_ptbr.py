@@ -127,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
     # Never overwrite it with empty ptBr entries when compiling a catalog.
     if not args.translations or worksheet_path.resolve() != args.translations.resolve():
         write_json(worksheet_path, template)
-    print(f"Origem validada: 12/48 V8 + 15/120 V82. "
+    print(f"Estrutura Quest validada: 12/48 V8 + 15/120 V82. "
           f"{len(template['translations'])} textos distintos; {reused} traduções preservadas.")
     if localized is not None:
         write_json(args.catalog, localized)
