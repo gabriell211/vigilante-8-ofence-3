@@ -32,7 +32,9 @@ class Offence3DesignTests(unittest.TestCase):
         self.assertIn("CAMPANHA / QUEST", self.menu)
         self.assertIn("SOBREVIVÊNCIA", self.menu)
         self.assertIn("MULTIJOGADOR", self.menu)
-        self.assertIn("dependem da integração das missões", self.menu)
+        self.assertIn("A consulta às missões não desbloqueia combate", self.menu)
+        self.assertIn("sobrevivência e multiplayer seguem pendentes", self.menu)
+        self.assertIn("MISSÕES ORIGINAIS AINDA NÃO IMPORTADAS", self.menu)
         self.assertNotIn("GameObject.CreatePrimitive", self.menu)
 
     def test_neo_arcade_panels_have_stripes_and_readiness_states(self):
