@@ -58,7 +58,8 @@ namespace Vigilante8.Gameplay
 
         public void Configure(SourceVariant type, VehicleDrive owner, int spentCharges)
         {
-            if (configured || type == SourceVariant.Standard ||
+            if (configured || (type != SourceVariant.Bearhug &&
+                type != SourceVariant.Hovermine && type != SourceVariant.CactusPatch) ||
                 owner == null || !owner.IsAlive ||
                 spentCharges < 1 || spentCharges > CactusMaxCharges ||
                 (type == SourceVariant.CactusPatch ? spentCharges < 2 : spentCharges != 2))
@@ -102,6 +103,11 @@ namespace Vigilante8.Gameplay
                     return true;
 
                 case SourceVariant.CactusPatch:
+                    // Original CactusPatch returns without scattering while
+                    // tags == 0. Here the source equivalent is Armed state.
+                    if (GetComponent<OriginalMineSourceTrap>().State !=
+                        OriginalMineSourceTrap.SourceState.Armed)
+                        return false;
                     // Original CactusPatch emits maxHalfHealth child Mine objects.
                     // They have no original visuals and no invented health damage.
                     SpawnFragments();
