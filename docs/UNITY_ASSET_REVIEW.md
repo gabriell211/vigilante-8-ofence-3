@@ -149,3 +149,33 @@ próprias, ainda não convertidas e aplicadas. A auditoria **não instancia
 props nas arenas**, não afirma que os objetos tenham colisão ou áudio prontos
 e não supõe pontos de spawn. Serve como vínculo de origem para a
 próxima etapa de reconstrução em Unity 6.
+
+
+## Coordenadas fixed-point reais de JUNC_DB — evidências, não spawns
+
+A nova auditoria \`python3 scripts/audit_v82_junction_fixed_positions.py --json\`
+lê os \`JUNC_DB\` das oito cenas com hashes originais verificados e cruza
+\`DAT_18\` com o **fileID exato** de \`VigMesh\`, exigindo o mesmo
+\`GameObject\`, GUID do banco \`XOBF00.prefab\` e a peça \`tmdID\` já
+extraída. A origem de cada vetor é \`JUNC_DB.DAT_00\`, como três inteiros
+assinados de 32 bits, não a posição \`Transform\` gravada na cena.
+
+O método \`JUNC_DB.Update()\` original faz
+\`(x / translateFactor, -y / translateFactor, z / translateFactor)\`.
+A fonte C# de \`GameManager\` tem escala padrão **10.000**; o
+\`GameManager\` explicitamente serializado em \`DEBUG.unity\` usa
+**4.096**. Por isso o relatório preserva o vetor bruto e calcula
+uma \`debugScalePreviewLocalPosition\` **apenas para exame**, sempre
+identificada como conversão com a escala do DEBUG, nunca como
+posição mundial certificada para combate. A escala efetiva da
+partida ainda precisa de inspeção no fluxo de inicialização.
+
+Cada junction declara \`referenceStatus\` para diferenciar peças
+verdadeiras, ausência de \`DAT_18\`, banco diferente, peça não
+exportada, dados inválidos e links para outro GameObject.
+O CI publica o artefato \`v82-original-junction-fixed-positions\`.
+O código original de junction também deforma a malha consultando
+o terreno; portanto o \`TMD\` sozinho, mesmo identificado e
+posicionado, ainda **não substitui** a cena final.
+Nenhum prefab de release, colisão, posição de spawn ou cenário
+homologado é criado por esta etapa.

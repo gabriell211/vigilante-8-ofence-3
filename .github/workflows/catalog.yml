@@ -73,6 +73,14 @@ jobs:
           name: v82-original-scene-mesh-crosswalk
           path: v82-original-scene-mesh-crosswalk.json
           if-no-files-found: error
+      - name: Cross-check original JUNC fixed-point coordinates with source XOBF mesh references
+        run: python3 scripts/audit_v82_junction_fixed_positions.py --json > v82-original-junction-fixed-position-evidence.json
+      - name: Preserve true JUNC source coordinates (not production placement)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-junction-fixed-positions
+          path: v82-original-junction-fixed-position-evidence.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage
