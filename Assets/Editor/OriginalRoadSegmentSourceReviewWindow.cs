@@ -42,7 +42,7 @@ namespace Vigilante8.Editor
             public Vector3Int? FixedPosition;
             public readonly List<string> Endpoints = new List<string>();
             public bool EndpointsPresent, TangentX, TangentZ;
-            public int? Flags;
+            public int? Flags, ProfileIndex;
             public readonly Dictionary<string, int> Coeffs =
                 new Dictionary<string, int>(StringComparer.Ordinal);
         }
@@ -55,7 +55,12 @@ namespace Vigilante8.Editor
             // Source-based 33-point geometry inspection, independently checked
             // for signed 32-bit overflow. Null if any source evaluation fails.
             public Vector2Int[] OriginalFixedXZExactDense;
+            public Vector2Int[] OriginalFixedTangentXZDense;
             public Vector3[] OriginalFixedXYZDense;
+            public Vector3[] OriginalLeftEdgeFixedXYZDense;
+            public Vector3[] OriginalRightEdgeFixedXYZDense;
+            public int? SourceXrtpProfileIndex;
+            public int SourceRoadFlags;
             // Present only for RSEG flags which directly specify height.
             // Null when VigTerrain sampling is required or fixed-point math is unsafe.
             public Vector3[] OriginalFixedXYZ;
@@ -119,6 +124,32 @@ namespace Vigilante8.Editor
             long result = origin + (five >> 8);
             if (!IsInt32(result)) return false;
             position = (int)result;
+            return true;
+        }
+
+        /// <summary>
+        /// Exact source RSEG_DB.FUN_285E4 tangent branch (signed fixed point).
+        /// Rejects source C# int overflow instead of silently wrapping.
+        /// </summary>
+        public static bool TrySampleSourceTangent(int t, int a, int b, int c,
+            out int derivative)
+        {
+            derivative = 0;
+            if (t < 0 || t > 4096) return false;
+            long first = (long)a * t;
+            if (!IsInt32(first)) return false;
+            long iVar3 = first >> 12;
+            long iVar4 = b + iVar3;
+            if (!IsInt32(iVar4)) return false;
+            long sum = iVar3 + iVar4 * 2;
+            if (!IsInt32(sum)) return false;
+            long product = sum * t;
+            if (!IsInt32(product)) return false;
+            long value = (product >> 12) + c;
+            if (!IsInt32(value)) return false;
+            if (value < 0) value += 255;
+            if (!IsInt32(value)) return false;
+            derivative = (int)(value >> 8);
             return true;
         }
 
@@ -222,6 +253,12 @@ namespace Vigilante8.Editor
                             ParseInt(m.Groups[3].Value, out int z))
                             currentMono.FixedPosition = new Vector3Int(x, y, z);
                     }
+                    else if (line.StartsWith("  DAT_0A: ", StringComparison.Ordinal))
+                    {
+                        if (ParseInt(line.Substring("  DAT_0A: ".Length).Trim(), out int profile) &&
+                            profile >= 0 && profile <= ushort.MaxValue)
+                            currentMono.ProfileIndex = profile;
+                    }
                     else if (line.StartsWith("  DAT_0C: ", StringComparison.Ordinal))
                     {
                         if (ParseInt(line.Substring("  DAT_0C: ".Length).Trim(), out int flags))
@@ -285,7 +322,9 @@ namespace Vigilante8.Editor
                 // points: re-evaluate the exact original integer polynomial.
                 var denseXZ = new List<Vector2Int>(DenseCurveSampleCount);
                 var denseXYZ = new List<Vector3>(DenseCurveSampleCount);
+                var denseTangent = new List<Vector2Int>(DenseCurveSampleCount);
                 bool denseYKnown = true;
+                bool allTangentsSafe = true;
                 for (int t = 0; t <= 4096; t += DenseCurveStepFixed12)
                 {
                     if (!TrySampleAxis(start.x, t, segment.Coeffs["DAT_20"],
@@ -298,6 +337,13 @@ namespace Vigilante8.Editor
                         break;
                     }
                     denseXZ.Add(new Vector2Int(x, z));
+                    if (TrySampleSourceTangent(t, segment.Coeffs["DAT_20"],
+                            segment.Coeffs["DAT_28"], segment.Coeffs["DAT_30"], out int dx) &&
+                        TrySampleSourceTangent(t, segment.Coeffs["DAT_24"],
+                            segment.Coeffs["DAT_2C"], segment.Coeffs["DAT_34"], out int dz))
+                        denseTangent.Add(new Vector2Int(dx, dz));
+                    else
+                        allTangentsSafe = false;
                     if (TrySampleKnownHeight(start, finish, segment.Flags.Value, t, out int y))
                         denseXYZ.Add(new Vector3(x, y, z));
                     else
@@ -312,6 +358,10 @@ namespace Vigilante8.Editor
                     OriginalFixedXZ = points.ToArray(),
                     OriginalFixedXZExact = exactPoints.ToArray(),
                     OriginalFixedXZExactDense = denseComplete ? denseXZ.ToArray() : null,
+                    OriginalFixedTangentXZDense = denseComplete && allTangentsSafe &&
+                        denseTangent.Count == DenseCurveSampleCount ? denseTangent.ToArray() : null,
+                    SourceXrtpProfileIndex = segment.ProfileIndex,
+                    SourceRoadFlags = segment.Flags.Value,
                     OriginalFixedXYZDense = denseComplete && denseYKnown &&
                         denseXYZ.Count == DenseCurveSampleCount ? denseXYZ.ToArray() : null,
                     OriginalFixedXYZ = allHeightsKnown && knownHeights.Count == SampleTimes.Length
