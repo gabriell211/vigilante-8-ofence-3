@@ -7,6 +7,7 @@ O gerador chama `OriginalTerrainSourceImporter.ImportAll()` e `LegacyVehiclePlay
 ## Limitações de homologação
 
 - **18** veículos V82 têm geometria original disponível no teste. Os **13** veículos do primeiro jogo ainda dependem de mídia e migração final.
+- O terreno usa a **malha original visível**, mas um **material neutro explicitamente diagnóstico**, pois as texturas da arena ainda não foram portadas. O terreno não é substituído por geometria genérica.
 - Existem **sete** malhas nativas de terreno utilizáveis para inspeção e colisão derivada de malha. A malha de **Meteor Crater / Route 66** continua ausente; nenhuma arena está completa.
 - Os carros usam física Unity provisória e projéteis invisíveis para diagnóstico. Armas especiais, animações, regras de dano, áudios classificados por função, materiais e spawns originais **não** foram homologados.
 - A ferramenta recusa carros repetidos, pilotos duplicados, mais de três adversários e o terreno ausente. Spawns são inferidos por raycast em geometria real, não retirados de dados oficiais.
