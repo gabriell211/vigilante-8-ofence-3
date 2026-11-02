@@ -70,6 +70,30 @@ namespace Vigilante8.Gameplay
             flight.EnterBastion();
             return true;
         }
+
+        /// <summary>
+        /// MissileL.UpdateW(12) launches a 60-damage shot; Missile.UpdateW(5)
+        /// transitions Shell -> Projectile with 480 original update cycles.
+        /// Only the verified TMD-car Editor playtest may call this.
+        /// </summary>
+        public bool LaunchSourceMissile(VehicleDrive target)
+        {
+            if (!Application.isPlaying || Time.timeScale <= 0f ||
+                !IsAlive || !HasWeapon || target == null || target == this ||
+                !target.IsAlive || GetComponent<LegacyVehiclePlaytest>() == null ||
+                GetComponent<OriginalMissileSourceLauncher>() == null)
+                return false;
+
+            Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+            shot.impactDamage = OriginalMissileSourceFlight.OriginalDamage;
+            shot.lifetimeSeconds =
+                OriginalMissileSourceFlight.OriginalLifeTicks * Time.fixedDeltaTime;
+            var flight = shot.gameObject.AddComponent<OriginalMissileSourceFlight>();
+            flight.Configure(target);
+            shot.Launch(this, muzzle.forward);
+            flight.ActivateProjectile();
+            return true;
+        }
 #endif
 
         private void Awake()
