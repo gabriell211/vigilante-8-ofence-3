@@ -76,8 +76,11 @@ namespace Vigilante8.EditorTests
             string json = File.ReadAllText("docs/legacy-v82-textures.json");
             var manifest = OriginalV82TextureQualityBuilder.ParseManifest(json);
             Assert.That(manifest.Count, Is.EqualTo(790));
-            Assert.That(manifest.Values, Is.All.Matches<OriginalV82TextureQualityBuilder.SourceTexture>(
-                entry => entry.Width > 0 && entry.Height > 0));
+            foreach (var entry in manifest.Values)
+            {
+                Assert.That(entry.Width, Is.GreaterThan(0));
+                Assert.That(entry.Height, Is.GreaterThan(0));
+            }
             Assert.Throws<InvalidDataException>(() =>
                 OriginalV82TextureQualityBuilder.ParseManifest("{}"));
         }

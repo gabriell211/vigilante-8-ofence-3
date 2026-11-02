@@ -42,8 +42,7 @@ class ArchivedTextureQualityContractTests(unittest.TestCase):
             "FilterMode.Trilinear",
             "anisoLevel = 8",
             "mipmapEnabled = true",
-            "SourcePrefab",  # placeholder should not appear in final
-        )[:-1]:
+        ):
             self.assertIn(term, code)
         self.assertNotIn("UnityEngine.Random", code)
         self.assertNotIn("AssetDatabase.DeleteAsset(source.Path)", code)
@@ -62,7 +61,7 @@ class ArchivedTextureQualityContractTests(unittest.TestCase):
         self.assertIn("Assets/GameContent/EnhancedSourceTexturesV82", code)
         self.assertNotIn("Assets/Resources/", code)
         self.assertIn("V82_SOURCE_BICUBIC_4X_V1", code)
-        self.assertIn("original.SourcePath", code.replace("OriginalPath", "SourcePath"))
+        self.assertIn("record.OriginalPath", code.replace("source.OriginalPath", "record.OriginalPath"))
 
 
 if __name__ == "__main__":
