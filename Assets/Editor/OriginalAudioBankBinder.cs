@@ -86,44 +86,101 @@ namespace Vigilante8.Editor
                 if (prefab == null || prefab.GetComponent<OriginalVehiclePreviewIdentity>() == null)
                     throw new InvalidOperationException("Original model inspection prefab missing: " + prefabPath);
 
-                var indices = new HashSet<int>();
-                var samples = new List<OriginalAudioBank.Sample>();
-                foreach (SampleEntry sample in bank.samples)
-                {
-                    if (sample.originalIndex < 0 || !indices.Add(sample.originalIndex))
-                        throw new InvalidOperationException("Duplicate original audio index: " + bank.id);
-                    if (!sample.assetPath.StartsWith("Assets/GameContent/LegacyAudioV82/",
-                            StringComparison.Ordinal) ||
-                        !string.Equals(AssetDatabase.AssetPathToGUID(sample.assetPath),
-                            sample.guid, StringComparison.OrdinalIgnoreCase))
-                        throw new InvalidOperationException("Original audio GUID mismatch: " + sample.assetPath);
-                    AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(sample.assetPath);
-                    if (clip == null)
-                        throw new InvalidOperationException("Original WAV did not import: " + sample.assetPath);
-                    samples.Add(new OriginalAudioBank.Sample {
-                        originalIndex = sample.originalIndex, clip = clip
-                    });
-                }
-                jobs.Add((bank.id, prefabPath, samples.ToArray()));
+                OriginalAudioBank.Sample[] samples = ResolveVerifiedSamples(bank);
+                jobs.Add((bank.id, prefabPath, samples));
             }
 
             foreach (var job in jobs)
-            {
-                GameObject prefab = PrefabUtility.LoadPrefabContents(job.path);
-                try
-                {
-                    OriginalAudioBank component = prefab.GetComponent<OriginalAudioBank>();
-                    if (component == null) component = prefab.AddComponent<OriginalAudioBank>();
-                    component.Configure(job.id, job.samples);
-                    if (PrefabUtility.SaveAsPrefabAsset(prefab, job.path) == null)
-                        throw new InvalidOperationException("Cannot save original audio bank: " + job.path);
-                }
-                finally { PrefabUtility.UnloadPrefabContents(prefab); }
-            }
+                WriteBankToPrefab(job.id, job.path, job.samples);
             AssetDatabase.SaveAssets();
             Debug.Log("Original vehicle audio indices bound to 18 inspection prefabs. " +
                       "No weapon/engine role assumed; runtime gameplay not certified.");
         }
+        /// <summary>
+        /// Attaches archived indexed WAV samples to all eight REAL XOBF stage-object
+        /// inspection prefabs. Those objects are not complete level prefabs, and
+        /// these clips do not have approved gameplay roles.
+        /// </summary>
+        [MenuItem("Vigilante 8/Migração/Anexar WAVs originais aos 8 bancos das fases")]
+        public static void AttachToStageInspectionPrefabs()
+        {
+            AudioCatalog manifest = LoadVerifiedCatalog();
+            var expected = new HashSet<string>(
+                CatalogRepository.Load().arenas.Where(a => a.game == "v82")
+                    .Select(a => a.id), StringComparer.Ordinal);
+            AudioBank[] banks = manifest.banks.Where(b => b.kind == "arena").ToArray();
+            if (expected.Count != 8 || banks.Length != 8 ||
+                banks.Select(b => b.id).Distinct(StringComparer.Ordinal).Count() != 8 ||
+                !expected.SetEquals(banks.Select(b => b.id)))
+                throw new InvalidOperationException("Source WAVs must cover precisely eight unique V82 arenas");
+
+            const string directory = "Assets/GameContent/PreviewStageObjectsV82";
+            var jobs = new List<(string id, string path, OriginalAudioBank.Sample[] samples)>();
+            foreach (AudioBank bank in banks)
+            {
+                string path = directory + "/" + bank.id + ".prefab";
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab == null ||
+                    prefab.GetComponent<OriginalStageObjectPreviewIdentity>()?.StageId != bank.id ||
+                    prefab.GetComponent<OfficialAssetIdentity>() != null ||
+                    prefab.GetComponentInChildren<Collider>(true) != null)
+                    throw new InvalidOperationException("The authentic stage inspection prefab is missing: " + path);
+                jobs.Add((bank.id, path, ResolveVerifiedSamples(bank)));
+            }
+
+            // All stage WAVs and GUIDs are verified before any prefab is written.
+            foreach (var job in jobs)
+                WriteBankToPrefab(job.id, job.path, job.samples);
+            AssetDatabase.SaveAssets();
+            Debug.Log("Original indexed WAV clips attached to eight source XOBF stage-object banks. " +
+                "No original audio role, full arena, collision, or gameplay certification claimed.");
+        }
+
+        private static OriginalAudioBank.Sample[] ResolveVerifiedSamples(AudioBank bank)
+        {
+            if (bank == null || string.IsNullOrWhiteSpace(bank.id) ||
+                bank.samples == null || bank.samples.Length == 0)
+                throw new InvalidOperationException("Missing original WAV source bank");
+
+            var indices = new HashSet<int>();
+            var samples = new List<OriginalAudioBank.Sample>(bank.samples.Length);
+            foreach (SampleEntry sample in bank.samples)
+            {
+                if (sample == null || sample.originalIndex < 0 ||
+                    !indices.Add(sample.originalIndex))
+                    throw new InvalidOperationException("Duplicate or invalid original audio index: " + bank.id);
+                if (string.IsNullOrWhiteSpace(sample.assetPath) ||
+                    !sample.assetPath.StartsWith("Assets/GameContent/LegacyAudioV82/",
+                        StringComparison.Ordinal) ||
+                    string.IsNullOrWhiteSpace(sample.guid) ||
+                    !string.Equals(AssetDatabase.AssetPathToGUID(sample.assetPath),
+                        sample.guid, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("Original audio GUID mismatch: " + sample.assetPath);
+                AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(sample.assetPath);
+                if (clip == null)
+                    throw new InvalidOperationException("Original WAV did not import: " + sample.assetPath);
+                samples.Add(new OriginalAudioBank.Sample {
+                    originalIndex = sample.originalIndex, clip = clip
+                });
+            }
+            return samples.ToArray();
+        }
+
+        private static void WriteBankToPrefab(string id, string path,
+            OriginalAudioBank.Sample[] samples)
+        {
+            GameObject prefab = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                OriginalAudioBank component = prefab.GetComponent<OriginalAudioBank>();
+                if (component == null) component = prefab.AddComponent<OriginalAudioBank>();
+                component.Configure(id, samples);
+                if (PrefabUtility.SaveAsPrefabAsset(prefab, path) == null)
+                    throw new InvalidOperationException("Cannot save original audio bank: " + path);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(prefab); }
+        }
+
     }
 }
 #endif
