@@ -21,7 +21,7 @@ class OriginalJunctionPreviewContract(unittest.TestCase):
             "junc.BankGuid == bankGuid && mesh.BankGuid == bankGuid",
             "SourceJunctionLocal(candidate.Junction.Dat00.Value, divisor)",
             "OriginalStageObjectReviewBuilder.PrepareAll()",
-            "GetComponent<MeshFilter>()",
+            "AddComponent<MeshFilter>()",
         ):
             self.assertIn(text, source)
         for forbidden in ("GameObject.CreatePrimitive(", "AddComponent<BoxCollider>", "AddComponent<MeshCollider>", "ArenaSpawnPoints", "OfficialAssetIdentity"):
