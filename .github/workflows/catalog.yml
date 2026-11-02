@@ -105,6 +105,14 @@ jobs:
           name: v82-original-xrtp-road-profiles
           path: v82-original-xrtp-road-profiles.json
           if-no-files-found: error
+      - name: Prove original XRTP road material and BMP provenance through source GUIDs
+        run: python3 scripts/audit_v82_xrtp_surface_textures.py --json > v82-original-road-material-textures.json
+      - name: Store original road texture and material source evidence (NOT certified UV)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-road-material-textures
+          path: v82-original-road-material-textures.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage

@@ -424,3 +424,21 @@ As linhas são **somente diagnóstico**: faltam as transições \`FUN_719C\`,
 \`FUN_6604\`, subdivisão adaptativa \`FUN_630C\`, triangulação e UV
 originais, além de materiais e colisão de release. A inspeção de bordas
 não equivale a uma malha oficial e não é embutida no pacote Windows.
+
+
+## Materiais reais de estrada (XRTP → MAT → BMP)
+
+Além das dimensões \`XRTP.DAT_24/DAT_28\`, o novo relatório
+\`scripts/audit_v82_xrtp_surface_textures.py\` segue cada GUID de
+\`timFarList\` para o \`.mat\` preservado **dentro da própria fase** e,
+dali, as referências originais \`_MainTex\` e \`_LODTex\` para as imagens
+BMP de origem. Todos os arquivos e seus \`.meta\` recebem hashes Git
+no relatório; referências impossíveis ou sem arquivo não são
+substituídas por asfalto genérico.
+
+O CI entrega o artefato \`v82-original-road-material-textures\`.
+Isso permite identificar as texturas originais de cada perfil de
+estrada antes de criar o renderer no Unity 6. A própria referência de
+material não certifica ainda a combinação de shader, atlas, UV
+originais, textura em jogo ou colisão: esses componentes dependem
+da triangulação adaptativa \`FUN_630C\` e do resto de \`FUN_5850\`.
