@@ -60,6 +60,10 @@ namespace Vigilante8.EditorTests
                 Assert.That(identity.SourceTriangles, Is.GreaterThan(1000));
                 Assert.That(identity.IsReleaseApproved, Is.False);
                 Assert.That(prefab.GetComponent<OfficialAssetIdentity>(), Is.Null);
+                var audio = prefab.GetComponent<OriginalAudioBank>();
+                Assert.That(audio, Is.Not.Null, "Eight source stage previews must carry real WAVs");
+                Assert.That(audio.SourceId, Is.EqualTo(stage.id));
+                Assert.That(audio.Count, Is.GreaterThan(0));
                 Assert.That(prefab.GetComponent<ArenaSpawnPoints>(), Is.Null);
                 Assert.That(prefab.GetComponentsInChildren<Collider>(true), Is.Empty);
                 var filters = prefab.GetComponentsInChildren<MeshFilter>(true);
