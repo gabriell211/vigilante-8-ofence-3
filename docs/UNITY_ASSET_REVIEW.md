@@ -73,3 +73,16 @@ Assets/Scenes/OriginalTerrainReview.unity. A etapa exige execução real no Edit
 Não são fases completas: faltam posicionamento de objetos, materiais PS1,
 colisões, scripts e pontos de spawn. O terreno de Meteor Crater não foi
 identificado e não é substituído por um modelo genérico.
+
+## Playtest de carros reais em terreno original (somente desenvolvimento)
+
+O comando Unity **Vigilante 8 > Migração > Dirigir em terreno real V82
+(teste, não release)** permite escolher dinamicamente uma das 7 malhas Geo.asset,
+um dos 18 carros originais e um segundo carro para oponente. O Editor importa
+as malhas TMD reais e os 7 terrenos nativos, calcula pontos de teste por
+raycast nos triângulos originais e gera uma cena com controles, física e IA.
+
+Cena: Assets/Scenes/OriginalNativeTerrainDriveTest.unity, **sempre fora do
+build Windows**. As posições inferidas NÃO são os spawns oficiais, a colisão
+MeshCollider NÃO reproduz VigTerrain e o projétil é o protótipo de teste,
+não uma arma especial original. Não usa piso, carros nem arenas fictícios.
