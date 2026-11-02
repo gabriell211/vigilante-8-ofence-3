@@ -64,6 +64,16 @@ No repositório original, o arquivo se chama `Bearhug.cs`, mas a classe preserva
 
 Os cálculos espaciais do PlayStation usam inteiros e `VigTerrain`; a busca de 35 m, as velocidades, o impulso e a distribuição física dos fragmentos desta implementação são **adaptações provisórias do teste**, não valores originais homologados. `Brearhug` não recebeu dano de vida inventado, `Hovermine` não recebeu modelos visuais genéricos apresentados como oficiais e os fragmentos `Mine` do `CactusPatch` também são colliders invisíveis. O registro global de até 16 minas de teste continua válido. Nenhuma destas variantes entra no build Windows final: o gate recusa `OriginalSpecialMineSourceBehavior` nos prefabs oficiais.
 
+## Foguete RoadRunner com aderência e explosão retardada (código original)
+
+`LegacySources/Vigilante2Unity/Assets/Scripts/Rocket.cs` possui o estado `RoadRunner`, ativado quando o foguete da variante especial atinge um veículo (`flags & 0x1000000`). O foguete é preso ao transform do alvo, `physics2.M2` recebe **360 ciclos** e, ao terminar, chama `Vehicle.FUN_3A020(-40, ... , true)`. A rotina `FUN_3A020` usa o sistema real de escudos e subdivisões dos carros antigos, ainda não convertido totalmente para `VehicleDrive`.
+
+A implementação de teste `OriginalRoadRunnerSourceCharge` mantém os estados **Rocket → RoadRunner → Expired**. Um impacto no carro original prende o projétil invisível ao alvo, **não aplica dano imediato**, e após 360 ciclos de `FixedUpdate` aplica uma única vez o equivalente provisório de **40 pontos**. Se o carro atingido morrer antes, a carga é descartada sem produzir uma segunda eliminação. O sistema de `Projectile` preserva o veículo proprietário para contabilizar a autoria real do eventual abate.
+
+Durante a batalha de diagnóstico, pressione **Y** (teclado) ou **X** (botão oeste do controle) para disparar o modo RoadRunner. O estado é somente Editor, nos 18 carros TMD autênticos do V82, e o gate Windows recusa qualquer prefab de produção que contenha `OriginalRoadRunnerSourceLauncher` ou `OriginalRoadRunnerSourceCharge`.
+
+**Limites:** o formato 3D oficial do foguete não foi importado, as regras de escudos, segmentação de carcaça, movimento e tempo original dos ciclos PS1 ainda não estão homologadas. Portanto, o valor de dano é preservado do código fonte, mas sua aplicação direta a `VehicleDrive.Health` é uma aproximação de desenvolvimento, não arma final certificada.
+
 ## Eliminações reais entre carros originais
 
 O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.
