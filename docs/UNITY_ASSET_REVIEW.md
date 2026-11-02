@@ -179,3 +179,33 @@ o terreno; portanto o \`TMD\` sozinho, mesmo identificado e
 posicionado, ainda **não substitui** a cena final.
 Nenhum prefab de release, colisão, posição de spawn ou cenário
 homologado é criado por esta etapa.
+
+
+## Revisão visual das posições de JUNC com as malhas reais (Editor, não release)
+
+No Editor Unity 6000.6.7f1, use **Vigilante 8 > Migração >
+Inspecionar posições JUNC originais com malhas TMD**, selecione uma das
+oito fases oficiais e crie a cena
+`Assets/Scenes/OriginalJunctionSourceReview.unity`.
+
+O importador lê o próprio acervo legado, **sem Python ou acesso à
+internet**, exigindo SHA Git original da cena, SHA do `XOBF`,
+GUIDs dos scripts `JUNC_DB` e `VigMesh`, associação
+`DAT_18` pelo fileID e o mesmo GameObject. Só monta peças TMD
+**efetivamente extraídas** do banco, com `MeshFilter` e `MeshRenderer`,
+sem criar objetos 3D substitutos. Para não simular hierarquias incompletas,
+somente elementos `JUNC_DB` com Transform raiz são exibidos.
+
+Os eixos seguem exatamente `JUNC_DB.Update()`, usando a escala do
+GameManager serializada em `DEBUG.unity` (validada por GUID). Esta é
+uma **prévia diagnóstica das coordenadas locais de origem**; a
+malha de junction não recebeu a deformação original de `VigTerrain`,
+o material URP é de inspeção e não representa a textura de PlayStation,
+e não existe colisão, IA, áudio espacial ou spawn oficial.
+O componente `OriginalJunctionSourcePreviewIdentity` marca cada
+instância como não homologada. O validador estrito recusa sua inclusão
+em prefabs de veículos ou arenas finais, e a cena nunca entra na
+Build Settings da release Windows.
+
+Os testes Python/Roslyn verificam contratos e sintaxe; verificação
+visual, compilação Unity e EditMode continuam exigindo Editor real.
