@@ -27,10 +27,10 @@ namespace Vigilante8.Gameplay
         private bool restoringSelections;
         private string matchVehicle = "";
         private string matchArena = "";
-        private static readonly Color Accent = new Color(0.98f, 0.39f, 0.15f);
-        private static readonly Color Ink = new Color(0.026f, 0.036f, 0.062f);
-        private static readonly Color Surface = new Color(0.066f, 0.086f, 0.13f);
-        private static readonly Color Muted = new Color(0.68f, 0.74f, 0.82f);
+        private static readonly Color Accent = Offence3MenuTheme.Bronze;
+        private static readonly Color Ink = Offence3MenuTheme.Background;
+        private static readonly Color Surface = Offence3MenuTheme.Surface;
+        private static readonly Color Muted = Offence3MenuTheme.Subtle;
         private GameCatalog catalog;
         private VisualElement root;
         private VisualElement menu;
@@ -57,7 +57,7 @@ namespace Vigilante8.Gameplay
             root = GetComponent<UIDocument>().rootVisualElement;
             if (root == null) throw new InvalidOperationException("Missing UI Toolkit panel");
             root.style.flexGrow = 1;
-            root.style.backgroundColor = new Color(0.025f, 0.035f, 0.065f, 0.88f);
+            root.style.backgroundColor = Ink;
             restoringSelections = true;
             try
             {
@@ -80,8 +80,9 @@ namespace Vigilante8.Gameplay
         private void BuildMenu()
         {
             menu = new VisualElement();
-            menu.style.width = 520;
-            menu.style.maxWidth = Length.Percent(92);
+            menu.style.width = Length.Percent(94);
+            menu.style.maxWidth = 790;
+            menu.style.minWidth = 0;
             menu.style.alignSelf = Align.Center;
             menu.style.marginTop = 24;
             menu.style.marginBottom = 30;
@@ -89,17 +90,14 @@ namespace Vigilante8.Gameplay
             menu.style.paddingRight = 24;
             menu.style.paddingTop = 24;
             menu.style.paddingBottom = 24;
-            menu.style.backgroundColor = new Color(0.065f, 0.08f, 0.13f, 0.96f);
-            menu.style.borderTopLeftRadius = 16;
-            menu.style.borderTopRightRadius = 16;
-            menu.style.borderBottomLeftRadius = 16;
-            menu.style.borderBottomRightRadius = 16;
+            Offence3MenuTheme.Card(menu);
             garagePage = new ScrollView(ScrollViewMode.Vertical);
             garagePage.style.flexGrow = 1;
             root.Add(garagePage);
             garagePage.Add(menu);
-            AddHeading(menu, "VIGILANTE 8", 34);
-            AddHeading(menu, "OFFENCE 3  /  UNIFIED PC EDITION", 13);
+            Offence3MenuTheme.AddHazardStripe(menu);
+            Offence3MenuTheme.AddIdentity(menu);
+            AddHeading(menu, "ESCOLHA SEU PILOTO", 22);
 
             var characters = OfficialMenuSelections.Pilots(catalog);
             characterIds = characters.Select(c => c.id).ToArray();
@@ -143,6 +141,12 @@ namespace Vigilante8.Gameplay
                 UpdateAvailability();
             });
 
+            var detailsTitle = new Label("DOSSIÊ DO COMBATENTE");
+            detailsTitle.style.fontSize = 15;
+            detailsTitle.style.color = Offence3MenuTheme.ElectricBlue;
+            detailsTitle.style.unityFontStyleAndWeight = FontStyle.Bold;
+            detailsTitle.style.marginTop = 10;
+            menu.Add(detailsTitle);
             garageSummary = new Label();
             garageSummary.style.color = Muted;
             garageSummary.style.whiteSpace = WhiteSpace.Normal;
@@ -155,11 +159,16 @@ namespace Vigilante8.Gameplay
             readinessLabel.style.whiteSpace = WhiteSpace.Normal;
             readinessLabel.style.marginTop = 15;
             menu.Add(readinessLabel);
-            startCombat = CreateButton("INICIAR COMBATE", StartMatch, true);
+            startCombat = CreateButton("ENTRAR NA ARENA  /  COMBATE ARCADE", StartMatch, true);
             menu.Add(startCombat);
-            menu.Add(CreateButton("VER TODO O ACERVO", () => Show(ScreenPage.Catalog)));
+            menu.Add(CreateButton("TROCAR JOGO / CARRO / FASE", () => Show(ScreenPage.Catalog)));
             menu.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
-            AddHeading(menu, "WASD / SETAS: dirigir   ·   SHIFT: freio   ·   ESPAÇO: disparar", 12);
+            var instructions = new Label("◀ / ▶ NAVEGAR    •    ENTER / A CONFIRMAR    •    ESC / B VOLTAR");
+            instructions.style.color = Muted;
+            instructions.style.fontSize = 11;
+            instructions.style.marginTop = 12;
+            instructions.style.whiteSpace = WhiteSpace.Normal;
+            menu.Add(instructions);
             UpdateAvailability();
         }
 
@@ -175,9 +184,7 @@ namespace Vigilante8.Gameplay
 
         private static void StyleDropdown(DropdownField dropdown)
         {
-            dropdown.style.color = Color.white;
-            dropdown.style.marginBottom = 14;
-            dropdown.style.minHeight = 46;
+            Offence3MenuTheme.Selector(dropdown);
         }
 
         private void RefreshVehicles()
@@ -227,7 +234,8 @@ namespace Vigilante8.Gameplay
                 hud.Add(label);
             }
             var quit = new Button(PauseGame) { text = "PAUSAR  /  ESC" };
-            quit.style.height = 35;
+            Offence3MenuTheme.Action(quit, false);
+            quit.style.minHeight = 37;
             hud.Add(quit);
         }
 
@@ -413,19 +421,7 @@ namespace Vigilante8.Gameplay
         private static Button CreateButton(string caption, Action clicked, bool highlighted = false)
         {
             var button = new Button(() => clicked()) { text = caption };
-            button.style.minHeight = 48;
-            button.style.marginTop = 9;
-            button.style.marginBottom = 7;
-            button.style.paddingLeft = 20;
-            button.style.paddingRight = 20;
-            button.style.fontSize = 15;
-            button.style.color = Color.white;
-            button.style.unityFontStyleAndWeight = FontStyle.Bold;
-            button.style.backgroundColor = highlighted ? Accent : new Color(0.15f, 0.19f, 0.26f);
-            button.style.borderTopLeftRadius = 9;
-            button.style.borderTopRightRadius = 9;
-            button.style.borderBottomLeftRadius = 9;
-            button.style.borderBottomRightRadius = 9;
+            Offence3MenuTheme.Action(button, highlighted);
             return button;
         }
 
@@ -439,8 +435,8 @@ namespace Vigilante8.Gameplay
             root.Add(overlay);
 
             panel = new VisualElement();
-            panel.style.width = Length.Percent(92);
-            panel.style.maxWidth = 780;
+            panel.style.width = Length.Percent(94);
+            panel.style.maxWidth = 920;
             panel.style.alignSelf = Align.Center;
             panel.style.marginTop = 45;
             panel.style.marginBottom = 40;
@@ -448,22 +444,10 @@ namespace Vigilante8.Gameplay
             panel.style.paddingLeft = 28;
             panel.style.paddingRight = 28;
             panel.style.paddingBottom = 28;
-            panel.style.backgroundColor = Surface;
-            panel.style.borderTopLeftRadius = 16;
-            panel.style.borderTopRightRadius = 16;
-            panel.style.borderBottomLeftRadius = 16;
-            panel.style.borderBottomRightRadius = 16;
+            Offence3MenuTheme.Card(panel);
             overlay.Add(panel);
-            var brand = new Label("VIGILANTE 8");
-            brand.style.color = Accent;
-            brand.style.fontSize = 42;
-            brand.style.unityFontStyleAndWeight = FontStyle.Bold;
-            panel.Add(brand);
-            var edition = new Label("OFFENCE 3    /    PC EDITION");
-            edition.style.color = Muted;
-            edition.style.fontSize = 13;
-            edition.style.marginBottom = 22;
-            panel.Add(edition);
+            Offence3MenuTheme.AddHazardStripe(panel);
+            Offence3MenuTheme.AddIdentity(panel);
             AddHeading(panel, heading, 24);
             var subtitle = new Label(description);
             subtitle.style.color = Muted;
@@ -476,8 +460,8 @@ namespace Vigilante8.Gameplay
 
         private void BuildMainMenu()
         {
-            homePage = CreateScreen("ESCOLHA SEU PILOTO. DOMINE A ARENA.",
-                "Os conteúdos oficiais de Vigilante 8 e 2nd Offense em uma edição para Windows.",
+            homePage = CreateScreen("SELECIONE O SEU DESTINO.",
+                "O legado de duas gerações de combate veicular. Uma nova edição criada para PC.",
                 out var panel);
             var collection = new Label(catalog.characters.Length + " PILOTOS   /   " +
                 catalog.vehicles.Length + " VEÍCULOS   /   " + catalog.arenas.Length + " ARENAS");
@@ -485,9 +469,28 @@ namespace Vigilante8.Gameplay
             collection.style.fontSize = 15;
             collection.style.marginBottom = 25;
             panel.Add(collection);
-            panel.Add(CreateButton("JOGAR  /  SELECIONAR VEÍCULO", () => Show(ScreenPage.Garage), true));
-            panel.Add(CreateButton("CATÁLOGO OFICIAL  /  31 CARROS E 19 ARENAS",
+            var pillars = new VisualElement();
+            pillars.style.flexDirection = FlexDirection.Row;
+            pillars.style.flexWrap = Wrap.Wrap;
+            pillars.style.marginBottom = 22;
+            pillars.Add(Offence3MenuTheme.Chip("VIGILANTE 8  /  1998", Offence3MenuTheme.Gold));
+            pillars.Add(Offence3MenuTheme.Chip("2ND OFFENSE  /  1999", Offence3MenuTheme.ElectricBlue));
+            pillars.Add(Offence3MenuTheme.Chip("OFFENCE 3  /  UNITY 6", Offence3MenuTheme.Bronze));
+            panel.Add(pillars);
+            panel.Add(CreateButton("UM JOGADOR  /  MODO ARCADE", () => Show(ScreenPage.Garage), true));
+            panel.Add(CreateButton("GARAGEM  /  31 CARROS E 19 ARENAS",
                 () => Show(ScreenPage.Catalog)));
+            var coming = Offence3MenuTheme.ContentPanel();
+            panel.Add(coming);
+            AddHeading(coming, "MODOS CLÁSSICOS DO 2ND OFFENSE", 16);
+            var comingDescription = new Label("ARCADE · CAMPANHA / QUEST · SOBREVIVÊNCIA · MULTIJOGADOR");
+            comingDescription.style.color = Muted;
+            comingDescription.style.whiteSpace = WhiteSpace.Normal;
+            coming.Add(comingDescription);
+            var notReady = new Label("Quest, sobrevivência e multiplayer dependem da integração das missões e arenas originais.");
+            notReady.style.color = Offence3MenuTheme.Gold;
+            notReady.style.whiteSpace = WhiteSpace.Normal;
+            coming.Add(notReady);
             panel.Add(CreateButton("OPÇÕES GRÁFICAS E ÁUDIO", () => OpenOptions(ScreenPage.Home)));
             panel.Add(CreateButton("CONTROLES", () => Show(ScreenPage.Controls)));
             panel.Add(CreateButton("SOBRE O ACERVO", () => Show(ScreenPage.About)));
@@ -496,19 +499,24 @@ namespace Vigilante8.Gameplay
 
         private void BuildCatalogBrowser()
         {
-            catalogPage = CreateScreen("CATÁLOGO OFICIAL",
-                "Consulte e selecione todos os pilotos, carros e arenas, mesmo aqueles que ainda não estão jogáveis.",
+            catalogPage = CreateScreen("SELECIONE SEU COMBATENTE",
+                "Pilotos e veículos de duas gerações, agora com filtros de origem e seleção direta.",
                 out var panel);
+            var catalogTop = Offence3MenuTheme.ContentPanel();
+            panel.Add(catalogTop);
+            var note = new Label("MODO DE SELEÇÃO   /   A = CONFIRMAR   ·   B = VOLTAR");
+            note.style.color = Offence3MenuTheme.ElectricBlue;
+            catalogTop.Add(note);
             catalogOrigin = new DropdownField("VERSÃO", new List<string> {
                 "TODAS AS VERSÕES", "VIGILANTE 8", "2ND OFFENSE"
             }, 0);
             StyleDropdown(catalogOrigin);
-            panel.Add(catalogOrigin);
+            catalogTop.Add(catalogOrigin);
             catalogCategory = new DropdownField("MOSTRAR", new List<string> {
                 "CARROS", "PILOTOS", "ARENAS"
             }, 0);
             StyleDropdown(catalogCategory);
-            panel.Add(catalogCategory);
+            catalogTop.Add(catalogCategory);
             catalogEntries = new VisualElement();
             catalogEntries.style.marginTop = 14;
             panel.Add(catalogEntries);
@@ -565,8 +573,8 @@ namespace Vigilante8.Gameplay
                     }
                     break;
             }
-            var info = new Label(count + " entradas oficiais desta categoria e versão.");
-            info.style.color = Muted;
+            var info = Offence3MenuTheme.Chip(
+                count + " OPÇÕES OFICIAIS NESTA CATEGORIA", Offence3MenuTheme.ElectricBlue);
             info.style.marginBottom = 14;
             catalogEntries.Insert(0, info);
         }
@@ -865,8 +873,7 @@ namespace Vigilante8.Gameplay
             }
             bool available = IsMatchAvailable(out string reason);
             readinessLabel.text = reason;
-            readinessLabel.style.color = available ? new Color(0.40f, 0.85f, 0.62f) :
-                new Color(1f, 0.72f, 0.42f);
+            Offence3MenuTheme.Emphasize(readinessLabel, available);
             startCombat.SetEnabled(available);
         }
 
