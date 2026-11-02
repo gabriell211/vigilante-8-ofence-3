@@ -86,21 +86,28 @@ namespace Vigilante8.Editor
                             profileId.Value < sourceRoadMaterials.Length &&
                             sourceRoadMaterials[profileId.Value] != null)
                         {
-                            // A visible, non-physical REVIEW STRIP uses an original
-                            // bitmap; its UV and triangulation are NOT source-certified.
-                            // Skip degenerate sections rather than adding fake triangles.
+                            // Optional adaptive source re-evaluation has its own
+                            // fail-closed validation. Legacy 33-point preview
+                            // remains a fallback, NEVER a final playable mesh.
                             try
                             {
+                                bool adaptive =
+                                    road.OriginalAdaptiveTimesFixed12 != null &&
+                                    road.OriginalAdaptiveLeftEdgeFixedXYZ != null &&
+                                    road.OriginalAdaptiveRightEdgeFixedXYZ != null;
                                 OriginalRoadTextureSourcePreview.AppendDiagnosticStrip(
                                     item.transform, stage, road.RsegFileId,
-                                    road.OriginalLeftEdgeFixedXYZDense,
-                                    road.OriginalRightEdgeFixedXYZDense,
-                                    divisor, sourceRoadMaterials[profileId.Value]);
+                                    adaptive ? road.OriginalAdaptiveLeftEdgeFixedXYZ :
+                                        road.OriginalLeftEdgeFixedXYZDense,
+                                    adaptive ? road.OriginalAdaptiveRightEdgeFixedXYZ :
+                                        road.OriginalRightEdgeFixedXYZDense,
+                                    divisor, sourceRoadMaterials[profileId.Value],
+                                    adaptive ? road.OriginalAdaptiveTimesFixed12 : null);
                             }
                             catch (InvalidDataException)
                             {
                                 // The authenticated centerline and original-side
-                                // guides remain useful even without a full strip.
+                                // guides remain useful without a full strip.
                             }
                         }
                     }
@@ -281,6 +288,13 @@ namespace Vigilante8.Editor
                     originalIndex.Value >= originalProfiles.Length)
                     continue;
                 TryAddSourceEdges(road, originalProfiles[originalIndex.Value], originalGrid);
+                if (OriginalRoadAdaptiveEdgeSampler.TryBuild(road,
+                    originalProfiles[originalIndex.Value], originalGrid, out var adaptive))
+                {
+                    road.OriginalAdaptiveLeftEdgeFixedXYZ = adaptive.Left;
+                    road.OriginalAdaptiveRightEdgeFixedXYZ = adaptive.Right;
+                    road.OriginalAdaptiveTimesFixed12 = adaptive.TimesFixed12;
+                }
             }
             var onlyKnownHeight = plan.Roads.Where(x => x.OriginalFixedXYZ != null &&
                 x.OriginalFixedXYZDense != null).ToArray();
