@@ -29,6 +29,8 @@ namespace Vigilante8.Gameplay
                 // own certified weapon inventory and binding.
                 if (keyboard.eKey.wasPressedThisFrame)
                     GetComponent<OriginalBastionRocketLauncher>()?.TryLaunch();
+                if (keyboard.qKey.wasPressedThisFrame)
+                    GetComponent<OriginalMissileSourceLauncher>()?.TryLaunch();
 #endif
             }
 
@@ -45,6 +47,8 @@ namespace Vigilante8.Gameplay
 #if UNITY_EDITOR
                 if (gamepad.leftShoulder.wasPressedThisFrame)
                     GetComponent<OriginalBastionRocketLauncher>()?.TryLaunch();
+                if (gamepad.dpad.up.wasPressedThisFrame)
+                    GetComponent<OriginalMissileSourceLauncher>()?.TryLaunch();
 #endif
             }
             vehicle.SetControls(gas, steer, brake, fire);
