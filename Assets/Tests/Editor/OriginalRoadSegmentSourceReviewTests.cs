@@ -27,7 +27,7 @@ namespace Vigilante8.EditorTests
                 "--- !u!114 &300\nMonoBehaviour:\n" +
                 "  m_Script: {fileID: 11500000, guid: " + rsegGuid + ", type: 3}\n" +
                 "  DAT_00:\n  - {fileID: 10}\n  - {fileID: " + endpoint + "}\n" +
-                "  DAT_0A: 0\n  DAT_0C: " + flags + "\n" +
+                "  DAT_0C: " + flags + "\n" +
                 "  DAT_10: 1e000000e2ffffff\n" +
                 "  DAT_14: 1e000000e2ffffff\n" +
                 "  DAT_20: 0\n  DAT_24: 0\n  DAT_28: 0\n" +
@@ -159,24 +159,30 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
-        public void OriginalRsegDerivativeKeepsFixedPointArithmeticAndRejectsOverflow()
+        public void OriginalWidthOffsetIsNotInventedAndFollowsUnadjustedSourceSigns()
         {
-            Assert.That(OriginalRoadSegmentSourceReviewWindow.TrySampleSourceTangent(
-                0, 0, 0, 256, out int first), Is.True);
-            Assert.That(first, Is.EqualTo(1));
-            Assert.That(OriginalRoadSegmentSourceReviewWindow.TrySampleSourceTangent(
-                2048, 0, 0, 256, out int middle), Is.True);
-            Assert.That(middle, Is.EqualTo(1));
-            Assert.That(OriginalRoadSegmentSourceReviewWindow.TrySampleSourceTangent(
-                4096, int.MaxValue, 0, 0, out _), Is.False);
-            Assert.That(OriginalRoadSegmentSourceReviewWindow.TrySampleSourceTangent(
-                -1, 0, 0, 256, out _), Is.False);
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                256, 0, 65536, out Vector2Int delta), Is.True);
+            Assert.That(delta, Is.EqualTo(new Vector2Int(0, 32768)));
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                0, 256, 65536, out Vector2Int rotated), Is.True);
+            Assert.That(rotated, Is.EqualTo(new Vector2Int(32768, 0)));
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                0, 0, 65536, out _), Is.False);
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                256, 0, 0, out _), Is.False);
+            Assert.That(OriginalRsegHeightPreviewBuilder.TrySourceHalfWidthOffset(
+                int.MaxValue, int.MaxValue, int.MaxValue, out _), Is.False);
+        }
 
-            var road = OriginalRoadSegmentSourceReviewWindow.ParseSource(
-                ArchivedSnippet(), Rseg, Junc).Roads[0];
-            Assert.That(road.SourceXrtpProfileIndex, Is.EqualTo(0));
-            Assert.That(road.OriginalFixedTangentXZDense.Length, Is.EqualTo(33));
-            Assert.That(road.OriginalFixedTangentXZDense[0], Is.EqualTo(new Vector2Int(2, 0)));
+        [Test]
+        public void VerifiedSteelMillOriginalXrtpWidthMatchesSerializedPrefab()
+        {
+            var source = OriginalXrtpSourceProfileReview.LoadVerified("v82_steel_mill");
+            Assert.That(source.Length, Is.EqualTo(1));
+            Assert.That(source[0], Is.Not.Null);
+            Assert.That(source[0].FullWidthFixed, Is.EqualTo(65536));
+            Assert.That(source[0].LongitudinalStepFixed, Is.EqualTo(81920));
         }
 
         [Test]

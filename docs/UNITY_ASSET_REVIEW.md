@@ -401,3 +401,26 @@ nem reconstrói a largura da malha triangulada, UV, textura em runtime,
 colisão ou spawn. A geração completa ainda exige portar
 \`LevelManager.FUN_719C\`, \`FUN_5850\`, \`FUN_630C\` e ramificações de
 \`FUN_6604\`, incluindo as junções e materiais de origem.
+
+
+## Inspeção não física das bordas de estradas RSEG/XRTP
+
+Quando a prévia RSEG de combate está habilitada, o Editor verifica a
+\`LevelManager.xrtpList\` original na mesma cena (GUID do script preservado),
+resolve o GUID e \`fileID\` de cada prefab XRTP da fase e lê \`DAT_24\`
+diretamente do arquivo. Se houver referência ausente ou não verificável,
+**nenhuma largura genérica é utilizada**.
+
+A equação de tangente \`RSEG_DB.FUN_285E4\` é avaliada com inteiros originais
+em 33 pontos; a fórmula de deslocamento lateral segue a ordem das divisões
+em \`LevelManager.FUN_5850\`. Alturas nas duas bordas são amostradas
+separadamente no grid original \`VigTerrain\` para pistas que acompanham
+o terreno, ou preservam o Y original das pontes com flag 1. Trechos com
+tangente nula, overflow, altura inválida, ou flag \`0x10\` que impede a
+geração de estrada são omitidos da inspeção das bordas. Os traços
+centrais 3D já existentes permanecem independentes.
+
+As linhas são **somente diagnóstico**: faltam as transições \`FUN_719C\`,
+\`FUN_6604\`, subdivisão adaptativa \`FUN_630C\`, triangulação e UV
+originais, além de materiais e colisão de release. A inspeção de bordas
+não equivale a uma malha oficial e não é embutida no pacote Windows.
