@@ -10,6 +10,10 @@ A cena criada agora possui `OriginalBattleSession`, um monitor **somente do Edit
 
 O HUD e suas condições de resultado **não substituem** as regras originais de pontuação, missões ou campanha. Não existem personagens ou carros fictícios: as etiquetas vêm do catálogo oficial e os HP vêm das instâncias vivas do teste. O build de produção continua proibindo `OriginalBattleSession` dentro dos prefabs das arenas.
 
+## IA de perseguição sobre o terreno original
+
+A detecção de obstáculos distingue superfícies dirigíveis de paredes por inclinação da normal da malha; usa consultas físicas sem alocação por decisão. IA interrompe os controles quando o veículo-alvo foi destruído e evita disparos com geometria entre os carros. Estas são **correções de comportamento na física Unity de desenvolvimento**, não equivalência confirmada com a IA, navegação ou armas do PlayStation. A verificação completa depende de PlayMode no Unity Editor com as sete malhas importadas.
+
 ## Limitações de homologação
 
 - **18** veículos V82 têm geometria original disponível no teste. Os **13** veículos do primeiro jogo ainda dependem de mídia e migração final.
