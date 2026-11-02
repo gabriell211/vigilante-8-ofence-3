@@ -33,10 +33,10 @@ def compare_obj(actual: str, expected: str, name: str) -> None:
     for line_no, (a, b) in enumerate(zip(left, right), 1):
         if a == b:
             continue
-        if a.startswith("v ") and b.startswith("v "):
+        # Python and JS may round exact half-micro unit ties in opposite\n        # directions; tolerate that representation, never face/topology drift.\n        if a.startswith("v ") and b.startswith("v "):
             va, vb = a.split(), b.split()
             if len(va) == len(vb) == 4 and all(
-                abs(float(va[i]) - float(vb[i])) <= 0.000001 for i in (1, 2, 3)
+                abs(float(va[i]) - float(vb[i])) <= 0.0000011 for i in (1, 2, 3)
             ):
                 continue
         raise ValueError(f"{name}: original TMD geometry mismatches at OBJ line {line_no}")
