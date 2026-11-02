@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+  "status": "original_native_unity_terrain_meshes_inspection_only",
+  "availableTerrainMeshes": 7,
+  "expectedV82Arenas": 8,
+  "missingTerrainSource": [
+    "v82_meteor_crater"
+  ],
+  "terrains": [
+    {
+      "stageId": "v82_alaskan_pipeline",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Oilfield/OilfieldGeo.asset",
+      "sourceGitBlobSha": "8f5c3b051acfe6627fb2c7c030f01cca763a628e",
+      "sourceBytes": 5114965,
+      "sourceGuid": "fbaa7813309bd254089185c7d57af989",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_alaskan_pipeline.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    },
+    {
+      "stageId": "v82_ghastly_bayou",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Bayou/BayouGeo.asset",
+      "sourceGitBlobSha": "42882002256aa0f038ff5b789b60a5e47f4ada73",
+      "sourceBytes": 5114962,
+      "sourceGuid": "a29a2d1fac371ea4fbffe05f3044253d",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_ghastly_bayou.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    },
+    {
+      "stageId": "v82_launch_site",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Launch/LaunchGeo.asset",
+      "sourceGitBlobSha": "077298c09b827a7ddfc871ae5dd363ce3a93b6db",
+      "sourceBytes": 5114965,
+      "sourceGuid": "cc87d468bc6ff974fb27dc3e6714de21",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_launch_site.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    },
+    {
+      "stageId": "v82_nuclear_plant",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Nuclear/NuclearGeo.asset",
+      "sourceGitBlobSha": "c71737b3b8c393c41bb6c86182f1772c4188456a",
+      "sourceBytes": 5114966,
+      "sourceGuid": "7268b6d5f79367d45a8be6af1dbfa8ab",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_nuclear_plant.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    },
+    {
+      "stageId": "v82_pacific_harbor",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Harbor/HarborGeo.asset",
+      "sourceGitBlobSha": "a81deeed9d2c6db90c6ee02472f883b89139aba3",
+      "sourceBytes": 5114953,
+      "sourceGuid": "2fe064e25a050cd43b7f5abb87723bb8",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_pacific_harbor.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    },
+    {
+      "stageId": "v82_steel_mill",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Steelmil/SteelmilGeo.asset",
+      "sourceGitBlobSha": "5b36bcd883e6be81c180e3ed6615b711b399e713",
+      "sourceBytes": 5114965,
+      "sourceGuid": "22e189d1b2d008a4390e80f9a92a37fd",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_steel_mill.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    },
+    {
+      "stageId": "v82_winter_games",
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Olympic/OlympicGeo.asset",
+      "sourceGitBlobSha": "930a40aa3be7ad8120e6c64d29b68a038876f112",
+      "sourceBytes": 7670860,
+      "sourceGuid": "2f030d0268361fd408822c85f08b66d7",
+      "importPath": "Assets/GameContent/ImportedOriginalTerrainV82/v82_winter_games.asset",
+      "isCompleteArena": false,
+      "collisionApproved": false,
+      "spawnPointsApproved": false
+    }
+  ]
+}
