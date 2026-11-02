@@ -11,12 +11,15 @@ namespace Vigilante8.Gameplay
     [RequireComponent(typeof(UIDocument))]
     public sealed class MatchBootstrap : MonoBehaviour
     {
-        private enum ScreenPage { Home, Garage, Catalog, Options, Controls, About, Playing, Pause, Results }
+        private enum ScreenPage { Home, Garage, Catalog, Missions, Options, Controls, About, Playing, Pause, Results }
         private ScreenPage activePage;
         private ScreenPage optionsReturn = ScreenPage.Home;
         private ScreenPage catalogReturn = ScreenPage.Home;
         private readonly GameMenuSettings preferences = new GameMenuSettings();
-        private VisualElement homePage, catalogPage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage;
+        private VisualElement homePage, catalogPage, missionArchivePage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage;
+        private VisualElement missionArchiveEntries;
+        private DropdownField originalQuestGameFilter;
+        private OriginalQuestArchiveData originalQuestData;
         private ScrollView garagePage;
         private VisualElement catalogEntries;
         private DropdownField catalogCategory;
@@ -73,6 +76,7 @@ namespace Vigilante8.Gameplay
             BuildHud();
             BuildMainMenu();
             BuildCatalogBrowser();
+            BuildOriginalQuestArchive();
             BuildOptionsMenu();
             BuildControlsMenu();
             BuildAboutMenu();
@@ -336,6 +340,7 @@ namespace Vigilante8.Gameplay
                     case ScreenPage.Pause: ResumeGame(); return;
                     case ScreenPage.Options: Show(optionsReturn); return;
                     case ScreenPage.Catalog: Show(catalogReturn); return;
+                    case ScreenPage.Missions: Show(ScreenPage.Home); return;
                     case ScreenPage.Results: BackToMenu(); return;
                     case ScreenPage.Garage:
                     case ScreenPage.Controls:
@@ -463,6 +468,8 @@ namespace Vigilante8.Gameplay
             panel.Add(CreateButton("UM JOGADOR  /  MODO ARCADE", () => Show(ScreenPage.Garage), true));
             panel.Add(CreateButton("GARAGEM  /  " + catalog.vehicles.Length + " CARROS E " + catalog.arenas.Length + " ARENAS",
                 () => OpenCatalog(ScreenPage.Home)));
+            panel.Add(CreateButton("MISSÕES ORIGINAIS / QUEST  ·  V8 + 2ND OFFENSE",
+                () => Show(ScreenPage.Missions)));
             var coming = Offence3MenuTheme.ContentPanel();
             panel.Add(coming);
             AddHeading(coming, "MODOS CLÁSSICOS DO 2ND OFFENSE", 16);
@@ -470,7 +477,8 @@ namespace Vigilante8.Gameplay
             comingDescription.style.color = Muted;
             comingDescription.style.whiteSpace = WhiteSpace.Normal;
             coming.Add(comingDescription);
-            var notReady = new Label("Quest, sobrevivência e multiplayer dependem da integração das missões e arenas originais.");
+            var notReady = new Label("Quest original: arquivo de missões e tradução PT-BR precisam estar verificados. " +
+                "A consulta às missões não desbloqueia combate; sobrevivência e multiplayer seguem pendentes.");
             notReady.style.color = Offence3MenuTheme.Gold;
             notReady.style.whiteSpace = WhiteSpace.Normal;
             coming.Add(notReady);
@@ -478,6 +486,88 @@ namespace Vigilante8.Gameplay
             panel.Add(CreateButton("CONTROLES", () => Show(ScreenPage.Controls)));
             panel.Add(CreateButton("SOBRE O ACERVO", () => Show(ScreenPage.About)));
             panel.Add(CreateButton("SAIR DO JOGO", ExitGame));
+        }
+
+        /// <summary>
+        /// Read-only mission source browser. No invented Quest routes, no
+        /// gameplay launch, and NO implicit English fallback for briefings.
+        /// </summary>
+        private void BuildOriginalQuestArchive()
+        {
+            missionArchivePage = CreateScreen("MISSÕES ORIGINAIS / QUEST",
+                "Vigilante 8 (1998) + 2nd Offense (1999). Textos traduzidos para português do Brasil, " +
+                "sem alterar as missões nem as regras de origem.", out var panel);
+
+            originalQuestGameFilter = new DropdownField("JOGO DE ORIGEM",
+                new List<string> { "AMBOS OS JOGOS", "VIGILANTE 8", "2ND OFFENSE" }, 0);
+            StyleDropdown(originalQuestGameFilter);
+            panel.Add(originalQuestGameFilter);
+            originalQuestGameFilter.RegisterValueChangedCallback(_ => RefreshOriginalQuestArchive());
+
+            missionArchiveEntries = new VisualElement();
+            panel.Add(missionArchiveEntries);
+            panel.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
+
+            try { originalQuestData = OriginalQuestArchive.TryLoad(); }
+            catch (Exception exception)
+            {
+                // A malformed or tampered source file is never presented as genuine Quest.
+                Debug.LogError("Acervo de missões originais não confiável: " + exception.Message);
+                originalQuestData = null;
+            }
+            RefreshOriginalQuestArchive();
+        }
+
+        private void RefreshOriginalQuestArchive()
+        {
+            if (missionArchiveEntries == null) return;
+            missionArchiveEntries.Clear();
+            if (originalQuestData == null)
+            {
+                var missing = new Label(
+                    "MISSÕES ORIGINAIS AINDA NÃO IMPORTADAS. O acervo de código confirma " +
+                    "48 missões no V8 e 120 no 2nd Offense, mas não contém os dois " +
+                    "QUEST.BIN com os textos completos. Nenhuma história ou objetivo será inventado.");
+                missing.style.color = Offence3MenuTheme.Gold;
+                missing.style.whiteSpace = WhiteSpace.Normal;
+                missionArchiveEntries.Add(missing);
+                return;
+            }
+
+            string game = originalQuestGameFilter.index == 1 ? "v8" :
+                originalQuestGameFilter.index == 2 ? "v82" : null;
+            var campaigns = OriginalQuestArchive.Campaigns(originalQuestData, game);
+            missionArchiveEntries.Add(Offence3MenuTheme.Chip(
+                campaigns.Length + " CAMPANHAS ORIGINAIS   /   " +
+                campaigns.Sum(c => c.missions.Length) + " MISSÕES TRADUZIDAS",
+                Offence3MenuTheme.ElectricBlue));
+            foreach (OriginalQuestCampaign campaign in campaigns)
+            {
+                var group = Offence3MenuTheme.ContentPanel();
+                missionArchiveEntries.Add(group);
+                AddHeading(group,
+                    (campaign.game == "v8" ? "VIGILANTE 8" : "2ND OFFENSE") +
+                    "  ·  " + campaign.sourceCharacter, 18);
+                for (int i = 0; i < campaign.missions.Length; i++)
+                {
+                    OriginalQuestMission mission = campaign.missions[i];
+                    var row = new Label("MISSÃO " + (mission.sourceMissionIndex + 1) +
+                        "  /  TEXTO ORIGINAL TRADUZIDO\n" + mission.briefingPtBr);
+                    row.style.color = Offence3MenuTheme.White;
+                    row.style.whiteSpace = WhiteSpace.Normal;
+                    row.style.marginBottom = 12;
+                    row.style.paddingBottom = 10;
+                    row.style.borderBottomWidth = 1;
+                    row.style.borderBottomColor = Offence3MenuTheme.Raised;
+                    group.Add(row);
+                }
+            }
+            var info = new Label(
+                "CONSULTA DO ACERVO — as condições, os inimigos, o progresso e as " +
+                "transições da campanha original ainda não estão integrados ao combate Unity.");
+            info.style.whiteSpace = WhiteSpace.Normal;
+            info.style.color = Offence3MenuTheme.Gold;
+            missionArchiveEntries.Add(info);
         }
 
         private void OpenCatalog(ScreenPage origin)
@@ -698,11 +788,12 @@ namespace Vigilante8.Gameplay
             if (hud != null) hud.style.display = target == ScreenPage.Playing ?
                 DisplayStyle.Flex : DisplayStyle.None;
             var pages = new[] {
-                homePage, catalogPage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage
+                homePage, catalogPage, missionArchivePage, optionsPage, controlsPage,
+                aboutPage, pausePage, resultsPage
             };
             var ids = new[] {
-                ScreenPage.Home, ScreenPage.Catalog, ScreenPage.Options, ScreenPage.Controls,
-                ScreenPage.About, ScreenPage.Pause, ScreenPage.Results
+                ScreenPage.Home, ScreenPage.Catalog, ScreenPage.Missions, ScreenPage.Options,
+                ScreenPage.Controls, ScreenPage.About, ScreenPage.Pause, ScreenPage.Results
             };
             for (int i = 0; i < pages.Length; i++)
                 if (pages[i] != null) pages[i].style.display =
@@ -716,6 +807,7 @@ namespace Vigilante8.Gameplay
                 ScreenPage.Home => homePage?.Q<Button>(),
                 ScreenPage.Garage => vehicleSelector,
                 ScreenPage.Catalog => catalogPage?.Q<Button>(),
+                ScreenPage.Missions => originalQuestGameFilter,
                 ScreenPage.Options => optionsPage?.Q<Slider>() ?? (VisualElement)optionsPage?.Q<Button>(),
                 ScreenPage.Controls => controlsPage?.Q<Button>(),
                 ScreenPage.About => aboutPage?.Q<Button>(),
