@@ -136,9 +136,9 @@ namespace Vigilante8.Editor
                         throw new InvalidOperationException("Material texture must remain inside Unity Assets");
 
                     string assetPath = "Assets/" + absolute.Substring(root.Length + 1);
-                    Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-                    if (texture == null)
-                        throw new InvalidOperationException("Missing actual original BMP: " + assetPath);
+                    // Every enhanced pixel comes from this SHA-verified original
+                    // BMP. The original source image, GUID and UVs remain intact.
+                    Texture2D texture = OriginalV82TextureQualityBuilder.EnsureEnhanced(assetPath);
                     material.SetTexture("_BaseMap", texture);
                 }
                 else
