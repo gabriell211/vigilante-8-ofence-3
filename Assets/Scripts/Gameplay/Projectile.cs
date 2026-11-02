@@ -38,6 +38,15 @@ namespace Vigilante8.Gameplay
             if (impacted || owner == null) return;
             if (collision.collider.transform.IsChildOf(owner.transform)) return;
 #if UNITY_EDITOR
+            // Missile.Halo ignores legacy type-8 collisions. In our current
+            // invisible test, other Projectile colliders are the conservative
+            // matching category. Exact PS1 object type mapping is unverified.
+            var halo = GetComponent<OriginalMissileSourceFlight>();
+            if (halo != null && halo.IgnoreDiagnosticProjectileContact(collision.collider))
+            {
+                Physics.IgnoreCollision(GetComponent<Collider>(), collision.collider);
+                return;
+            }
             // Rocket.RoadRunner sticks to an enemy vehicle and suppresses
             // the generic projectile's immediate-hit damage. Delayed damage
             // must happen once, only after the source 360-tick countdown.
