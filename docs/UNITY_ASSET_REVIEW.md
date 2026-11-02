@@ -581,3 +581,38 @@ materiais de múltiplas faixas, UV oficiais, nem colisão em runtime.
 Os testes Python no CI verificam contratos de origem e os testes
 NUnit no Unity Editor verificam aritmética e geometria (estes últimos
 ainda dependem de execução na instalação Unity).
+
+
+## Autenticidade e segurança das junções FUN_719C / FUN_6604
+
+O novo \`OriginalJunctionTransitionSourceReview\` analisa os
+\`JUNC_DB\` e \`RSEG_DB\` da cena original de cada fase, com os
+\`fileID\` e GUIDs de scripts oficialmente arquivados, além
+dos perfis \`XRTP.DAT_24\` já verificados. Reproduz **a regra
+de seleção do raio de transição em \`FUN_719C\`**: apenas junções
+sem malha XOBF, cuja flag \`JUNC.DAT_10 & 1\` não bloqueia o
+ajuste e cujo bit em \`RSEG.DAT_0C\` permite \`FUN_6604\`;
+a largura selecionada é o maior \`DAT_24/2\` das estradas
+conectadas cujo \`DAT_08\`, interpretado como \`short\`
+assinado, é inferior ao da estrada atual. Contagens \`DAT_11\`,
+referências \`DAT_1C\` e perfis faltantes causam reprovação,
+não inferência.
+
+Na prévia sem colisão, **círculos com raio efetivamente obtido
+da fonte** indicam onde seria necessária uma transição
+\`FUN_6604\`. Esses círculos são apenas guias de inspeção;
+não modificam a Bézier ou simulam pavimento.
+
+**Bloqueio original confirmado:** a versão C# arquivada de
+\`FUN_6604\` declara \`uint[] local_188 = new uint[27]\`
+e utiliza \`local_188[30]\`. Portanto, executá-la literalmente
+poderia resultar em acesso fora dos limites. O sistema
+**não executa** essa rotina em geometria de produção; a
+transição continua pendente de reconstrução e homologação.
+Também são declaradas como não portadas as junções que
+dependem da ramificação XOBF/\`configContainers\`.
+
+A auditoria \`scripts/audit_v82_junction_transition_selection.py\`
+produz o artefato \`v82-original-junction-transition-decisions\`
+com duas decisões por estrada para as oito fases. Não gera UVs
+definitivos, colisão ou malhas de release.
