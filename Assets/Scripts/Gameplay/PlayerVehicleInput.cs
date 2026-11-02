@@ -31,6 +31,8 @@ namespace Vigilante8.Gameplay
                     GetComponent<OriginalBastionRocketLauncher>()?.TryLaunch();
                 if (keyboard.qKey.wasPressedThisFrame)
                     GetComponent<OriginalMissileSourceLauncher>()?.TryLaunch();
+                if (keyboard.rKey.wasPressedThisFrame)
+                    GetComponent<OriginalMineSourceLauncher>()?.TryDeploy();
 #endif
             }
 
@@ -49,6 +51,8 @@ namespace Vigilante8.Gameplay
                     GetComponent<OriginalBastionRocketLauncher>()?.TryLaunch();
                 if (gamepad.dpad.up.wasPressedThisFrame)
                     GetComponent<OriginalMissileSourceLauncher>()?.TryLaunch();
+                if (gamepad.dpad.down.wasPressedThisFrame)
+                    GetComponent<OriginalMineSourceLauncher>()?.TryDeploy();
 #endif
             }
             vehicle.SetControls(gas, steer, brake, fire);

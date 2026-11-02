@@ -198,7 +198,7 @@ namespace Vigilante8.Gameplay
         {
             if (!ready || !Application.isPlaying) return;
             float width = Mathf.Clamp(Screen.width - 36f, 260f, 440f);
-            float height = 258f + TotalOpponents * 24f;
+            float height = 281f + TotalOpponents * 24f;
             GUI.Box(new Rect(16f, 16f, width, height), GUIContent.none);
             var title = new GUIStyle(GUI.skin.label)
             {
@@ -246,6 +246,11 @@ namespace Vigilante8.Gameplay
             y += 23f;
             GUI.Label(new Rect(28f, y, width - 24f, 22f),
                 "Q / D-PAD CIMA: MISSILE (TESTE, FISICA PROVISORIA)", regular);
+            y += 23f;
+            var mine = player.GetComponent<OriginalMineSourceLauncher>();
+            GUI.Label(new Rect(28f, y, width - 24f, 22f),
+                "R / D-PAD BAIXO: MINA (TESTE, CARGAS " +
+                (mine == null ? "-" : mine.RemainingCharges.ToString()) + ")", regular);
             if (paused)
                 GUI.Label(new Rect(28f, y + 22f, width - 24f, 22f), "PAUSADO (TESTE)", title);
         }
