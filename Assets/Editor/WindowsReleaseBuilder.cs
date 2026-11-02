@@ -96,7 +96,7 @@ namespace Vigilante8.Editor
                 catalog.arenas.Length != 19)
                 throw new BuildFailedException("Unified V8 and V82 roster is incomplete.");
 
-            var seenVehicleBodyMeshes = new System.Collections.Generic.HashSet<int>();
+            var seenVehicleBodyMeshes = new System.Collections.Generic.HashSet<Mesh>();
             foreach (VehicleEntry vehicle in catalog.vehicles)
             {
                 string path = "Assets/Resources/Vehicles/" + vehicle.assetId + ".prefab";
@@ -154,11 +154,11 @@ namespace Vigilante8.Editor
                 if (primaryMesh == null || primaryMesh.vertexCount < 3 ||
                     string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(primaryMesh)))
                     throw new BuildFailedException("Imported authored vehicle geometry missing: " + vehicle.id);
-                if (!seenVehicleBodyMeshes.Add(primaryMesh.GetInstanceID()))
+                if (!seenVehicleBodyMeshes.Add(primaryMesh))
                     throw new BuildFailedException("Repeated vehicle body mesh used as another official car: " + vehicle.id);
             }
 
-            var seenArenaMeshes = new System.Collections.Generic.HashSet<int>();
+            var seenArenaMeshes = new System.Collections.Generic.HashSet<Mesh>();
             foreach (ArenaEntry arena in catalog.arenas)
             {
                 string path = "Assets/Resources/Arenas/" + arena.assetId + ".prefab";
@@ -193,7 +193,7 @@ namespace Vigilante8.Editor
                 if (primaryMesh == null || primaryMesh.vertexCount < 3 ||
                     string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(primaryMesh)))
                     throw new BuildFailedException("Actual arena mesh not imported: " + arena.id);
-                if (!seenArenaMeshes.Add(primaryMesh.GetInstanceID()))
+                if (!seenArenaMeshes.Add(primaryMesh))
                     throw new BuildFailedException("Same arena geometry reused for different official stages: " + arena.id);
             }
             Debug.Log("Release asset gate passed: 23 drivers, 31 vehicles, 19 arenas.");
@@ -244,7 +244,7 @@ namespace Vigilante8.Editor
             string zip = Path.Combine(buildRoot,
                 "Vigilante8Offence3-" + PlayerSettings.bundleVersion + "-win-x64.zip");
             if (File.Exists(zip)) File.Delete(zip);
-            ZipFile.CreateFromDirectory(outputDir, zip, CompressionLevel.Optimal, false);
+            ZipFile.CreateFromDirectory(outputDir, zip, System.IO.Compression.CompressionLevel.Optimal, false);
             using (var stream = File.OpenRead(zip))
             using (var sha = SHA256.Create())
             {

@@ -5,10 +5,11 @@
   "audioFiles": [
     {
       "source": "LEVELS/BAYOU/Sounds/XOBF00_0000.wav",
-      "unityPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0000.wav",
+      "unityPath": null,
       "guid": "b9f826eb84477aa40a804fc8119f3299",
       "sha256": "9d020b38136b855a434fae1c2e4ed8db8c0d95648bb56e4813c6bb54cc292c4c",
-      "bytes": 112
+      "bytes": 112,
+      "importStatus": "empty_source_not_importable"
     },
     {
       "source": "LEVELS/BAYOU/Sounds/XOBF00_0001.wav",
@@ -2209,11 +2210,6 @@
     ],
     "v82_ghastly_bayou": [
       {
-        "index": 0,
-        "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0000.wav",
-        "guid": "b9f826eb84477aa40a804fc8119f3299"
-      },
-      {
         "index": 1,
         "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0001.wav",
         "guid": "173eed755220d15459cbaed78a6398b2"
@@ -2415,5 +2411,6 @@
       }
     ]
   },
-  "note": "Original samples preserved, sample roles not assigned; not proof of gameplay audio"
+  "note": "Original samples preserved, sample roles not assigned; not proof of gameplay audio",
+  "importableCount": 234
 }

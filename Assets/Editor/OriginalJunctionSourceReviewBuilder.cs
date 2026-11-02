@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
@@ -216,18 +215,6 @@ namespace Vigilante8.Editor
             return full;
         }
 
-        private static string ShaGit(string path)
-        {
-            byte[] bytes = File.ReadAllBytes(path);
-            byte[] prefix = Encoding.ASCII.GetBytes("blob " + bytes.Length + "\0");
-            using (SHA1 sha = SHA1.Create())
-            {
-                sha.TransformBlock(prefix, 0, prefix.Length, prefix, 0);
-                sha.TransformFinalBlock(bytes, 0, bytes.Length);
-                return BitConverter.ToString(sha.Hash).Replace("-", "").ToLowerInvariant();
-            }
-        }
-
         private static string SourceGuid(string path)
         {
             Match match = MetaGuid.Match(File.ReadAllText(Absolute(path)));
@@ -369,8 +356,8 @@ namespace Vigilante8.Editor
                 row.sourceGitBlobSha?.Length != 40 ||
                 row.objPath != "Assets/GameContent/ExtractedStageObjectsV82/" + id + ".obj" ||
                 row.sourcePath.IndexOf("XOBF00.prefab", StringComparison.Ordinal) < 0 ||
-                ShaGit(Absolute(row.sourceScenePath)) != SceneBlobs[id] ||
-                ShaGit(Absolute(row.sourcePath)) != row.sourceGitBlobSha)
+                !OriginalSourceGitBlob.Matches(Absolute(row.sourceScenePath), SceneBlobs[id]) ||
+                !OriginalSourceGitBlob.Matches(Absolute(row.sourcePath), row.sourceGitBlobSha))
                 throw new InvalidDataException("Stage original source/bank hash or path changed");
             return row;
         }

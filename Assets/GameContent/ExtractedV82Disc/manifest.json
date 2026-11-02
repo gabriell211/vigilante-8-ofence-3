@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dialect": "v82",
-  "source": "Assets/GameContent/Private/DiscV82Europe/SHARED/COMMON.EXP",
+  "source": "DiscSources/DiscV82Europe/SHARED/COMMON.EXP",
   "sourceSha256": "b4e4273c4dd6f401924a2b4bd1b207b4c8f9d3882282d480e761ce6d6ec23e32",
   "status": "source_geometry_only_not_playable",
   "materialsReady": false,

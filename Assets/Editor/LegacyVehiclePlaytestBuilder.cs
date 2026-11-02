@@ -114,20 +114,20 @@ namespace Vigilante8.Editor
                     if (bounds.size.x < 0.1f || bounds.size.z < 0.1f)
                         throw new InvalidOperationException("Empty source body geometry: " + vehicle.id);
 
-                    var box = instance.GetComponent<BoxCollider>() ??
-                              instance.AddComponent<BoxCollider>();
+                    var box = instance.GetComponent<BoxCollider>();
+                    if (box == null) box = instance.AddComponent<BoxCollider>();
                     box.center = instance.transform.InverseTransformPoint(bounds.center);
                     box.size = new Vector3(
                         Mathf.Max(0.25f, bounds.size.x),
                         Mathf.Max(0.25f, bounds.size.y),
                         Mathf.Max(0.25f, bounds.size.z));
 
-                    Rigidbody rigidbody = instance.GetComponent<Rigidbody>() ??
-                        instance.AddComponent<Rigidbody>();
+                    Rigidbody rigidbody = instance.GetComponent<Rigidbody>();
+                    if (rigidbody == null) rigidbody = instance.AddComponent<Rigidbody>();
                     rigidbody.useGravity = true;
                     RawCar original = handling[vehicle.id];
-                    LegacyVehicleHandlingProfile stats = instance.GetComponent<LegacyVehicleHandlingProfile>() ??
-                        instance.AddComponent<LegacyVehicleHandlingProfile>();
+                    LegacyVehicleHandlingProfile stats = instance.GetComponent<LegacyVehicleHandlingProfile>();
+                    if (stats == null) stats = instance.AddComponent<LegacyVehicleHandlingProfile>();
                     stats.Configure(vehicle.id, original.sourceEnum, original.rawHalfHealth,
                         original.rawLightness, original.dat0e, original.dat0f,
                         original.dat10, original.dat11, original.dat12,
@@ -135,8 +135,8 @@ namespace Vigilante8.Editor
                     rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
                     rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
-                    var drive = instance.GetComponent<VehicleDrive>() ??
-                        instance.AddComponent<VehicleDrive>();
+                    var drive = instance.GetComponent<VehicleDrive>();
+                    if (drive == null) drive = instance.AddComponent<VehicleDrive>();
                     stats.ApplyProvisionalHandling(drive);
                     rigidbody.mass = drive.massKg;
                     var muzzle = instance.transform.Find("PLAYTEST MUZZLE - NOT ORIGINAL");

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Vigilante8.Content;
 
 namespace Vigilante8.Gameplay
 {
@@ -26,7 +27,12 @@ namespace Vigilante8.Gameplay
         /// that delivered the fatal hit, or null for unattributed damage.
         /// </summary>
         public event Action<VehicleDrive, VehicleDrive> Eliminated;
-        public float Health { get; private set; }
+        private float? currentHealth;
+        public float Health
+        {
+            get => currentHealth ?? maximumHealth;
+            private set => currentHealth = value;
+        }
         public bool IsAlive => Health > 0f;
         public bool HasWeapon => muzzle != null && projectilePrefab != null;
         private Rigidbody body;
@@ -238,6 +244,7 @@ namespace Vigilante8.Gameplay
             Eliminated?.Invoke(this, attacker != this ? attacker : null);
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 collider.enabled = false;
+            if (body == null) body = GetComponent<Rigidbody>();
             body.isKinematic = true;
         }
     }

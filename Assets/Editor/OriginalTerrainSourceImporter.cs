@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -50,17 +48,6 @@ namespace Vigilante8.Editor
                 throw new InvalidOperationException("Terrain escaped Unity project");
             return result;
         }
-        private static string GitBlobSha(string file)
-        {
-            byte[] data = File.ReadAllBytes(file);
-            byte[] header = Encoding.ASCII.GetBytes("blob " + data.Length + "\0");
-            using (var sha = SHA1.Create())
-            {
-                sha.TransformBlock(header, 0, header.Length, header, 0);
-                sha.TransformFinalBlock(data, 0, data.Length);
-                return BitConverter.ToString(sha.Hash).Replace("-", "").ToLowerInvariant();
-            }
-        }
         private static Row[] Verified()
         {
             var text = AssetDatabase.LoadAssetAtPath<TextAsset>(ManifestPath);
@@ -93,8 +80,8 @@ namespace Vigilante8.Editor
                     entry.sourceGitBlobSha.Length != 40 || entry.sourceBytes < 100000)
                     throw new InvalidOperationException("Invalid original source terrain entry");
                 string path = Absolute(entry.sourcePath);
-                if (!File.Exists(path) || new FileInfo(path).Length != entry.sourceBytes ||
-                    GitBlobSha(path) != entry.sourceGitBlobSha)
+                if (!OriginalSourceGitBlob.Matches(
+                    path, entry.sourceGitBlobSha, entry.sourceBytes))
                     throw new InvalidOperationException("Original source terrain Git SHA mismatch");
                 var meta = File.ReadAllText(path + ".meta");
                 if (!meta.Contains("guid: " + entry.sourceGuid) ||
@@ -127,7 +114,8 @@ namespace Vigilante8.Editor
             foreach (var row in rows)
             {
                 var output = Absolute(row.importPath);
-                if (File.Exists(output) && GitBlobSha(output) != row.sourceGitBlobSha)
+                if (File.Exists(output) && !OriginalSourceGitBlob.Matches(
+                    output, row.sourceGitBlobSha, row.sourceBytes))
                     throw new InvalidOperationException("Refusing to overwrite changed source mesh");
                 if (File.Exists(output + ".meta") &&
                     File.ReadAllText(output + ".meta") !=

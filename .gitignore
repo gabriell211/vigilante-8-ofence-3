@@ -16,6 +16,7 @@
 
 # Only temporary unprocessed local content is private
 /Assets/GameContent/Private/
+/DiscSources/
 /Assets/ContentImportStaging/
 *.iso
 *.chd

@@ -11,7 +11,7 @@ O primeiro disco contém `COMMON.EXP`, `SHELL/VEHICLES.EXP`, dez pares `TERRAIN/
 
 ## Extração feita
 
-`scripts/inspect_psx_disc.mjs` valida o sistema ISO9660 e extrai arquivos comuns. Ele deixa de fora `.XA`, `.STR` e áudio CDDA porque esses fluxos precisam de decodificação por setor. As cópias locais ficaram em `Assets/GameContent/Private/DiscV8/` e `DiscV82Europe/`, pastas ignoradas pelo Git. Foram extraídos 46 e 84 arquivos comuns, respectivamente.
+`scripts/inspect_psx_disc.mjs` valida o sistema ISO9660 e extrai arquivos comuns. Ele deixa de fora `.XA`, `.STR` e áudio CDDA porque esses fluxos precisam de decodificação por setor. As cópias locais ficaram em `DiscSources/DiscV8/` e `DiscSources/DiscV82Europe/`, pastas ignoradas pelo Git e fora da importação do Unity. Os `.DLL` dos discos são dados PlayStation, não plugins do Editor. Foram extraídos 46 e 84 arquivos comuns, respectivamente.
 
 `scripts/export_v8_disc_geometry.mjs` decodificou os 16 bancos XOBF de `COMMON.EXP` do primeiro jogo. Os bancos 0–12 são os 13 corpos dos veículos, segundo a tabela nativa preservada em `LegacySources/Vigilante8ClassicRecomp/tools/blender_addons/tests/build_v8_to_v82_guest_roster.py`; o banco 13 é a biblioteca de rodas e os bancos 14–15 são efeitos. As malhas OBJ e o manifesto com hashes e IDs estão em `Assets/GameContent/ExtractedV8/`. Os 13 corpos somam 223 grupos, 5.838 vértices e 9.184 triângulos.
 
@@ -22,12 +22,12 @@ O 2nd Offense já tinha 18 malhas de veículos em `Assets/GameContent/ExtractedV
 Para repetir a leitura com os mesmos BINs:
 
 ```powershell
-node scripts/inspect_psx_disc.mjs 'Vigilante 8/Vigilante 8 (Track 01).bin' --extract 'Assets/GameContent/Private/DiscV8' --json
-node scripts/inspect_psx_disc.mjs 'Vigilante 8/Vigilante 8 - Second Offense (Europe)/Vigilante 8 - Second Offense (Europe) (Track 01).bin' --extract 'Assets/GameContent/Private/DiscV82Europe' --json
-node scripts/export_v8_disc_geometry.mjs 'Assets/GameContent/Private/DiscV8/COMMON.EXP' 'Assets/GameContent/ExtractedV8' v8
-node scripts/export_v8_stage_geometry.mjs 'Assets/GameContent/Private/DiscV8/TERRAIN' 'Assets/GameContent/ExtractedV8Stages'
-node scripts/export_v8_disc_geometry.mjs 'Assets/GameContent/Private/DiscV82Europe/SHARED/COMMON.EXP' 'Assets/GameContent/ExtractedV82Disc' v82
-node scripts/export_v82_stage_geometry.mjs 'Assets/GameContent/Private/DiscV82Europe/LEVELS' 'Assets/GameContent/ExtractedV82DiscStages'
+node scripts/inspect_psx_disc.mjs 'Vigilante 8/Vigilante 8 (Track 01).bin' --extract 'DiscSources/DiscV8' --json
+node scripts/inspect_psx_disc.mjs 'Vigilante 8/Vigilante 8 - Second Offense (Europe)/Vigilante 8 - Second Offense (Europe) (Track 01).bin' --extract 'DiscSources/DiscV82Europe' --json
+node scripts/export_v8_disc_geometry.mjs 'DiscSources/DiscV8/COMMON.EXP' 'Assets/GameContent/ExtractedV8' v8
+node scripts/export_v8_stage_geometry.mjs 'DiscSources/DiscV8/TERRAIN' 'Assets/GameContent/ExtractedV8Stages'
+node scripts/export_v8_disc_geometry.mjs 'DiscSources/DiscV82Europe/SHARED/COMMON.EXP' 'Assets/GameContent/ExtractedV82Disc' v82
+node scripts/export_v82_stage_geometry.mjs 'DiscSources/DiscV82Europe/LEVELS' 'Assets/GameContent/ExtractedV82DiscStages'
 node --test tests/test_psx_disc_tools.mjs
 ```
 

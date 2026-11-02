@@ -566,11 +566,6 @@
       "kind": "arena",
       "samples": [
         {
-          "originalIndex": 0,
-          "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0000.wav",
-          "guid": "b9f826eb84477aa40a804fc8119f3299"
-        },
-        {
           "originalIndex": 1,
           "assetPath": "Assets/GameContent/LegacyAudioV82/LEVELS/BAYOU/Sounds/XOBF00_0001.wav",
           "guid": "173eed755220d15459cbaed78a6398b2"

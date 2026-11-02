@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Vigilante8.Content;
 using Vigilante8.Gameplay;
 
 namespace Vigilante8.PlayModeTests

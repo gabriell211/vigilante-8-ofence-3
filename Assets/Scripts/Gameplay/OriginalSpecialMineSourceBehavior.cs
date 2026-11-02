@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using UnityEngine;
+using Vigilante8.Content;
 
 namespace Vigilante8.Gameplay
 {

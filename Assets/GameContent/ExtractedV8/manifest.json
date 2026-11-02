@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dialect": "v8",
-  "source": "Assets/GameContent/Private/DiscV8/COMMON.EXP",
+  "source": "DiscSources/DiscV8/COMMON.EXP",
   "sourceSha256": "43319de40db58be51dbf22cdeef5f61cf7139efeb97953546741ce6ab3b73cff",
   "status": "source_geometry_only_not_playable",
   "materialsReady": false,

@@ -18,6 +18,8 @@ SOURCE = Path("LegacySources/Vigilante2Unity/Assets")
 DEST = Path("Assets/GameContent/LegacyAudioV82")
 MANIFEST = Path("docs/v82-audio-sources.json")
 GUID_PATTERN = re.compile(r"(?m)^guid:\s*([a-f0-9]{32})\s*$")
+EMPTY_SOURCE = "LEVELS/BAYOU/Sounds/XOBF00_0000.wav"
+EMPTY_SOURCE_SHA256 = "9d020b38136b855a434fae1c2e4ed8db8c0d95648bb56e4813c6bb54cc292c4c"
 
 
 def guid_from_meta(meta: str) -> str:
@@ -73,13 +75,26 @@ def copy_audio(root: Path = ROOT) -> dict:
         content = original_file.read_bytes()
         if len(content) < 44 or content[:4] != b"RIFF" or content[8:12] != b"WAVE":
             raise ValueError(f"Not a real RIFF/WAVE audio file: {original_file}")
+        checksum = hashlib.sha256(content).hexdigest()
         dest = root / DEST / relative
+        if relative.as_posix() == EMPTY_SOURCE:
+            if checksum != EMPTY_SOURCE_SHA256 or len(content) != 112:
+                raise ValueError("The archived empty Bayou sample changed")
+            # The source is a zero-rate, zero-data WAV placeholder. Keep the
+            # archived copy, but do not feed an unplayable clip to Unity.
+            dest.unlink(missing_ok=True)
+            Path(str(dest) + ".meta").unlink(missing_ok=True)
+            all_records.append({
+                "source": relative.as_posix(), "unityPath": None,
+                "guid": guid, "sha256": checksum, "bytes": len(content),
+                "importStatus": "empty_source_not_importable",
+            })
+            continue
         dest.parent.mkdir(parents=True, exist_ok=True)
         if dest.exists() and dest.read_bytes() != content:
             raise ValueError(f"Conflicting local audio: {dest}")
         shutil.copyfile(original_file, dest)
         shutil.copyfile(source_meta, Path(str(dest) + ".meta"))
-        checksum = hashlib.sha256(content).hexdigest()
         all_records.append({
             "source": relative.as_posix(),
             "unityPath": (DEST / relative).as_posix(),
@@ -95,6 +110,8 @@ def copy_audio(root: Path = ROOT) -> dict:
             result = []
             for rec in records:
                 item = all_by_source[rec["source"]]
+                if item["unityPath"] is None:
+                    continue
                 result.append({
                     "index": int(Path(rec["source"]).stem.rsplit("_", 1)[-1]),
                     "assetPath": item["unityPath"], "guid": item["guid"]
@@ -113,6 +130,7 @@ def copy_audio(root: Path = ROOT) -> dict:
         "vehicles": enrich(vehicle_audio),
         "arenas": enrich(stage_audio),
         "note": "Original samples preserved, sample roles not assigned; not proof of gameplay audio",
+        "importableCount": sum(r["unityPath"] is not None for r in all_records),
     }
     # Unity JsonUtility does not decode dictionaries: ship a derived and
     # source-verified array catalog for the Editor (no hard-coded car mapping).

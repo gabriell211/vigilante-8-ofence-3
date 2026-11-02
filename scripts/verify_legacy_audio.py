@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from migrate_legacy_audio import guid_from_meta
+from migrate_legacy_audio import EMPTY_SOURCE, EMPTY_SOURCE_SHA256, guid_from_meta
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -17,27 +17,43 @@ def verify(root: Path = ROOT) -> dict:
     records = data["audioFiles"]
     if data["schemaVersion"] != 1 or data["count"] < 230 or len(records) != data["count"]:
         raise ValueError("Incomplete original WAV catalog")
+    if data.get("importableCount") != sum(r["unityPath"] is not None for r in records):
+        raise ValueError("Imported WAV count mismatch")
     if set(data["vehicles"]) != set(mapping["vehicles"]) or set(data["arenas"]) != set(mapping["arenas"]):
         raise ValueError("Missing or changed official source banks")
     seen_guids, seen_paths = set(), set()
     for record in records:
         orig = root / "LegacySources/Vigilante2Unity/Assets" / record["source"]
-        copied = root / record["unityPath"]
-        if not orig.exists() or not copied.exists() or orig.read_bytes() != copied.read_bytes():
-            raise ValueError("Original WAV bytes missing or altered: " + record["source"])
-        if not str(copied.relative_to(root)).startswith("Assets/GameContent/LegacyAudioV82/"):
-            raise ValueError("WAV copied to unexpected path")
-        guid = guid_from_meta(Path(str(copied) + ".meta").read_text("utf-8-sig"))
+        if not orig.exists():
+            raise ValueError("Original WAV source missing: " + record["source"])
         source_guid = guid_from_meta(Path(str(orig) + ".meta").read_text("utf-8-sig"))
-        if guid != record["guid"] or guid != source_guid:
+        if source_guid != record["guid"]:
             raise ValueError("Original WAV GUID changed: " + record["source"])
-        if hashlib.sha256(copied.read_bytes()).hexdigest() != record["sha256"]:
+        if hashlib.sha256(orig.read_bytes()).hexdigest() != record["sha256"]:
             raise ValueError("WAV checksum mismatch: " + record["source"])
-        if guid in seen_guids or record["unityPath"] in seen_paths:
+        if record["unityPath"] is None:
+            if record["source"] != EMPTY_SOURCE or record["sha256"] != EMPTY_SOURCE_SHA256 \
+                    or record.get("importStatus") != "empty_source_not_importable":
+                raise ValueError("Unknown unimportable WAV: " + record["source"])
+            invalid_copy = root / "Assets/GameContent/LegacyAudioV82" / record["source"]
+            if invalid_copy.exists() or Path(str(invalid_copy) + ".meta").exists():
+                raise ValueError("Empty WAV must stay outside Unity Assets")
+        else:
+            copied = root / record["unityPath"]
+            if not copied.exists() or orig.read_bytes() != copied.read_bytes():
+                raise ValueError("Original WAV bytes missing or altered: " + record["source"])
+            if not str(copied.relative_to(root)).startswith("Assets/GameContent/LegacyAudioV82/"):
+                raise ValueError("WAV copied to unexpected path")
+            guid = guid_from_meta(Path(str(copied) + ".meta").read_text("utf-8-sig"))
+            if guid != source_guid:
+                raise ValueError("Copied WAV GUID changed: " + record["source"])
+            if record["unityPath"] in seen_paths:
+                raise ValueError("Duplicate original WAV path")
+            seen_paths.add(record["unityPath"])
+        if source_guid in seen_guids:
             raise ValueError("Duplicate original WAV or GUID")
-        seen_guids.add(guid)
-        seen_paths.add(record["unityPath"])
-    by_path = {r["unityPath"]: r for r in records}
+        seen_guids.add(source_guid)
+    by_path = {r["unityPath"]: r for r in records if r["unityPath"] is not None}
     for group in ("vehicles", "arenas"):
         for identifier, samples in data[group].items():
             if not samples or len({s["index"] for s in samples}) != len(samples):
@@ -72,7 +88,8 @@ def verify(root: Path = ROOT) -> dict:
 
 if __name__ == "__main__":
     report = verify()
-    print(f"PASS: {report['count']} original WAV files verified with unique GUIDs")
+    print(f"PASS: {report['count']} archived WAV sources verified; "
+          f"{report['importableCount']} imported into Unity with unique GUIDs")
     print(f"PASS: {len(report['vehicles'])} original vehicle banks and "
           f"{len(report['arenas'])} stage banks")
     print("No audio role or Unity gameplay certification claimed")

@@ -96,7 +96,7 @@ A fase atual já inclui os seguintes dados **reais** do repositório original:
 - **18/18 veículos do segundo jogo:** geometria PS1 extraída em `Assets/GameContent/ExtractedV82/`, com verificação de triângulos e hashes da fonte
 - **790 BMPs originais:** importados com GUIDs de textura preservados em `Assets/GameContent/LegacyTextureBank/`
 - **18 prévias OBJ/MTL:** a geometria real possui **677 materiais ligados diretamente às texturas** nos modos TMD conhecidos, em `Assets/GameContent/TexturedPreviewV82/`
-- **235 WAVs originais:** importados com GUIDs preservados em `Assets/GameContent/LegacyAudioV82/`; os 18 veículos têm **88 amostras indexadas**, as oito arenas possuem **54**, e os demais efeitos permanecem em seus bancos originais
+- **235 WAVs no acervo original:** 234 importados com GUIDs preservados em `Assets/GameContent/LegacyAudioV82/`. O arquivo `LEVELS/BAYOU/Sounds/XOBF00_0000.wav` é um WAV vazio e inválido preservado apenas em `LegacySources/`. Os 18 veículos têm **88 amostras indexadas**, as oito arenas possuem **53 reproduzíveis** com seus índices originais, e os demais efeitos permanecem em seus bancos originais
 - **Catálogo para o Unity:** `Assets/GameContent/LegacyAudioV82/catalog.json` vincula os sons às identidades oficiais por dados reais, sem IDs de veículos codificados manualmente
 
 ### Ferramentas no Unity
