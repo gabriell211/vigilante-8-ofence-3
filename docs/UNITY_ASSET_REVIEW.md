@@ -72,6 +72,14 @@ Para conferir uma amostra, abra **Vigilante 8 > Migração > Inspecionar WAVs re
 
 Esta é uma **ligação fiel entre fonte de áudio e banco da fase**, não um mapeamento verificado das funções de som durante o jogo. Motor, armas, explosões, ambientação, posição espacial, disparos automáticos e trilhas originais ainda exigem estudo da execução de origem. Os bancos permanecem fora de `Assets/Resources/Arenas`, não criam fases jogáveis e não liberam a build Windows. O manifesto contempla 26 bancos (18 carros, 8 fases) com 142 referências de índices, entre 235 WAV originais arquivados, incluindo outros sons compartilhados.
 
+## Inventário de posições locais das oito cenas Unity originais
+
+As oito cenas Unity preservadas em `LegacySources/Vigilante2Unity/Assets/Levels/` são fontes autênticas e volumosas, incluindo `Route66/ROUTE66.unity`, mesmo sem o `Route66Geo.asset` final. O novo comando `python3 scripts/audit_legacy_v82_scene_layouts.py --json` percorre os arquivos YAML **originais**, conferindo os oito IDs canônicos do catálogo e os hashes Git SHA-1 completos de cada arquivo. Não depende de instalar o Unity.
+
+A auditoria exporta para cada documento: identificador serializado de `GameObject` e `Transform`, nome original, `m_LocalPosition` (X/Y/Z), `m_Father` e referências de `PrefabInstance`. São **dados locais da serialização**, com hierarquia de parentes preservada: coordenadas de mundo não são presumidas, prefab overrides não resolvidos não são tratados como objetos posicionados, e nenhum `SpawnPoint` fictício é criado.
+
+Cada execução automática do CI do GitHub salva o artefato **`v82-original-local-transform-evidence`** com o arquivo JSON `v82-original-local-transform-evidence.json`, que permite examinar sistematicamente a hierarquia e preparar a adaptação real dos objetos. Ele complementa `LegacyStageManifests/scene-audit.json` (que já confere os oito arquivos e contagens gerais); não o substitui nem altera cenas de origem. O parser é somente leitura, não gera prefabs oficiais, não converte shaders e **não transforma as oito cenas legadas em arenas jogáveis na Unity 6**.
+
 ## Malhas nativas de terreno original do 2nd Offense
 
 Novo comando Unity: Vigilante 8 > Migração > Gerar galeria 3D de 7 terrenos V82 originais.
