@@ -470,3 +470,33 @@ estrada antes de criar o renderer no Unity 6. A própria referência de
 material não certifica ainda a combinação de shader, atlas, UV
 originais, textura em jogo ou colisão: esses componentes dependem
 da triangulação adaptativa \`FUN_630C\` e do resto de \`FUN_5850\`.
+
+
+## Superfície de inspeção com textura original das estradas (sem física)
+
+O botão já existente de inspeção opcional de estradas no Editor agora
+adiciona, além dos traços centrais e laterais de origem, um **strip
+texturizado apenas para diagnóstico**. A geometria possui 33 pares de
+bordas cujo centro vem de \`RSEG_DB.FUN_285E4\`, cujos offsets usam a
+largura \`XRTP.DAT_24\` e cujas alturas vêm do \`VigTerrain\` original
+quando aplicável. São 66 vértices e até 64 triângulos por trecho de
+prévia completo — **isso não é a malha original do jogo**.
+
+O novo \`OriginalRoadTextureSourcePreview\` resolve
+\`XRTP.timFarList[0] → MAT._MainTex → BMP\` exclusivamente pelos GUIDs e
+\`fileID\` preservados no arquivo original da mesma fase. O BMP é
+copiado **sem modificar bytes** para
+\`Assets/GameContent/PreviewRoadTexturesV82\`, com digest SHA-256
+registrado no TextureImporter; recebe mipmaps, trilinear e anisotropia
+8×. O material URP de inspeção e a malha serializada residem apenas
+nas pastas \`PreviewRoadMaterialsV82\` e \`PreviewRoadMeshesV82\`.
+
+**Restrições:** UVs \`[0..1]\` são explicitamente provisórios e
+**não** copiados de \`Junction.FUN_4F828\`. Falta reproduzir também
+\`LevelManager.FUN_630C\` e as transições \`FUN_6604\`; nenhum collider
+ou Rigidbody é introduzido. O identificador de prévia da estrada
+permanece e impede que essa visualização se torne release. Texturas
+inexistentes não recebem substituto genérico: só são exibidos os
+traços geométricos verificáveis. Testes Unity Editor ficam pendentes
+de execução real; o CI verifica sintaxe C#, auditoria de fontes e
+contratos estruturais.

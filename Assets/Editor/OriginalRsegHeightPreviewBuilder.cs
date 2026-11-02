@@ -27,15 +27,17 @@ namespace Vigilante8.Editor
             private readonly int divisor;
             private readonly OriginalRoadSegmentSourceReviewWindow.SourceRoad[] lines;
             private readonly Material material;
+            private readonly Material[] sourceRoadMaterials;
 
             internal PreparedSourceLines(string stageId, int factor,
                 OriginalRoadSegmentSourceReviewWindow.SourceRoad[] sourceRoads,
-                Material sourceMaterial)
+                Material sourceMaterial, Material[] archivedRoadMaterials)
             {
                 stage = stageId;
                 divisor = factor;
                 lines = sourceRoads;
                 material = sourceMaterial;
+                sourceRoadMaterials = archivedRoadMaterials;
             }
 
             public int AppendTo(Transform parent)
@@ -79,6 +81,28 @@ namespace Vigilante8.Editor
                             road.OriginalLeftEdgeFixedXYZDense, divisor, material);
                         AppendGuide(item.transform, "SOURCE RIGHT EDGE (NOT A ROAD MESH)",
                             road.OriginalRightEdgeFixedXYZDense, divisor, material);
+                        int? profileId = road.SourceXrtpProfileIndex;
+                        if (profileId.HasValue && profileId.Value >= 0 &&
+                            profileId.Value < sourceRoadMaterials.Length &&
+                            sourceRoadMaterials[profileId.Value] != null)
+                        {
+                            // A visible, non-physical REVIEW STRIP uses an original
+                            // bitmap; its UV and triangulation are NOT source-certified.
+                            // Skip degenerate sections rather than adding fake triangles.
+                            try
+                            {
+                                OriginalRoadTextureSourcePreview.AppendDiagnosticStrip(
+                                    item.transform, stage, road.RsegFileId,
+                                    road.OriginalLeftEdgeFixedXYZDense,
+                                    road.OriginalRightEdgeFixedXYZDense,
+                                    divisor, sourceRoadMaterials[profileId.Value]);
+                            }
+                            catch (InvalidDataException)
+                            {
+                                // The authenticated centerline and original-side
+                                // guides remain useful even without a full strip.
+                            }
+                        }
                     }
                     item.AddComponent<OriginalRoadSourcePreviewIdentity>().Configure(
                         stage, road.RsegFileId, road.FirstJuncFileId,
@@ -272,7 +296,22 @@ namespace Vigilante8.Editor
                 material.SetColor("_BaseColor", new Color(0.96f, 0.55f, 0.19f, 1f));
                 AssetDatabase.CreateAsset(material, MaterialPath);
             }
-            return new PreparedSourceLines(stageId, divisor, onlyKnownHeight, material);
+            var originalMaterialPreviews = new Material[originalProfiles.Length];
+            foreach (var road in onlyKnownHeight)
+            {
+                int? profileId = road.SourceXrtpProfileIndex;
+                if (road.OriginalLeftEdgeFixedXYZDense == null || !profileId.HasValue ||
+                    profileId.Value < 0 || profileId.Value >= originalProfiles.Length ||
+                    originalMaterialPreviews[profileId.Value] != null)
+                    continue;
+                // Fails closed if original MAT/BMP was tampered with. An archive
+                // missing the source reference simply keeps the existing lines.
+                originalMaterialPreviews[profileId.Value] =
+                    OriginalRoadTextureSourcePreview.PrepareDiagnosticMaterial(
+                        originalProfiles[profileId.Value]);
+            }
+            return new PreparedSourceLines(stageId, divisor, onlyKnownHeight,
+                material, originalMaterialPreviews);
         }
     }
 }
