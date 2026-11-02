@@ -65,6 +65,14 @@ jobs:
           name: v82-original-local-transform-evidence
           path: v82-original-local-transform-evidence.json
           if-no-files-found: error
+      - name: Cross-reference actual scene VigMesh component GUIDs and XOBF TMD groups
+        run: python3 scripts/audit_v82_scene_mesh_references.py --json > v82-original-scene-mesh-crosswalk.json
+      - name: Save original source scene-to-TMD references (NOT playable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-original-scene-mesh-crosswalk
+          path: v82-original-scene-mesh-crosswalk.json
+          if-no-files-found: error
       - name: Recheck real 8-stage geometry source discovery against original Unity scenes
         run: python3 scripts/verify_stage_geometry_probe.py
       - name: Report real imported Unity prefab coverage
