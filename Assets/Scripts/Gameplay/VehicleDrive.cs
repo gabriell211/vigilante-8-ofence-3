@@ -94,6 +94,28 @@ namespace Vigilante8.Gameplay
             flight.ActivateProjectile();
             return true;
         }
+
+        /// <summary>
+        /// Rocket.RoadRunner source mode: stick to the victim for 360 engine
+        /// events then apply -40 through the vehicle health model. Both
+        /// timing and damage-body segmentation remain provisional in Unity.
+        /// </summary>
+        public bool LaunchSourceRoadRunner()
+        {
+            if (!Application.isPlaying || Time.timeScale <= 0f ||
+                !IsAlive || !HasWeapon ||
+                GetComponent<LegacyVehiclePlaytest>() == null ||
+                GetComponent<OriginalRoadRunnerSourceLauncher>() == null)
+                return false;
+
+            Projectile shot = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+            shot.impactDamage = OriginalRoadRunnerSourceCharge.OriginalDamageMagnitude;
+            shot.lifetimeSeconds =
+                OriginalRoadRunnerSourceCharge.AttachedSourceTicks * Time.fixedDeltaTime + 2f;
+            shot.gameObject.AddComponent<OriginalRoadRunnerSourceCharge>().Configure(this);
+            shot.Launch(this, muzzle.forward);
+            return true;
+        }
 #endif
 
         private void Awake()

@@ -198,7 +198,7 @@ namespace Vigilante8.Gameplay
         {
             if (!ready || !Application.isPlaying) return;
             float width = Mathf.Clamp(Screen.width - 36f, 260f, 440f);
-            float height = 304f + TotalOpponents * 24f;
+            float height = 327f + TotalOpponents * 24f;
             GUI.Box(new Rect(16f, 16f, width, height), GUIContent.none);
             var title = new GUIStyle(GUI.skin.label)
             {
@@ -254,6 +254,9 @@ namespace Vigilante8.Gameplay
             y += 23f;
             GUI.Label(new Rect(28f, y, width - 24f, 22f),
                 "T: BEARHUG | G: HOVERMINE | V: CACTUSPATCH (TESTES)", regular);
+            y += 23f;
+            GUI.Label(new Rect(28f, y, width - 24f, 22f),
+                "Y / X GAMEPAD: ROADRUNNER (GRUDA, 360 CICLOS, -40)", regular);
             if (paused)
                 GUI.Label(new Rect(28f, y + 22f, width - 24f, 22f), "PAUSADO (TESTE)", title);
         }

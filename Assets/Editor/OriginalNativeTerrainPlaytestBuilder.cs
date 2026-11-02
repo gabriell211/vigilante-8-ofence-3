@@ -184,6 +184,7 @@ namespace Vigilante8.Editor
                 original.GetComponent<OriginalBastionRocketLauncher>() == null ||
                 original.GetComponent<OriginalMissileSourceLauncher>() == null ||
                 original.GetComponent<OriginalMineSourceLauncher>() == null ||
+                original.GetComponent<OriginalRoadRunnerSourceLauncher>() == null ||
                 original.GetComponent<OriginalAudioBank>() == null ||
                 original.GetComponent<Rigidbody>() == null ||
                 original.GetComponent<VehicleDrive>()?.HasWeapon != true ||

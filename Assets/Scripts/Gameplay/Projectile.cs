@@ -37,6 +37,15 @@ namespace Vigilante8.Gameplay
         {
             if (impacted || owner == null) return;
             if (collision.collider.transform.IsChildOf(owner.transform)) return;
+#if UNITY_EDITOR
+            // Rocket.RoadRunner sticks to an enemy vehicle and suppresses
+            // the generic projectile's immediate-hit damage. Delayed damage
+            // must happen once, only after the source 360-tick countdown.
+            var sticky = GetComponent<OriginalRoadRunnerSourceCharge>();
+            if (sticky != null &&
+                sticky.TryAttach(collision.collider.GetComponentInParent<VehicleDrive>()))
+                return;
+#endif
             impacted = true;
             if (explosionRadius <= 0f)
             {
