@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "d20883df0d5da3ba517142fb4d486db1f5e673fb",
+  "arenas": {
+    "v82_alaskan_pipeline": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Oilfield/OILFIELD.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 5,
+      "tmdFaceBuffers": 5,
+      "meshFilterReferences": 35,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 185,
+      "hasRawTmdGeometry": true
+    },
+    "v82_ghastly_bayou": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Bayou/BAYOU.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 8,
+      "tmdFaceBuffers": 8,
+      "meshFilterReferences": 38,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 161,
+      "hasRawTmdGeometry": true
+    },
+    "v82_launch_site": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Launch/LAUNCH.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 10,
+      "tmdFaceBuffers": 10,
+      "meshFilterReferences": 49,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 216,
+      "hasRawTmdGeometry": true
+    },
+    "v82_meteor_crater": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Route66/ROUTE66.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 8,
+      "tmdFaceBuffers": 8,
+      "meshFilterReferences": 52,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 173,
+      "hasRawTmdGeometry": true
+    },
+    "v82_nuclear_plant": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Nuclear/NUCLEAR.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 0,
+      "tmdFaceBuffers": 0,
+      "meshFilterReferences": 9,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 134,
+      "hasRawTmdGeometry": false
+    },
+    "v82_pacific_harbor": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Harbor/HARBOR.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 5,
+      "tmdFaceBuffers": 5,
+      "meshFilterReferences": 26,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 265,
+      "hasRawTmdGeometry": true
+    },
+    "v82_steel_mill": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Steelmil/STEELMIL.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 11,
+      "tmdFaceBuffers": 11,
+      "meshFilterReferences": 55,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 193,
+      "hasRawTmdGeometry": true
+    },
+    "v82_winter_games": {
+      "sourcePath": "LegacySources/Vigilante2Unity/Assets/Levels/Olympic/OLYMPIC.unity",
+      "tmdListBlocks": 0,
+      "tmdVertexBuffers": 12,
+      "tmdFaceBuffers": 12,
+      "meshFilterReferences": 50,
+      "serializedTerrainObjects": 0,
+      "originalSceneGameObjectNames": 164,
+      "hasRawTmdGeometry": true
+    }
+  },
+  "status": "legacy_scene_geometry_probe_not_ported"
+}
