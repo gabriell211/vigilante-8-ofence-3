@@ -150,7 +150,8 @@ namespace Vigilante8.Gameplay
             VehicleDrive playerDrive, VehicleDrive[] botDrives)
         {
             if (victim == null || killer == null || victim == killer ||
-                playerDrive == null || botDrives == null)
+                playerDrive == null || botDrives == null ||
+                (victim != playerDrive && Array.IndexOf(botDrives, victim) < 0))
                 return -1;
             if (killer == playerDrive) return 0;
             int index = Array.IndexOf(botDrives, killer);
