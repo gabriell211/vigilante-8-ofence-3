@@ -283,3 +283,29 @@ Esta visualização não cria GameObjects, Mesh, colisão, prefabs,
 estradas artificiais ou conteúdo de release. É uma ferramenta de
 análise para posteriormente importar a geometria real das vias,
 as alturas do terreno e a colisão com fidelidade.
+
+
+## Linhas 3D de origem RSEG com altura explícita (inspeção dentro do combate)
+
+No Unity Editor, a janela de combate sobre terreno original contém a opção
+**Ver curvas RSEG com Y original conhecido (somente visual)**, inicialmente
+desmarcada. A nova função lê diretamente a cena legada autenticada por SHA
+e os vínculos RSEG/JUNC; não depende de arquivos exportados manualmente.
+A geometria visual é um traçado fino \`LineRenderer\`, **não uma malha de
+estrada original**. A largura é somente da linha de inspeção.
+
+Para segmentos cuja \`RSEG_DB.FUN_285E4\` indica flags 8, o Y vem da
+primeira JUNC; para flags 1, o Y é interpolado a partir das duas JUNC,
+seguindo a expressão int32 fixed-point original. Somente esses segmentos
+geram cinco amostras XYZ verificáveis. Quando a altura requer
+\`VigTerrain.FUN_1B750()\`, quando há overflow ou vínculo inválido,
+**não aparece traçado 3D**; o registro X/Z continua disponível na planta
+2D do Editor. A escala e os eixos dos traçados são de \`DEBUG.unity\`,
+portanto **não certificam a posição em partidas reais**.
+
+Essas linhas não introduzem Collider, Rigidbody, spawn, objetos substitutos
+ou comportamento físico. Cada uma é identificada por
+\`OriginalRoadSourcePreviewIdentity\`, explicitamente proibida dentro de
+prefabs oficiais pelo validador da release Windows. Sem execução do
+Unity Editor real, a inspeção visual e os EditMode tests permanecem por
+homologar; o CI atual valida código, estrutura, auditoria e regressões.

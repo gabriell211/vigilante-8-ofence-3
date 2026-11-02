@@ -35,7 +35,8 @@ namespace Vigilante8.Editor
         /// original spawn points, weapon effects or stage gameplay.
         /// </summary>
         public static void CreateBattle(string stageId, string playerVehicleId,
-            IEnumerable<string> opponentVehicleIds, bool includeOriginalJunctionVisuals = false)
+            IEnumerable<string> opponentVehicleIds, bool includeOriginalJunctionVisuals = false,
+            bool includeHeightKnownRoadReview = false)
         {
             if (string.IsNullOrWhiteSpace(stageId) ||
                 string.IsNullOrWhiteSpace(playerVehicleId) || opponentVehicleIds == null)
@@ -72,6 +73,11 @@ namespace Vigilante8.Editor
                 includeOriginalJunctionVisuals
                     ? OriginalJunctionSourceReviewBuilder.Prepare(stageId)
                     : null;
+            // Source plan / original SHA preflight must pass before changing scenes.
+            OriginalRsegHeightPreviewBuilder.PreparedSourceLines originalRoadLines =
+                includeHeightKnownRoadReview
+                    ? OriginalRsegHeightPreviewBuilder.Prepare(stageId)
+                    : null;
             GameObject playerPrefab = VerifiedCar(playerVehicleId);
             GameObject[] enemyPrefabs = enemyVehicleIds.Select(VerifiedCar).ToArray();
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
@@ -104,6 +110,14 @@ namespace Vigilante8.Editor
                 var sourceRoot = new GameObject(
                     "ARCHIVED JUNC/TMD OBJECTS - VISUAL ONLY / NO COLLISION");
                 sourceJunctionCount = originalJunctions.AppendTo(sourceRoot.transform);
+            }
+
+            int originalRoadLineCount = 0;
+            if (originalRoadLines != null)
+            {
+                var roadRoot = new GameObject(
+                    "RSEG AUTHENTIC HEIGHT-BRANCH CURVES - REVIEW ONLY / NO COLLISION");
+                originalRoadLineCount = originalRoadLines.AppendTo(roadRoot.transform);
             }
 
             Physics.SyncTransforms();
@@ -153,7 +167,8 @@ namespace Vigilante8.Editor
             Debug.Log("Source-derived 1-v-" + enemyVehicleIds.Length +
                 " terrain battle ready: " + stageId + " / " + playerVehicleId +
                 " vs " + string.Join(", ", enemyVehicleIds) +
-                ". Extra original JUNC/TMD visual source pieces: " + sourceJunctionCount +
+                ". Original RSEG height-known review lines: " + originalRoadLineCount +
+                " (no collider or road mesh). Extra original JUNC/TMD visual source pieces: " + sourceJunctionCount +
                 " (no colliders / DEBUG-scale positions; original terrain deformation NOT ported). " +
                 "Rocket/Bastion steering is source-informed, but actual weapon meshes, original effects, " +
                 "exact collision and official spawn points are NOT ready.");
@@ -263,6 +278,7 @@ namespace Vigilante8.Editor
     {
         private int stageIndex, carIndex, opponentIndex = 1, opponentCount = 1;
         private bool includeOriginalJunctionVisuals;
+        private bool includeHeightKnownRoadReview;
         [MenuItem("Vigilante 8/Migração/Dirigir em terreno real V82 (teste, não release)")]
         public static void ShowWindow() =>
             GetWindow<OriginalNativeTerrainPlaytestWindow>("V8 original terrain test");
@@ -300,6 +316,14 @@ namespace Vigilante8.Editor
                     "JUNC usa a escala serializada de DEBUG.unity. Não há deformação original " +
                     "de terreno, colisores de objetos ou validação da posição final no jogo.",
                     MessageType.Warning);
+            includeHeightKnownRoadReview = EditorGUILayout.ToggleLeft(
+                "Ver curvas RSEG com Y original conhecido (somente visual)",
+                includeHeightKnownRoadReview);
+            if (includeHeightKnownRoadReview)
+                EditorGUILayout.HelpBox(
+                    "Somente curvas RSEG com altura explícita na origem (flags 1 ou 8). " +
+                    "Não gera estradas, altura de terreno, colisões ou conteúdo homologado.",
+                    MessageType.Warning);
             VehicleEntry selected = vehicles[carIndex];
             VehicleEntry firstOpponent = vehicles[opponentIndex];
             VehicleEntry[] extraOpponents = vehicles.Where(v =>
@@ -318,7 +342,7 @@ namespace Vigilante8.Editor
                     OriginalNativeTerrainPlaytestBuilder.CreateBattle(
                         terrains[stageIndex].id, selected.id,
                         new[] { firstOpponent.id }.Concat(extraOpponents.Select(v => v.id)),
-                        includeOriginalJunctionVisuals);
+                        includeOriginalJunctionVisuals, includeHeightKnownRoadReview);
             }
             EditorGUILayout.LabelField(
                 "1 a 3 adversários com carros/pilotos próprios. Cena excluída do build Windows.");
