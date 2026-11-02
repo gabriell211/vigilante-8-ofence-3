@@ -97,6 +97,45 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void OnlyOriginalFlagsWithExplicitHeightProduceThreeDimensionalEvidence()
+        {
+            var linear = OriginalRoadSegmentSourceReviewWindow.ParseSource(
+                ArchivedSnippet(flags: 1), Rseg, Junc);
+            var xyz = linear.Roads[0].OriginalFixedXYZ;
+            Assert.That(xyz, Is.Not.Null);
+            Assert.That(xyz.Length, Is.EqualTo(5));
+            Assert.That(xyz[0], Is.EqualTo(new Vector3(5000, 100, 4000)));
+            Assert.That(xyz[2], Is.EqualTo(new Vector3(10000, 150, 4000)));
+            Assert.That(xyz[4], Is.EqualTo(new Vector3(15000, 200, 4000)));
+            Assert.That(linear.HeightKnownSegments, Is.EqualTo(1));
+
+            var fixedY = OriginalRoadSegmentSourceReviewWindow.ParseSource(
+                ArchivedSnippet(flags: 8), Rseg, Junc);
+            foreach (Vector3 sample in fixedY.Roads[0].OriginalFixedXYZ)
+                Assert.That(sample.y, Is.EqualTo(100));
+
+            var needsTerrain = OriginalRoadSegmentSourceReviewWindow.ParseSource(
+                ArchivedSnippet(flags: 0), Rseg, Junc);
+            Assert.That(needsTerrain.Roads[0].OriginalFixedXYZ, Is.Null);
+            Assert.That(needsTerrain.HeightKnownSegments, Is.Zero);
+
+            Assert.That(OriginalRoadSegmentSourceReviewWindow.TrySampleKnownHeight(
+                new Vector3Int(0, int.MinValue, 0),
+                new Vector3Int(0, int.MaxValue, 0), 1, 4096, out _), Is.False);
+        }
+
+        [Test]
+        public void SourceDebugAxisMappingRequiresPositiveScale()
+        {
+            Assert.That(OriginalRsegHeightPreviewBuilder.ToSourceReviewPosition(
+                new Vector3(4096, -8192, 12288), 4096),
+                Is.EqualTo(new Vector3(1f, 2f, 3f)));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                OriginalRsegHeightPreviewBuilder.ToSourceReviewPosition(
+                    Vector3.one, 0));
+        }
+
+        [Test]
         public void OriginalEightScenesStaySourceVerifiedAndUnconvertedToReleaseRoads()
         {
             var catalog = Vigilante8.Content.CatalogRepository.Load();

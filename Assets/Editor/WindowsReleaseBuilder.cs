@@ -104,8 +104,9 @@ namespace Vigilante8.Editor
                 if (prefab == null)
                     throw new BuildFailedException("Missing official vehicle: " + vehicle.assetId);
 
-                if (prefab.GetComponentInChildren<OriginalJunctionSourcePreviewIdentity>(true) != null)
-                    throw new BuildFailedException("JUNC source-only preview cannot ship as vehicle: " + vehicle.id);
+                if (prefab.GetComponentInChildren<OriginalJunctionSourcePreviewIdentity>(true) != null ||
+                    prefab.GetComponentInChildren<OriginalRoadSourcePreviewIdentity>(true) != null)
+                    throw new BuildFailedException("Original road/JUNC source-only preview cannot ship as vehicle: " + vehicle.id);
                 if (prefab.GetComponent<LegacyVehiclePlaytest>() != null)
                     throw new BuildFailedException("Development-only TMD physics prototype cannot be released: " + vehicle.id);
                 if (prefab.GetComponent<OriginalMachineGunSourceTest>() != null)
@@ -170,6 +171,7 @@ namespace Vigilante8.Editor
                     prefab.GetComponentInChildren<OriginalBattleTargetCoordinator>(true) != null ||
                     prefab.GetComponentInChildren<OriginalBotSourceWeaponAI>(true) != null ||
                     prefab.GetComponentInChildren<OriginalJunctionSourcePreviewIdentity>(true) != null ||
+                    prefab.GetComponentInChildren<OriginalRoadSourcePreviewIdentity>(true) != null ||
                     prefab.GetComponentInChildren<OriginalStageObjectPreviewIdentity>(true) != null ||
                     prefab.GetComponentInChildren<OriginalTerrainPreviewIdentity>(true) != null)
                     throw new BuildFailedException("Source-only preview embedded in an official arena: " + arena.id);

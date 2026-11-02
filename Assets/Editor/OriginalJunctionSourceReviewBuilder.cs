@@ -344,6 +344,8 @@ namespace Vigilante8.Editor
                     throw new InvalidDataException("JUNC_DB.Update source conversion changed");
         }
 
+        internal static int VerifiedDebugScale() => ReadDebugScale();
+
         internal static string VerifiedOriginalScenePath(string id) =>
             Absolute(VerifiedStage(id).sourceScenePath);
 

@@ -47,6 +47,9 @@ namespace Vigilante8.Editor
         {
             public string RsegFileId, FirstJuncFileId, SecondJuncFileId;
             public Vector2[] OriginalFixedXZ;
+            // Present only for RSEG flags which directly specify height.
+            // Null when VigTerrain sampling is required or fixed-point math is unsafe.
+            public Vector3[] OriginalFixedXYZ;
             public bool NeedsVigTerrainHeight;
         }
 
@@ -54,6 +57,7 @@ namespace Vigilante8.Editor
         {
             public SourceRoad[] Roads;
             public int TotalSegments, RejectedSegments, TerrainDependentSegments;
+            public int HeightKnownSegments;
         }
 
         private string[] ids = Array.Empty<string>();
@@ -106,6 +110,32 @@ namespace Vigilante8.Editor
             long result = origin + (five >> 8);
             if (!IsInt32(result)) return false;
             position = (int)result;
+            return true;
+        }
+
+        /// <summary>
+        /// RSEG_DB.FUN_285E4 original height branches: bit 8 keeps first
+        /// junction's Y; bit 1 interpolates fixed Y. Otherwise VigTerrain is
+        /// mandatory and we refuse a synthetic height.
+        /// </summary>
+        public static bool TrySampleKnownHeight(Vector3Int start, Vector3Int finish,
+            int flags, int t, out int y)
+        {
+            y = 0;
+            if (t < 0 || t > 4096) return false;
+            if ((flags & 8) != 0)
+            {
+                y = start.y;
+                return true;
+            }
+            if ((flags & 1) == 0) return false;
+            long difference = (long)finish.y - start.y;
+            if (!IsInt32(difference)) return false;
+            long scaled = difference * t;
+            if (!IsInt32(scaled)) return false;
+            long height = start.y + (scaled >> 12);
+            if (!IsInt32(height)) return false;
+            y = (int)height;
             return true;
         }
 
@@ -220,6 +250,8 @@ namespace Vigilante8.Editor
                     continue;
 
                 var points = new List<Vector2>();
+                var knownHeights = new List<Vector3>();
+                bool allHeightsKnown = true;
                 foreach (int t in SampleTimes)
                 {
                     if (!TrySampleAxis(start.x, t, segment.Coeffs["DAT_20"],
@@ -231,6 +263,10 @@ namespace Vigilante8.Editor
                         break;
                     }
                     points.Add(new Vector2(x, z));
+                    if (TrySampleKnownHeight(start, finish, segment.Flags.Value, t, out int y))
+                        knownHeights.Add(new Vector3(x, y, z));
+                    else
+                        allHeightsKnown = false;
                 }
                 if (points.Count != SampleTimes.Length) continue;
                 accepted.Add(new SourceRoad
@@ -239,6 +275,8 @@ namespace Vigilante8.Editor
                     FirstJuncFileId = segment.Endpoints[0],
                     SecondJuncFileId = segment.Endpoints[1],
                     OriginalFixedXZ = points.ToArray(),
+                    OriginalFixedXYZ = allHeightsKnown && knownHeights.Count == SampleTimes.Length
+                        ? knownHeights.ToArray() : null,
                     NeedsVigTerrainHeight = (segment.Flags.Value & 9) == 0
                 });
             }
@@ -247,7 +285,8 @@ namespace Vigilante8.Editor
                 Roads = accepted.ToArray(),
                 TotalSegments = segments.Count,
                 RejectedSegments = segments.Count - accepted.Count,
-                TerrainDependentSegments = accepted.Count(r => r.NeedsVigTerrainHeight)
+                TerrainDependentSegments = accepted.Count(r => r.NeedsVigTerrainHeight),
+                HeightKnownSegments = accepted.Count(r => r.OriginalFixedXYZ != null)
             };
         }
 
@@ -310,7 +349,8 @@ namespace Vigilante8.Editor
             EditorGUILayout.LabelField(
                 "RSEG: " + current.TotalSegments + " | resolvidos: " + current.Roads.Length +
                 " | não resolvidos: " + current.RejectedSegments +
-                " | altura via VigTerrain: " + current.TerrainDependentSegments);
+                " | altura via VigTerrain: " + current.TerrainDependentSegments +
+                " | Y de origem conhecido: " + current.HeightKnownSegments);
             if (selectedRoad != null)
                 EditorGUILayout.LabelField("fileID do trecho selecionado: " + selectedRoad);
             Rect rect = GUILayoutUtility.GetRect(100f, Mathf.Max(320f, position.height - 210f),
