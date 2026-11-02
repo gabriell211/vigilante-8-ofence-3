@@ -142,8 +142,9 @@ namespace Vigilante8.Editor
                 if (prefab == null)
                     throw new BuildFailedException("Missing official arena: " + arena.assetId);
 
-                if (prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null)
-                    throw new BuildFailedException("Developer test content embedded in an official arena: " + arena.id);
+                if (prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null ||
+                    prefab.GetComponentInChildren<OriginalStageObjectPreviewIdentity>(true) != null)
+                    throw new BuildFailedException("Source-only preview embedded in an official arena: " + arena.id);
 
                 OfficialAssetIdentity identity = prefab.GetComponent<OfficialAssetIdentity>();
                 if (identity == null || !identity.Matches(arena.id, arena.game))
