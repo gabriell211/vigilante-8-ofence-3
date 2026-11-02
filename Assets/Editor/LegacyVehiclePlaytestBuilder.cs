@@ -23,6 +23,50 @@ namespace Vigilante8.Editor
         public const string ScenePath = "Assets/Scenes/LegacyVehiclePhysicsTest.unity";
         private const string ProjectilePath = "Assets/GameContent/PlaytestWeaponsV82/PhysicsTestProjectile.prefab";
         private const string UpstreamRevision = "d20883df0d5da3ba517142fb4d486db1f5e673fb";
+        private const string HandlingPath = "Assets/GameContent/LegacyHandlingV82/manifest.json";
+
+        [Serializable]
+        private sealed class RawHandlingManifest
+        {
+            public int schemaVersion;
+            public string sourceCommit;
+            public string status;
+            public RawCar[] vehicles;
+        }
+
+        [Serializable]
+        private sealed class RawCar
+        {
+            public string vehicleId;
+            public string sourceEnum;
+            public int rawHalfHealth, rawLightness, dat0e, dat0f, dat10, dat11;
+            public int dat12, dat13, dat15, dat2a;
+        }
+
+        private static Dictionary<string, RawCar> LoadSourceHandling(VehicleEntry[] expected)
+        {
+            TextAsset file = AssetDatabase.LoadAssetAtPath<TextAsset>(HandlingPath);
+            if (file == null) throw new InvalidOperationException("Missing source vehicle handling data");
+            var manifest = JsonUtility.FromJson<RawHandlingManifest>(file.text);
+            if (manifest == null || manifest.schemaVersion != 1 ||
+                manifest.sourceCommit != UpstreamRevision ||
+                manifest.status != "authentic_raw_vehicle_config_provisional_unity_handling_not_certified" ||
+                manifest.vehicles == null || manifest.vehicles.Length != 18)
+                throw new InvalidOperationException("Unverified original GameManager vehicle table");
+            var ids = new HashSet<string>(expected.Select(v => v.id), StringComparer.Ordinal);
+            var profiles = new Dictionary<string, RawCar>(StringComparer.Ordinal);
+            foreach (RawCar entry in manifest.vehicles)
+            {
+                if (entry == null || !ids.Contains(entry.vehicleId) ||
+                    string.IsNullOrWhiteSpace(entry.sourceEnum) ||
+                    entry.rawHalfHealth <= 0 || entry.rawLightness <= 0 ||
+                    !profiles.TryAdd(entry.vehicleId, entry))
+                    throw new InvalidOperationException("Duplicated or invalid original vehicle handling data");
+            }
+            if (profiles.Count != expected.Length)
+                throw new InvalidOperationException("Missing official source vehicle handling data");
+            return profiles;
+        }
 
         [MenuItem("Vigilante 8/Migração/Preparar todos os 18 carros para teste de física")]
         public static void PrepareAll()
@@ -35,6 +79,7 @@ namespace Vigilante8.Editor
             if (vehicles.Length != 18 || vehicles.Select(v => v.id).Distinct().Count() != 18)
                 throw new InvalidOperationException("The original 18-vehicle sequel roster is missing.");
 
+            Dictionary<string, RawCar> handling = LoadSourceHandling(vehicles);
             EnsureFolder(PrefabDirectory);
             foreach (VehicleEntry vehicle in vehicles)
             {
@@ -80,12 +125,20 @@ namespace Vigilante8.Editor
                     Rigidbody rigidbody = instance.GetComponent<Rigidbody>() ??
                         instance.AddComponent<Rigidbody>();
                     rigidbody.useGravity = true;
-                    rigidbody.mass = 1400f;
+                    RawCar original = handling[vehicle.id];
+                    LegacyVehicleHandlingProfile stats = instance.GetComponent<LegacyVehicleHandlingProfile>() ??
+                        instance.AddComponent<LegacyVehicleHandlingProfile>();
+                    stats.Configure(vehicle.id, original.sourceEnum, original.rawHalfHealth,
+                        original.rawLightness, original.dat0e, original.dat0f,
+                        original.dat10, original.dat11, original.dat12,
+                        original.dat13, original.dat15, original.dat2a);
                     rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
                     rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
                     var drive = instance.GetComponent<VehicleDrive>() ??
                         instance.AddComponent<VehicleDrive>();
+                    stats.ApplyProvisionalHandling(drive);
+                    rigidbody.mass = drive.massKg;
                     var muzzle = instance.transform.Find("PLAYTEST MUZZLE - NOT ORIGINAL");
                     if (muzzle == null)
                     {
@@ -107,6 +160,7 @@ namespace Vigilante8.Editor
             }
             AssetDatabase.SaveAssets();
             Debug.Log("18 real source-derived vehicle *physics prototypes* generated outside Resources. " +
+                      "Each uses its own authentic GameManager stats and provisional Unity tuning. " +
                       "Original special weapons, final handling and car part transforms NOT certified.");
         }
 

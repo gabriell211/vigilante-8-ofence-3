@@ -176,3 +176,19 @@ para compensar essa falta.
 A interface original de **Vigilante 8 Offence 3** foi redesenhada em UI Toolkit, inspirando-se na navegação clássica do *2nd Offense* sem reutilizar a tela antiga. O novo menu usa grafite industrial, laranja/dourado e azul elétrico, com títulos próprios, seleção de pilotos e veículos, catálogo filtrável, cartões de disponibilidade e foco visual para teclado/controle. Veja [o guia de identidade visual](docs/OFFENCE3_MENU_DESIGN.md). CI de sintaxe e testes estáticos **não substitui** a validação real do Editor Unity 6.6.
 
 O novo menu oferece ainda uma **prévia 3D giratória de carros oficiais**: somente prefabs verificados entram no showroom. Se o carro ainda não estiver portado, a interface avisa claramente e nunca cria um veículo genérico. A prévia só renderiza quando a garagem está aberta.
+
+## Atributos individuais de origem — 18 veículos do 2nd Offense
+
+Os 18 protótipos da oficina Unity agora recebem **dados brutos autênticos** da tabela
+`GameManager.vehicleConfigs` do `Vigilante2Unity`, preservados em
+`Assets/GameContent/LegacyHandlingV82/manifest.json`. O extrator
+`python3 scripts/extract_v82_handling.py --check` compara esse manifesto com os
+campos originais por veículo (saúde, lightness e `DAT_*`), sem inventar
+identidades nem reutilizar uma configuração genérica entre carros.
+
+`LegacyVehicleHandlingProfile` mantém os valores originais no prefab; a
+conversão desses números para massa, aceleração, velocidade, curva, aderência
+e resistência no `VehicleDrive` **é uma calibração provisória de teste**, não
+reprodução homologada da física em ponto fixo do PlayStation. A oficina continua
+fora de `Resources` e bloqueada no build Windows. Armas especiais e arenas
+continuam pendentes, assim como as malhas comerciais do primeiro jogo.
