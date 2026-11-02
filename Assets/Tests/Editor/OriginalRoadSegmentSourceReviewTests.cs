@@ -125,6 +125,40 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void DenseOriginalRsegPreviewReevaluatesEveryFixedPoint()
+        {
+            var plan = OriginalRoadSegmentSourceReviewWindow.ParseSource(
+                ArchivedSnippet(flags: 1), Rseg, Junc);
+            var road = plan.Roads[0];
+            Assert.That(road.OriginalFixedXZExactDense, Is.Not.Null);
+            Assert.That(road.OriginalFixedXZExactDense.Length,
+                Is.EqualTo(OriginalRoadSegmentSourceReviewWindow.DenseCurveSampleCount));
+            Assert.That(road.OriginalFixedXYZDense, Is.Not.Null);
+            Assert.That(road.OriginalFixedXYZDense.Length, Is.EqualTo(33));
+            Assert.That(road.OriginalFixedXYZDense[0], Is.EqualTo(new Vector3(5000, 100, 4000)));
+            Assert.That(road.OriginalFixedXYZDense[4],
+                Is.EqualTo(new Vector3(6250, 112, 4000)));
+            Assert.That(road.OriginalFixedXYZDense[16],
+                Is.EqualTo(new Vector3(10000, 150, 4000)));
+            Assert.That(road.OriginalFixedXYZDense[32],
+                Is.EqualTo(new Vector3(15000, 200, 4000)));
+            var terrain = OriginalRoadSegmentSourceReviewWindow.ParseSource(
+                ArchivedSnippet(flags: 0), Rseg, Junc).Roads[0];
+            Assert.That(terrain.OriginalFixedXZExactDense.Length, Is.EqualTo(33));
+            Assert.That(terrain.OriginalFixedXYZDense, Is.Null,
+                "Unknown VigTerrain heights may never become fabricated 3D points");
+        }
+
+        [Test]
+        public void DenseTraceRejectsOverflowInsteadOfDrawingInventedInterpolations()
+        {
+            var rejected = OriginalRoadSegmentSourceReviewWindow.ParseSource(
+                ArchivedSnippet(coefficient: int.MaxValue), Rseg, Junc);
+            Assert.That(rejected.Roads, Is.Empty);
+            Assert.That(rejected.RejectedSegments, Is.EqualTo(1));
+        }
+
+        [Test]
         public void SourceDebugAxisMappingRequiresPositiveScale()
         {
             Assert.That(OriginalRsegHeightPreviewBuilder.ToSourceReviewPosition(

@@ -31,6 +31,10 @@ namespace Vigilante8.Editor
             "DAT_20", "DAT_24", "DAT_28", "DAT_2C", "DAT_30", "DAT_34"
         };
         private static readonly int[] SampleTimes = { 0, 1024, 2048, 3072, 4096 };
+        // 33 exact fixed-point evaluations of RSEG_DB.FUN_285E4, not an
+        // interpolated spline between the five coarse map samples.
+        public const int DenseCurveSampleCount = 33;
+        public const int DenseCurveStepFixed12 = 128;
 
         private sealed class RawMono
         {
@@ -48,6 +52,10 @@ namespace Vigilante8.Editor
             public string RsegFileId, FirstJuncFileId, SecondJuncFileId;
             public Vector2[] OriginalFixedXZ;
             public Vector2Int[] OriginalFixedXZExact;
+            // Source-based 33-point geometry inspection, independently checked
+            // for signed 32-bit overflow. Null if any source evaluation fails.
+            public Vector2Int[] OriginalFixedXZExactDense;
+            public Vector3[] OriginalFixedXYZDense;
             // Present only for RSEG flags which directly specify height.
             // Null when VigTerrain sampling is required or fixed-point math is unsafe.
             public Vector3[] OriginalFixedXYZ;
@@ -272,6 +280,30 @@ namespace Vigilante8.Editor
                         allHeightsKnown = false;
                 }
                 if (points.Count != SampleTimes.Length) continue;
+
+                // Do not invent curves by linearly interpolating the 5 coarse
+                // points: re-evaluate the exact original integer polynomial.
+                var denseXZ = new List<Vector2Int>(DenseCurveSampleCount);
+                var denseXYZ = new List<Vector3>(DenseCurveSampleCount);
+                bool denseYKnown = true;
+                for (int t = 0; t <= 4096; t += DenseCurveStepFixed12)
+                {
+                    if (!TrySampleAxis(start.x, t, segment.Coeffs["DAT_20"],
+                            segment.Coeffs["DAT_28"], segment.Coeffs["DAT_30"], out int x) ||
+                        !TrySampleAxis(start.z, t, segment.Coeffs["DAT_24"],
+                            segment.Coeffs["DAT_2C"], segment.Coeffs["DAT_34"], out int z))
+                    {
+                        denseXZ.Clear();
+                        denseXYZ.Clear();
+                        break;
+                    }
+                    denseXZ.Add(new Vector2Int(x, z));
+                    if (TrySampleKnownHeight(start, finish, segment.Flags.Value, t, out int y))
+                        denseXYZ.Add(new Vector3(x, y, z));
+                    else
+                        denseYKnown = false;
+                }
+                bool denseComplete = denseXZ.Count == DenseCurveSampleCount;
                 accepted.Add(new SourceRoad
                 {
                     RsegFileId = segment.Id,
@@ -279,6 +311,9 @@ namespace Vigilante8.Editor
                     SecondJuncFileId = segment.Endpoints[1],
                     OriginalFixedXZ = points.ToArray(),
                     OriginalFixedXZExact = exactPoints.ToArray(),
+                    OriginalFixedXZExactDense = denseComplete ? denseXZ.ToArray() : null,
+                    OriginalFixedXYZDense = denseComplete && denseYKnown &&
+                        denseXYZ.Count == DenseCurveSampleCount ? denseXYZ.ToArray() : null,
                     OriginalFixedXYZ = allHeightsKnown && knownHeights.Count == SampleTimes.Length
                         ? knownHeights.ToArray() : null,
                     NeedsVigTerrainHeight = (segment.Flags.Value & 9) == 0
