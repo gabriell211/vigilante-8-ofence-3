@@ -33,6 +33,15 @@ namespace Vigilante8.Gameplay
                     GetComponent<OriginalMissileSourceLauncher>()?.TryLaunch();
                 if (keyboard.rKey.wasPressedThisFrame)
                     GetComponent<OriginalMineSourceLauncher>()?.TryDeploy();
+                if (keyboard.tKey.wasPressedThisFrame)
+                    GetComponent<OriginalMineSourceLauncher>()?.TryDeployVariant(
+                        OriginalSpecialMineSourceBehavior.SourceVariant.Bearhug);
+                if (keyboard.gKey.wasPressedThisFrame)
+                    GetComponent<OriginalMineSourceLauncher>()?.TryDeployVariant(
+                        OriginalSpecialMineSourceBehavior.SourceVariant.Hovermine);
+                if (keyboard.vKey.wasPressedThisFrame)
+                    GetComponent<OriginalMineSourceLauncher>()?.TryDeployVariant(
+                        OriginalSpecialMineSourceBehavior.SourceVariant.CactusPatch);
 #endif
             }
 

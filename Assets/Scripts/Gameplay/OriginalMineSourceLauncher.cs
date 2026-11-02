@@ -27,12 +27,20 @@ namespace Vigilante8.Gameplay
             remainingCharges = InitialSourceCharges;
         }
 
-        public bool TryDeploy()
+        public bool TryDeploy() => TryDeployVariant(
+            OriginalSpecialMineSourceBehavior.SourceVariant.Standard);
+
+        /// <summary>
+        /// MineDr.UpdateW(10): 0x132 Bearhug costs 2, 0x133 Hovermine
+        /// costs 2, and 0x134 CactusPatch spends min(6, remaining).
+        /// The basic Mine from UpdateW(12) costs one.
+        /// </summary>
+        public bool TryDeployVariant(OriginalSpecialMineSourceBehavior.SourceVariant variant)
         {
+            int cost = OriginalSpecialMineSourceBehavior.ChargeCost(variant, remainingCharges);
             if (!Application.isPlaying || Time.timeScale <= 0f ||
                 vehicle == null || !vehicle.IsAlive ||
-                GetComponent<LegacyVehiclePlaytest>() == null ||
-                remainingCharges <= 0)
+                GetComponent<LegacyVehiclePlaytest>() == null || cost == 0)
                 return false;
 
             // Invisible inspection-only collider; NO fabricated original mesh.
@@ -47,8 +55,12 @@ namespace Vigilante8.Gameplay
             rigidbody.linearVelocity = GetComponent<Rigidbody>().linearVelocity -
                 transform.forward * 2f + Vector3.up * 1f;
             var sourceMine = objectInstance.AddComponent<OriginalMineSourceTrap>();
+            if (variant != OriginalSpecialMineSourceBehavior.SourceVariant.Standard)
+                objectInstance.AddComponent<OriginalSpecialMineSourceBehavior>()
+                    .Configure(variant, vehicle, cost);
             sourceMine.Configure(vehicle);
-            remainingCharges--;
+            if (cost == 1) remainingCharges--;
+            else remainingCharges -= cost;
             deployedCount++;
             return true;
         }

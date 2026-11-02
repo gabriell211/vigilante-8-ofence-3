@@ -49,6 +49,21 @@ No teste Editor, pressione **R** (teclado) ou **D-pad para baixo** (controle) pa
 
 **Limites:** as minas usam colliders físicos invisíveis para homologação de colisão, nunca um objeto 3D genérico apresentado como original; ponto de queda, massa, impulso Unity, aderência ao terreno e duração são adaptações de teste. As minas especiais `Bearhug`, `Hovermine` e `CactusPatch`, efeitos visuais, dano sobre rodas e partículas permanecem pendentes. Nada é distribuído como arma final: o build Windows recusa os dois componentes.
 
+## Minas especiais originais de MineDr: Bearhug, Hovermine e CactusPatch
+
+O sistema de **seis cargas** de `MineDr.cs` agora permite testar as três variantes registradas no script original, além da mina básica. Elas usam o **mesmo inventário** por carro original, sem cargas ou armas fictícias:
+
+| Tecla | Variante da fonte | Consumo | Comportamento rastreado |
+|---|---|---:|---|
+| **R** | `Mine` (`UpdateW(12)`) | 1 | Queda, contato e impulso vertical |
+| **T** | `Brearhug`/Bearhug (`0x132`) | 2 | Atração magnética persistente ao tocar veículo |
+| **G** | `Hovermine` (`0x133`) | 2 | Busca de veículo a cada **31** ciclos, deslocamento e impulso no contato |
+| **V** | `CactusPatch` (`0x134`) | mín(6, cargas disponíveis), exigindo pelo menos 2 | Depois de armar, colisão espalha a quantidade de minas-filhas igual ao número de cargas consumidas |
+
+No repositório original, o arquivo se chama `Bearhug.cs`, mas a classe preservada foi escrita `Brearhug` — esse nome está documentado para garantir rastreabilidade. A regra de `CactusPatch.cs` exige `tags != 0` antes da dispersão e o número de fragmentos vem de `maxHalfHealth`. A `Hovermine.cs` procura alvos a cada 31 ciclos e contém a condição `DAT_19 > 10` após dez buscas.
+
+Os cálculos espaciais do PlayStation usam inteiros e `VigTerrain`; a busca de 35 m, as velocidades, o impulso e a distribuição física dos fragmentos desta implementação são **adaptações provisórias do teste**, não valores originais homologados. `Brearhug` não recebeu dano de vida inventado, `Hovermine` não recebeu modelos visuais genéricos apresentados como oficiais e os fragmentos `Mine` do `CactusPatch` também são colliders invisíveis. O registro global de até 16 minas de teste continua válido. Nenhuma destas variantes entra no build Windows final: o gate recusa `OriginalSpecialMineSourceBehavior` nos prefabs oficiais.
+
 ## Eliminações reais entre carros originais
 
 O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.
