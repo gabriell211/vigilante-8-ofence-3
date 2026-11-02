@@ -20,6 +20,16 @@ Os **18 prefabs de veículos V82 para teste no Editor** agora têm `OriginalMach
 
 Este é o **primeiro comportamento de arma baseado nos estados do código original**, não o sistema completo de armas do PlayStation. Os disparos ainda usam o projétil de física invisível do teste, a velocidade/ponto do cano não estão calibrados, a duração dos ciclos do PlayStation pode diferir do timestep Unity, e o som/efeito original e as armas especiais não foram integrados. A rotina existe somente no Editor, permanece fora dos prefabs oficiais e não altera as 31 entradas do catálogo.
 
+## Foguete direcionado Rocket → Bastion (código de origem)
+
+Os **18 carros V82 de desenvolvimento** agora incluem `OriginalBastionRocketLauncher`. No teste de combate sobre o terreno Geo.asset original, o jogador pode pressionar **E** (teclado) ou **LB** (controle) para disparar um foguete diagnóstico em direção ao adversário original vivo mais próximo. A seleção é atualizada por `OriginalBattleTargetCoordinator`, de modo que o alvo possa ser outro carro real de um dos 18 disponíveis.
+
+O comportamento é **derivado diretamente** de `LegacySources/Vigilante2Unity/Assets/Scripts/Rocket.cs`, em especial o estado inicial `Rocket` e a transição explícita `UpdateW(2)` para `Bastion`. O voo mantém a distinção original entre perseguição mais suave enquanto `physics2.M2 >= 211` e mais forte abaixo de 211, além de revalidar o alvo a cada **16 ciclos**. O modelo C# `OriginalBastionRocketFlight` aplica essas fases aos vetores de velocidade de um Rigidbody do Unity.
+
+**Não é uma reprodução homologada de uma arma original:** o projétil permanece o collider invisível de diagnóstico já existente; o desenho, dano efetivo, explosões, som, inventário, quantidade de munição, conversão fixed-point e duração dos ciclos não foram portados. Os coeficientes e unidades de velocidade são adaptações explícitas; nenhuma munição fictícia é atribuída. No teste, o botão E/LB dispara um protótipo por pressionamento, e a metralhadora continua no Espaço. Os bots mantêm as armas de teste anteriores; o disparo do Bastion ainda é controlado pelo jogador, não pela IA.
+
+Os testes NUnit EditMode verificam estados, fases e os 18 prefabs verdadeiros; testes PlayMode verificam orientação do Rigidbody e cancelamento de alvo destruído. O CI Python/Roslyn não substitui executar esses testes dentro da Unity. O gate do executável continua recusando o launcher e o controlador experimental.
+
 ## Eliminações reais entre carros originais
 
 O projétil do teste físico agora informa ao `VehicleDrive` atingido qual veículo disparou tanto no dano direto quanto na explosão em área. O evento `Eliminated` informa o responsável **exatamente uma vez** quando ocorre um golpe fatal. Dano inválido (`NaN`, infinito, não positivo), morte ambiental sem agressor e ataques vindos de fora da partida não concedem pontos artificiais. A API `TakeDamage(float)` continua disponível para compatibilidade.
@@ -41,7 +51,7 @@ A heurística de alvo mais próximo **não afirma replicar o algoritmo oficial**
 - **18** veículos V82 têm geometria original disponível no teste. Os **13** veículos do primeiro jogo ainda dependem de mídia e migração final.
 - O terreno usa a **malha original visível**, mas um **material neutro explicitamente diagnóstico**, pois as texturas da arena ainda não foram portadas. O terreno não é substituído por geometria genérica.
 - Existem **sete** malhas nativas de terreno utilizáveis para inspeção e colisão derivada de malha. A malha de **Meteor Crater / Route 66** continua ausente; nenhuma arena está completa.
-- Os carros usam física Unity provisória e projéteis invisíveis para diagnóstico (com cadência da MGun derivada da origem). Armas especiais, animações, regras de dano, áudios classificados por função, materiais e spawns originais **não** foram homologados.
+- Os carros usam física Unity provisória e projéteis invisíveis para diagnóstico (com estados da MGun e do Rocket/Bastion baseados nos arquivos legados). As demais armas especiais, animações, regras completas de dano, áudios classificados por função, materiais e spawns originais **não** foram homologados.
 - A ferramenta recusa carros repetidos, pilotos duplicados, mais de três adversários e o terreno ausente. Spawns são inferidos por raycast em geometria real, não retirados de dados oficiais.
 - A homologação real exige executar `.github/workflows/unity-editmode.yml` com licença Unity configurada. O CI normal verifica apenas sintaxe e contratos estruturais; um resultado verde não implica build do jogo.
 
