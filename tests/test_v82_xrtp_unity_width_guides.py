@@ -30,7 +30,7 @@ class OriginalWidthGuideContract(unittest.TestCase):
             "OriginalJunctionSourceReviewBuilder.VerifiedScriptGuid(XrtpMeta)",
             "OriginalOrderedRefs(",
             "TryReadPrefab(",
-            "if (full <= 0", # may be split over lines
+            "full <= 0 || longitudinal <= 0",
         ):
             self.assertIn(fragment, code)
         self.assertNotIn("GameObject.CreatePrimitive(", code)

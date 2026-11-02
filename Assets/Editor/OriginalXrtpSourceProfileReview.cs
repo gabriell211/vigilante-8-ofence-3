@@ -174,9 +174,15 @@ namespace Vigilante8.Editor
                 File.ReadAllText(scenePath), managerGuid);
             string stageName = Path.GetFileName(Path.GetDirectoryName(scenePath));
             string levels = Absolute(AssetRoot + "LEVELS");
-            string[] stageDirs = Directory.GetDirectories(levels)
+            // The archive has BOTH LEVELS/ROUTE66 and LEVELS/Route66.
+            // Prefer the exact case from the SHA-verified source scene.
+            string[] exactDirs = Directory.GetDirectories(levels)
                 .Where(p => string.Equals(Path.GetFileName(p), stageName,
-                    StringComparison.OrdinalIgnoreCase)).ToArray();
+                    StringComparison.Ordinal)).ToArray();
+            string[] stageDirs = exactDirs.Length > 0 ? exactDirs :
+                Directory.GetDirectories(levels)
+                    .Where(p => string.Equals(Path.GetFileName(p), stageName,
+                        StringComparison.OrdinalIgnoreCase)).ToArray();
             if (stageDirs.Length != 1)
                 throw new InvalidDataException("Ambiguous or missing archived XRTP stage folder");
 
