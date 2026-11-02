@@ -106,6 +106,10 @@ namespace Vigilante8.EditorTests
             Assert.That(encounter.OriginalPlayerId, Is.EqualTo("v82_tsunami"));
             Assert.That(encounter.TotalOpponents, Is.EqualTo(3));
             Assert.That(encounter.IsReleaseApproved, Is.False);
+            var targeting = roots.SelectMany(root =>
+                root.GetComponentsInChildren<OriginalBattleTargetCoordinator>(true)).Single();
+            Assert.That(targeting.ParticipantCount, Is.EqualTo(4));
+            Assert.That(targeting.IsReleaseApproved, Is.False);
             var terrain = roots.SelectMany(root =>
                 root.GetComponentsInChildren<OriginalTerrainPreviewIdentity>(true))
                 .SingleOrDefault();

@@ -144,6 +144,7 @@ namespace Vigilante8.Editor
 
                 if (prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null ||
                     prefab.GetComponentInChildren<OriginalBattleSession>(true) != null ||
+                    prefab.GetComponentInChildren<OriginalBattleTargetCoordinator>(true) != null ||
                     prefab.GetComponentInChildren<OriginalStageObjectPreviewIdentity>(true) != null ||
                     prefab.GetComponentInChildren<OriginalTerrainPreviewIdentity>(true) != null)
                     throw new BuildFailedException("Source-only preview embedded in an official arena: " + arena.id);
