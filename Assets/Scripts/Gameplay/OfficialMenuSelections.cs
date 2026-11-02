@@ -46,6 +46,20 @@ namespace Vigilante8.Gameplay
                 .OrderBy(v => v.name, StringComparer.Ordinal).ToArray();
         }
 
+        /// <summary>
+        /// Resolves the official driver directly from the selected vehicle, without a
+        /// second pilot/faction selection. Rejects altered or unregistered vehicles.
+        /// </summary>
+        public static CharacterEntry PilotForCar(GameCatalog catalog, VehicleEntry vehicle)
+        {
+            RequireCatalog(catalog);
+            if (vehicle == null || string.IsNullOrWhiteSpace(vehicle.id)) return null;
+            VehicleEntry official = catalog.vehicles.FirstOrDefault(v => v.id == vehicle.id);
+            if (official == null || official.characterId != vehicle.characterId ||
+                official.game != vehicle.game) return null;
+            return catalog.characters.FirstOrDefault(c => c.id == official.characterId);
+        }
+
         public static bool OwnsVehicle(GameCatalog catalog, string pilotId, string vehicleId)
         {
             RequireCatalog(catalog);

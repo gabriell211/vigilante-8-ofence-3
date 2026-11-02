@@ -31,6 +31,27 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void EachOfThe31CarsHasItsOwnVerifiedPilot()
+        {
+            var all = OfficialMenuSelections.Cars(catalog);
+            Assert.That(all.Length, Is.EqualTo(31));
+            foreach (var vehicle in all)
+            {
+                var pilot = OfficialMenuSelections.PilotForCar(catalog, vehicle);
+                Assert.That(pilot, Is.Not.Null, vehicle.id);
+                Assert.That(pilot.id, Is.EqualTo(vehicle.characterId), vehicle.id);
+            }
+            Assert.That(OfficialMenuSelections.PilotForCar(catalog, null), Is.Null);
+            var forged = new VehicleEntry
+            {
+                id = all[0].id,
+                game = all[0].game,
+                characterId = "__not_official__"
+            };
+            Assert.That(OfficialMenuSelections.PilotForCar(catalog, forged), Is.Null);
+        }
+
+        [Test]
         public void VersionFilterPreservesExactOfficialCars()
         {
             Assert.That(OfficialMenuSelections.Cars(catalog, "v8").Length, Is.EqualTo(13));

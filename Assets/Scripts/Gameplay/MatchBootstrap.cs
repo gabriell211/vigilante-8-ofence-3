@@ -39,7 +39,6 @@ namespace Vigilante8.Gameplay
         private VisualElement root;
         private VisualElement menu;
         private VisualElement hud;
-        private DropdownField characterSelector;
         private DropdownField vehicleSelector;
         private DropdownField arenaSelector;
         private Label healthLabel;
@@ -50,7 +49,6 @@ namespace Vigilante8.Gameplay
         private VehicleDrive player;
         private ChaseCamera chase;
         private GameObject arenaInstance;
-        private string[] characterIds;
         private string[] vehicleIds;
         private string[] arenaIds;
 
@@ -103,36 +101,28 @@ namespace Vigilante8.Gameplay
             garagePage.Add(menu);
             Offence3MenuTheme.AddHazardStripe(menu);
             Offence3MenuTheme.AddIdentity(menu);
-            AddHeading(menu, "ESCOLHA SEU PILOTO", 22);
+            AddHeading(menu, "ESCOLHA SEU CARRO", 22);
 
-            var characters = OfficialMenuSelections.Pilots(catalog);
-            characterIds = characters.Select(c => c.id).ToArray();
-            characterSelector = new DropdownField("PILOTO", characters.Select(c => c.name).ToList(), 0);
-            StyleDropdown(characterSelector);
-            menu.Add(characterSelector);
-            characterSelector.RegisterValueChangedCallback(_ =>
-            {
-                if (restoringSelections) return;
-                SaveOfficialChoice(GameMenuSettings.CharacterKey, characterIds, characterSelector.index);
-                RefreshVehicles();
-                SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
-            });
+            var garageHint = new Label("31 CARROS OFICIAIS  /  VIGILANTE 8 + 2ND OFFENSE  /  PILOTO VINCULADO AUTOMATICAMENTE");
+            garageHint.style.color = Muted;
+            garageHint.style.whiteSpace = WhiteSpace.Normal;
+            garageHint.style.marginBottom = 12;
+            menu.Add(garageHint);
 
-            vehicleSelector = new DropdownField("VEÍCULO");
+            var vehicles = OfficialMenuSelections.Cars(catalog);
+            vehicleIds = vehicles.Select(v => v.id).ToArray();
+            vehicleSelector = new DropdownField("CARRO", vehicles.Select(v =>
+                v.officialName + "   /   " +
+                (OfficialMenuSelections.PilotForCar(catalog, v)?.name ?? "PILOTO INDISPONÍVEL") +
+                "   /   " + (v.game == "v82" ? "2ND OFFENSE" : "V8")).ToList(), 0);
             StyleDropdown(vehicleSelector);
             menu.Add(vehicleSelector);
             vehicleSelector.RegisterValueChangedCallback(_ =>
             {
                 if (restoringSelections) return;
                 SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
-                if (characterSelector.index >= 0 && characterSelector.index < characterIds.Length &&
-                    vehicleIds != null && vehicleSelector.index >= 0 && vehicleSelector.index < vehicleIds.Length)
-                    GameMenuSettings.StoreVehicleForCharacter(
-                        characterIds[characterSelector.index], vehicleIds[vehicleSelector.index],
-                        characterIds, vehicleIds);
                 UpdateAvailability();
             });
-            RefreshVehicles();
 
             var arenas = OfficialMenuSelections.Arenas(catalog);
             arenaIds = arenas.Select(a => a.id).ToArray();
@@ -191,7 +181,7 @@ namespace Vigilante8.Gameplay
             menu.Add(readinessLabel);
             startCombat = CreateButton("ENTRAR NA ARENA  /  COMBATE ARCADE", StartMatch, true);
             menu.Add(startCombat);
-            menu.Add(CreateButton("TROCAR JOGO / CARRO / FASE", () => OpenCatalog(ScreenPage.Garage)));
+            menu.Add(CreateButton("TROCAR CARRO / FASE", () => OpenCatalog(ScreenPage.Garage)));
             menu.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
             var instructions = new Label("◀ / ▶ NAVEGAR    •    ENTER / A CONFIRMAR    •    ESC / B VOLTAR");
             instructions.style.color = Muted;
@@ -215,29 +205,6 @@ namespace Vigilante8.Gameplay
         private static void StyleDropdown(DropdownField dropdown)
         {
             Offence3MenuTheme.Selector(dropdown);
-        }
-
-        private void RefreshVehicles()
-        {
-            int index = characterSelector.index;
-            if (index < 0 || index >= characterIds.Length) return;
-            var vehicles = OfficialMenuSelections.CarsForPilot(catalog, characterIds[index]);
-            string[] available = vehicles.Select(v => v.id).ToArray();
-            string remembered = GameMenuSettings.RestoreVehicleForCharacter(
-                characterIds[index], characterIds, available);
-            int choice = Array.IndexOf(available, remembered);
-            bool wasRestoring = restoringSelections;
-            restoringSelections = true;
-            try
-            {
-                vehicleIds = available;
-                vehicleSelector.choices = vehicles.Select(v =>
-                    (string.IsNullOrWhiteSpace(v.officialName) ? v.name : v.officialName) +
-                    "   ·   " + v.game.ToUpperInvariant()).ToList();
-                vehicleSelector.index = vehicles.Length == 0 ? -1 : Mathf.Max(0, choice);
-            }
-            finally { restoringSelections = wasRestoring; }
-            UpdateAvailability();
         }
 
         private void BuildHud()
@@ -422,29 +389,13 @@ namespace Vigilante8.Gameplay
 
         private void RestoreLastOfficialSelections()
         {
-            // Read all three values before any dropdown callbacks can mutate preferences.
+            // The car identifies its own pilot. Restore only car and arena choices.
             string originalVehicle = GameMenuSettings.RestoreSelection(
-                GameMenuSettings.VehicleKey, catalog.vehicles.Select(v => v.id).ToArray());
+                GameMenuSettings.VehicleKey, vehicleIds);
             string originalArena = GameMenuSettings.RestoreSelection(
                 GameMenuSettings.ArenaKey, arenaIds);
-            string originalCharacter = GameMenuSettings.RestoreSelection(
-                GameMenuSettings.CharacterKey, characterIds);
-            int characterIndex = Array.IndexOf(characterIds, originalCharacter);
-            if (characterIndex >= 0) characterSelector.index = characterIndex;
-            RefreshVehicles();
-
-            // A vehicle from another character is never allowed to leak into this selection.
             int vehicleIndex = Array.IndexOf(vehicleIds, originalVehicle);
-            if (vehicleIndex >= 0)
-                vehicleSelector.index = vehicleIndex;
-            else
-            {
-                string remembered = GameMenuSettings.RestoreVehicleForCharacter(
-                    characterIds[characterSelector.index], characterIds, vehicleIds);
-                int rememberedIndex = Array.IndexOf(vehicleIds, remembered);
-                if (rememberedIndex >= 0) vehicleSelector.index = rememberedIndex;
-            }
-
+            if (vehicleIndex >= 0) vehicleSelector.index = vehicleIndex;
             int arenaIndex = Array.IndexOf(arenaIds, originalArena);
             if (arenaIndex >= 0) arenaSelector.index = arenaIndex;
             UpdateAvailability();
@@ -510,7 +461,7 @@ namespace Vigilante8.Gameplay
             pillars.Add(Offence3MenuTheme.Chip("OFFENCE 3  /  UNITY 6", Offence3MenuTheme.Bronze));
             panel.Add(pillars);
             panel.Add(CreateButton("UM JOGADOR  /  MODO ARCADE", () => Show(ScreenPage.Garage), true));
-            panel.Add(CreateButton("GARAGEM  /  31 CARROS E 19 ARENAS",
+            panel.Add(CreateButton("GARAGEM  /  " + catalog.vehicles.Length + " CARROS E " + catalog.arenas.Length + " ARENAS",
                 () => OpenCatalog(ScreenPage.Home)));
             var coming = Offence3MenuTheme.ContentPanel();
             panel.Add(coming);
@@ -537,8 +488,8 @@ namespace Vigilante8.Gameplay
 
         private void BuildCatalogBrowser()
         {
-            catalogPage = CreateScreen("SELECIONE SEU COMBATENTE",
-                "Pilotos e veículos de duas gerações, agora com filtros de origem e seleção direta.",
+            catalogPage = CreateScreen("SELECIONE SEU CARRO",
+                "Os carros das duas gerações aparecem juntos; cada veículo acompanha seu piloto original.",
                 out var panel);
             var catalogTop = Offence3MenuTheme.ContentPanel();
             panel.Add(catalogTop);
@@ -551,7 +502,7 @@ namespace Vigilante8.Gameplay
             StyleDropdown(catalogOrigin);
             catalogTop.Add(catalogOrigin);
             catalogCategory = new DropdownField("MOSTRAR", new List<string> {
-                "CARROS", "PILOTOS", "ARENAS"
+                "CARROS", "ARENAS"
             }, 0);
             StyleDropdown(catalogCategory);
             catalogTop.Add(catalogCategory);
@@ -585,22 +536,11 @@ namespace Vigilante8.Gameplay
                         string status = IsVehicleReady(car) ? "DISPONÍVEL" : "MIGRAÇÃO PENDENTE";
                         catalogEntries.Add(CreateButton(
                             car.officialName + "   /   " + pilot.name + "   /   " + status,
-                            () => SelectPilotFromCatalog(car.characterId, car.id)));
+                            () => SelectVehicleFromCatalog(car.id)));
                         count++;
                     }
                     break;
                 case 1:
-                    foreach (CharacterEntry pilot in OfficialMenuSelections.Pilots(catalog, game))
-                    {
-                        int vehicleCount = catalog.vehicles.Count(v => v.characterId == pilot.id &&
-                            (game == null || v.game == game));
-                        catalogEntries.Add(CreateButton(pilot.name + "   /   " +
-                            vehicleCount + (vehicleCount == 1 ? " VEÍCULO" : " VEÍCULOS"),
-                            () => SelectPilotFromCatalog(pilot.id, null)));
-                        count++;
-                    }
-                    break;
-                case 2:
                     foreach (ArenaEntry arena in OfficialMenuSelections.Arenas(catalog, game))
                     {
                         string status = IsArenaReady(arena) ? "DISPONÍVEL" : "MIGRAÇÃO PENDENTE";
@@ -617,26 +557,16 @@ namespace Vigilante8.Gameplay
             catalogEntries.Insert(0, info);
         }
 
-        private void SelectPilotFromCatalog(string pilotId, string requestedVehicleId)
+        private void SelectVehicleFromCatalog(string requestedVehicleId)
         {
-            int index = Array.IndexOf(characterIds, pilotId);
-            if (index < 0) throw new InvalidOperationException("Piloto não encontrado no catálogo oficial");
+            int index = Array.IndexOf(vehicleIds, requestedVehicleId);
+            if (index < 0)
+                throw new InvalidOperationException("Carro não encontrado no catálogo oficial");
             bool previous = restoringSelections;
             restoringSelections = true;
-            try
-            {
-                characterSelector.index = index;
-                RefreshVehicles();
-                int selected = Array.IndexOf(vehicleIds, requestedVehicleId);
-                if (selected >= 0) vehicleSelector.index = selected;
-            }
+            try { vehicleSelector.index = index; }
             finally { restoringSelections = previous; }
-            SaveOfficialChoice(GameMenuSettings.CharacterKey, characterIds, characterSelector.index);
-            SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
-            if (vehicleIds != null && vehicleSelector.index >= 0 &&
-                vehicleSelector.index < vehicleIds.Length)
-                GameMenuSettings.StoreVehicleForCharacter(pilotId,
-                    vehicleIds[vehicleSelector.index], characterIds, vehicleIds);
+            SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, index);
             Show(ScreenPage.Garage);
         }
 
@@ -784,7 +714,7 @@ namespace Vigilante8.Gameplay
             VisualElement focusTarget = target switch
             {
                 ScreenPage.Home => homePage?.Q<Button>(),
-                ScreenPage.Garage => characterSelector,
+                ScreenPage.Garage => vehicleSelector,
                 ScreenPage.Catalog => catalogPage?.Q<Button>(),
                 ScreenPage.Options => optionsPage?.Q<Slider>() ?? (VisualElement)optionsPage?.Q<Button>(),
                 ScreenPage.Controls => controlsPage?.Q<Button>(),
@@ -848,21 +778,14 @@ namespace Vigilante8.Gameplay
                 vehicleSelector.index >= vehicleIds.Length ||
                 arenaSelector.index >= arenaIds.Length)
             {
-                reason = "Escolha um piloto, um veículo e uma arena.";
-                return false;
-            }
-            if (characterSelector == null || characterSelector.index < 0 ||
-                characterSelector.index >= characterIds.Length)
-            {
-                reason = "Selecione um piloto oficial antes do combate.";
+                reason = "Escolha um carro e uma arena.";
                 return false;
             }
             var selected = catalog.vehicles.First(v => v.id == vehicleIds[vehicleSelector.index]);
             var arena = catalog.arenas.First(a => a.id == arenaIds[arenaSelector.index]);
-            if (!OfficialMenuSelections.OwnsVehicle(
-                catalog, characterIds[characterSelector.index], selected.id))
+            if (OfficialMenuSelections.PilotForCar(catalog, selected) == null)
             {
-                reason = "O veículo selecionado não pertence ao piloto atual.";
+                reason = "Este carro não possui um piloto oficial válido.";
                 return false;
             }
             if (!IsVehicleReady(selected))
@@ -912,7 +835,7 @@ namespace Vigilante8.Gameplay
                 }
                 if (chosen != null && selectedArena != null)
                 {
-                    CharacterEntry pilot = catalog.characters.FirstOrDefault(c => c.id == chosen.characterId);
+                    CharacterEntry pilot = OfficialMenuSelections.PilotForCar(catalog, chosen);
                     string game = chosen.game == "v82" ? "2ND OFFENSE" : "VIGILANTE 8";
                     garageSummary.text = "PILOTO: " + (pilot?.name ?? chosen.characterId) +
                         "    |    CARRO: " + chosen.officialName + " (" + game + ")" +

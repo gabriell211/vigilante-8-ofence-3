@@ -17,9 +17,9 @@ class Offence3DesignTests(unittest.TestCase):
         self.assertIn("Offence3MenuTheme.AddIdentity", self.menu)
 
     def test_classic_roster_navigation_is_a_real_interface(self):
-        for snippet in ("SELECIONE SEU COMBATENTE", "OfficialMenuSelections.Cars",
-                        "OfficialMenuSelections.Pilots", "OfficialMenuSelections.Arenas",
-                        "SelectPilotFromCatalog", "SelectArenaFromCatalog"):
+        for snippet in ("SELECIONE SEU CARRO", "OfficialMenuSelections.Cars",
+                        "OfficialMenuSelections.PilotForCar", "OfficialMenuSelections.Arenas",
+                        "SelectVehicleFromCatalog", "SelectArenaFromCatalog"):
             self.assertIn(snippet, self.menu)
 
     def test_keyboard_and_gamepad_have_visual_focus_states(self):
