@@ -25,7 +25,6 @@ namespace Vigilante8.Editor
         private static readonly Regex RefId = new Regex(@"\bfileID: (-?\d+)\b");
         private static readonly Regex RawVector = new Regex(
             @"^  DAT_00: \{x: (-?\d+), y: (-?\d+), z: (-?\d+)\}$");
-        private static readonly Regex HexPair = new Regex(@"^[a-fA-F0-9]{16}$");
         private static readonly string[] Coefficients =
         {
             "DAT_20", "DAT_24", "DAT_28", "DAT_2C", "DAT_30", "DAT_34"

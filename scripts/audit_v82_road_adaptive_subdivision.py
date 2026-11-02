@@ -98,7 +98,7 @@ def verify_archived_source(code: str):
         "if (iVar3 < 0x100000)",
         "(param1[0, 3] + param1[1, 2]) / 2;",
         "(param1[1, 1] + param1[2, 0]) / 2;",
-        "(param1[0, 1] + param1[2, 2]) / 2;",
+        "(param1[0, 1] + param1[2, 2]) / 2,",
         "jVar4 = FUN_5850(param1, param2, param3);",
     ):
         if statement not in code:
