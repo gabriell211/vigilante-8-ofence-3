@@ -10,6 +10,7 @@ PORT = ROOT / "Assets/Scripts/Gameplay/OriginalMachineGunSourceTest.cs"
 DRIVE = ROOT / "Assets/Scripts/Gameplay/VehicleDrive.cs"
 BUILDER = ROOT / "Assets/Editor/LegacyVehiclePlaytestBuilder.cs"
 TERRAIN = ROOT / "Assets/Editor/OriginalNativeTerrainPlaytestBuilder.cs"
+RELEASE = ROOT / "Assets/Editor/WindowsReleaseBuilder.cs"
 UNITY_TEST = ROOT / "Assets/Tests/Editor/OriginalMachineGunSourceTests.cs"
 
 
@@ -63,6 +64,8 @@ class ArchivedMachineGunSourceContracts(unittest.TestCase):
         self.assertIn("OriginalMachineGunSourceTest.BulletLifeSourceTicks * Time.fixedDeltaTime", drive)
         self.assertIn("#if UNITY_EDITOR", drive)
         self.assertNotIn("Assets/Resources/Vehicles/", builder)
+        self.assertIn("prefab.GetComponent<OriginalMachineGunSourceTest>() != null",
+                      RELEASE.read_text("utf-8"))
         tests = UNITY_TEST.read_text("utf-8")
         for term in ("FirstShotAndTagsFollowArchivedMGunUpdateW12Exactly",
                      "TriggerReleaseDoesNotInventASourceWeaponSwitch",
