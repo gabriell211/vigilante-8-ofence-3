@@ -44,5 +44,23 @@ namespace Vigilante8.EditorTests
             Assert.Throws<ArgumentException>(() =>
                 GameMenuSettings.StoreSelection(GameMenuSettings.VehicleKey, null, official));
         }
+        [Test]
+        public void StoredVehicleNeverCrossesPilotOwnership()
+        {
+            var pilots = new[] { "chassey_blue", "sheila" };
+            var first = new[] { "v8_rattler", "v82_vertigo" };
+            var second = new[] { "v8_strider", "v82_wonderwagon" };
+            GameMenuSettings.StoreVehicleForCharacter("chassey_blue", "v82_vertigo", pilots, first);
+            GameMenuSettings.StoreVehicleForCharacter("sheila", "v82_wonderwagon", pilots, second);
+            Assert.That(GameMenuSettings.RestoreVehicleForCharacter("chassey_blue", pilots, first),
+                Is.EqualTo("v82_vertigo"));
+            Assert.That(GameMenuSettings.RestoreVehicleForCharacter("sheila", pilots, second),
+                Is.EqualTo("v82_wonderwagon"));
+            Assert.Throws<ArgumentException>(() =>
+                GameMenuSettings.StoreVehicleForCharacter("sheila", "v8_rattler", pilots, second));
+            Assert.Throws<ArgumentException>(() =>
+                GameMenuSettings.RestoreVehicleForCharacter("../other", pilots, first));
+        }
+
     }
 }

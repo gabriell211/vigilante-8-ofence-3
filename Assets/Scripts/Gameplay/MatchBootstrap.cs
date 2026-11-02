@@ -19,6 +19,7 @@ namespace Vigilante8.Gameplay
         private Label readinessLabel, resultsTitle, resultsDetails;
         private Button startCombat;
         private bool finished;
+        private bool restoringSelections;
         private string matchVehicle = "";
         private string matchArena = "";
         private static readonly Color Accent = new Color(0.98f, 0.39f, 0.15f);
@@ -52,8 +53,14 @@ namespace Vigilante8.Gameplay
             if (root == null) throw new InvalidOperationException("Missing UI Toolkit panel");
             root.style.flexGrow = 1;
             root.style.backgroundColor = new Color(0.025f, 0.035f, 0.065f, 0.88f);
-            BuildMenu();
-            RestoreLastOfficialSelections();
+            restoringSelections = true;
+            try
+            {
+                BuildMenu();
+                RestoreLastOfficialSelections();
+            }
+            finally { restoringSelections = false; }
+            UpdateAvailability();
             BuildHud();
             BuildMainMenu();
             BuildOptionsMenu();
@@ -69,8 +76,9 @@ namespace Vigilante8.Gameplay
             menu = new VisualElement();
             menu.style.width = 520;
             menu.style.maxWidth = Length.Percent(92);
-            menu.style.marginLeft = Length.Percent(5);
-            menu.style.marginTop = 42;
+            menu.style.alignSelf = Align.Center;
+            menu.style.marginTop = 24;
+            menu.style.marginBottom = 30;
             menu.style.paddingLeft = 24;
             menu.style.paddingRight = 24;
             menu.style.paddingTop = 24;
@@ -91,8 +99,10 @@ namespace Vigilante8.Gameplay
             menu.Add(characterSelector);
             characterSelector.RegisterValueChangedCallback(_ =>
             {
+                if (restoringSelections) return;
                 SaveOfficialChoice(GameMenuSettings.CharacterKey, characterIds, characterSelector.index);
                 RefreshVehicles();
+                SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
             });
 
             vehicleSelector = new DropdownField("VEÍCULO");
@@ -100,7 +110,13 @@ namespace Vigilante8.Gameplay
             menu.Add(vehicleSelector);
             vehicleSelector.RegisterValueChangedCallback(_ =>
             {
+                if (restoringSelections) return;
                 SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
+                if (characterSelector.index >= 0 && characterSelector.index < characterIds.Length &&
+                    vehicleIds != null && vehicleSelector.index >= 0 && vehicleSelector.index < vehicleIds.Length)
+                    GameMenuSettings.StoreVehicleForCharacter(
+                        characterIds[characterSelector.index], vehicleIds[vehicleSelector.index],
+                        characterIds, vehicleIds);
                 UpdateAvailability();
             });
             RefreshVehicles();
@@ -113,6 +129,7 @@ namespace Vigilante8.Gameplay
             menu.Add(arenaSelector);
             arenaSelector.RegisterValueChangedCallback(_ =>
             {
+                if (restoringSelections) return;
                 SaveOfficialChoice(GameMenuSettings.ArenaKey, arenaIds, arenaSelector.index);
                 UpdateAvailability();
             });
@@ -151,11 +168,22 @@ namespace Vigilante8.Gameplay
             int index = characterSelector.index;
             if (index < 0 || index >= characterIds.Length) return;
             var vehicles = catalog.vehicles.Where(v => v.characterId == characterIds[index])
-                .OrderBy(v => v.name).ToArray();
-            vehicleIds = vehicles.Select(v => v.id).ToArray();
-            vehicleSelector.choices = vehicles.Select(v => (string.IsNullOrWhiteSpace(v.officialName) ? v.name : v.officialName) +
-                "   ·   " + v.game.ToUpperInvariant()).ToList();
-            vehicleSelector.index = vehicles.Length > 0 ? 0 : -1;
+                .OrderBy(v => v.name, StringComparer.Ordinal).ToArray();
+            string[] available = vehicles.Select(v => v.id).ToArray();
+            string remembered = GameMenuSettings.RestoreVehicleForCharacter(
+                characterIds[index], characterIds, available);
+            int choice = Array.IndexOf(available, remembered);
+            bool wasRestoring = restoringSelections;
+            restoringSelections = true;
+            try
+            {
+                vehicleIds = available;
+                vehicleSelector.choices = vehicles.Select(v =>
+                    (string.IsNullOrWhiteSpace(v.officialName) ? v.name : v.officialName) +
+                    "   ·   " + v.game.ToUpperInvariant()).ToList();
+                vehicleSelector.index = vehicles.Length == 0 ? -1 : Mathf.Max(0, choice);
+            }
+            finally { restoringSelections = wasRestoring; }
             UpdateAvailability();
         }
 
@@ -247,8 +275,13 @@ namespace Vigilante8.Gameplay
                 return;
             }
             chase = Camera.main != null ? Camera.main.GetComponent<ChaseCamera>() : null;
-            if (chase == null) Debug.LogError("Camera has no ChaseCamera component.");
-            else chase.target = player.transform;
+            if (chase == null)
+            {
+                Debug.LogError("Camera has no ChaseCamera component.");
+                BackToMenu();
+                return;
+            }
+            chase.target = player.transform;
             finished = false;
             matchVehicle = selected.officialName;
             matchArena = arena.name;
@@ -332,25 +365,31 @@ namespace Vigilante8.Gameplay
 
         private void RestoreLastOfficialSelections()
         {
-            // Read all saved values before selection callbacks can rewrite preferences.
+            // Read all three values before any dropdown callbacks can mutate preferences.
             string originalVehicle = GameMenuSettings.RestoreSelection(
-                GameMenuSettings.VehicleKey,
-                catalog.vehicles.Select(v => v.id).ToArray());
+                GameMenuSettings.VehicleKey, catalog.vehicles.Select(v => v.id).ToArray());
             string originalArena = GameMenuSettings.RestoreSelection(
                 GameMenuSettings.ArenaKey, arenaIds);
             string originalCharacter = GameMenuSettings.RestoreSelection(
                 GameMenuSettings.CharacterKey, characterIds);
             int characterIndex = Array.IndexOf(characterIds, originalCharacter);
-            if (characterIndex >= 0)
-                characterSelector.index = characterIndex;
+            if (characterIndex >= 0) characterSelector.index = characterIndex;
+            RefreshVehicles();
 
+            // A vehicle from another character is never allowed to leak into this selection.
             int vehicleIndex = Array.IndexOf(vehicleIds, originalVehicle);
             if (vehicleIndex >= 0)
                 vehicleSelector.index = vehicleIndex;
+            else
+            {
+                string remembered = GameMenuSettings.RestoreVehicleForCharacter(
+                    characterIds[characterSelector.index], characterIds, vehicleIds);
+                int rememberedIndex = Array.IndexOf(vehicleIds, remembered);
+                if (rememberedIndex >= 0) vehicleSelector.index = rememberedIndex;
+            }
 
             int arenaIndex = Array.IndexOf(arenaIds, originalArena);
-            if (arenaIndex >= 0)
-                arenaSelector.index = arenaIndex;
+            if (arenaIndex >= 0) arenaSelector.index = arenaIndex;
             UpdateAvailability();
         }
 
@@ -560,33 +599,66 @@ namespace Vigilante8.Gameplay
                 if (pages[i] != null) pages[i].style.display =
                     target == ids[i] ? DisplayStyle.Flex : DisplayStyle.None;
             root.style.backgroundColor = target == ScreenPage.Playing ? Color.clear : Ink;
+
+            // Keep focus on an actionable element when navigating by keyboard/gamepad.
+            VisualElement focusTarget = target switch
+            {
+                ScreenPage.Home => homePage?.Q<Button>(),
+                ScreenPage.Garage => characterSelector,
+                ScreenPage.Options => optionsPage?.Q<Slider>() ?? (VisualElement)optionsPage?.Q<Button>(),
+                ScreenPage.Controls => controlsPage?.Q<Button>(),
+                ScreenPage.About => aboutPage?.Q<Button>(),
+                ScreenPage.Pause => pausePage?.Q<Button>(),
+                ScreenPage.Results => resultsPage?.Q<Button>(),
+                _ => null,
+            };
+            if (focusTarget != null)
+                focusTarget.schedule.Execute(() =>
+                {
+                    if (activePage == target && focusTarget.panel != null && focusTarget.enabledInHierarchy)
+                        focusTarget.Focus();
+                });
         }
 
         private static bool IsVehicleReady(VehicleEntry vehicle)
         {
             var prefab = CatalogRepository.LoadVehiclePrefab(vehicle);
-            if (prefab == null) return false;
+            if (prefab == null || prefab.GetComponent<LegacyVehiclePlaytest>() != null ||
+                prefab.GetComponentInChildren<OriginalVehiclePreviewIdentity>(true) != null)
+                return false;
+
             var identity = prefab.GetComponent<OfficialAssetIdentity>();
             var drive = prefab.GetComponent<VehicleDrive>();
             bool hasRealMesh = prefab.GetComponentsInChildren<MeshFilter>(true)
                 .Any(m => m.sharedMesh != null && m.sharedMesh.vertexCount > 2) ||
                 prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true)
                 .Any(m => m.sharedMesh != null && m.sharedMesh.vertexCount > 2);
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
+            bool materialsValid = renderers.Length > 0 && renderers.All(r =>
+                r.sharedMaterials.Length > 0 && r.sharedMaterials.All(m => m != null));
             return identity != null && identity.Matches(vehicle.id, vehicle.game) &&
-                drive != null && drive.HasWeapon && hasRealMesh &&
+                drive != null && drive.HasWeapon && hasRealMesh && materialsValid &&
                 prefab.GetComponent<Rigidbody>() != null &&
-                prefab.GetComponentsInChildren<Collider>(true).Length != 0;
+                prefab.GetComponentsInChildren<Collider>(true).Length > 0;
         }
 
         private static bool IsArenaReady(ArenaEntry arena)
         {
             var prefab = CatalogRepository.LoadArenaPrefab(arena);
-            if (prefab == null) return false;
+            if (prefab == null || prefab.GetComponentInChildren<LegacyVehiclePlaytest>(true) != null)
+                return false;
             var identity = prefab.GetComponent<OfficialAssetIdentity>();
             var spawns = prefab.GetComponentInChildren<ArenaSpawnPoints>(true);
+            bool hasRealMesh = prefab.GetComponentsInChildren<MeshFilter>(true)
+                .Any(m => m.sharedMesh != null && m.sharedMesh.vertexCount > 2) ||
+                prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                .Any(m => m.sharedMesh != null && m.sharedMesh.vertexCount > 2);
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
             return identity != null && identity.Matches(arena.id, arena.game) &&
-                spawns != null && spawns.HasValidSpawns(4) &&
-                prefab.GetComponentsInChildren<Collider>(true).Length != 0;
+                spawns != null && spawns.HasValidSpawns(4) && hasRealMesh &&
+                renderers.Length > 0 && renderers.All(r =>
+                    r.sharedMaterials.Length > 0 && r.sharedMaterials.All(m => m != null)) &&
+                prefab.GetComponentsInChildren<Collider>(true).Length > 0;
         }
 
         private bool IsMatchAvailable(out string reason)

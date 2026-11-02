@@ -86,6 +86,33 @@ namespace Vigilante8.Gameplay
             return Array.IndexOf(officialIds, stored) >= 0 ? stored : officialIds[0];
         }
 
+        private static string PerCharacterKey(string characterId, string[] officialCharacterIds)
+        {
+            if (string.IsNullOrWhiteSpace(characterId) || officialCharacterIds == null ||
+                Array.IndexOf(officialCharacterIds, characterId) < 0)
+                throw new ArgumentException("Unknown official pilot", nameof(characterId));
+            return Prefix + "vehicle-for-" + characterId;
+        }
+
+        public static string RestoreVehicleForCharacter(
+            string characterId, string[] officialCharacterIds, string[] ownerVehicleIds)
+        {
+            if (ownerVehicleIds == null || ownerVehicleIds.Length == 0) return null;
+            string key = PerCharacterKey(characterId, officialCharacterIds);
+            string stored = PlayerPrefs.GetString(key, "");
+            return Array.IndexOf(ownerVehicleIds, stored) >= 0 ? stored : ownerVehicleIds[0];
+        }
+
+        public static void StoreVehicleForCharacter(string characterId, string vehicleId,
+            string[] officialCharacterIds, string[] ownerVehicleIds)
+        {
+            string key = PerCharacterKey(characterId, officialCharacterIds);
+            if (ownerVehicleIds == null || Array.IndexOf(ownerVehicleIds, vehicleId) < 0)
+                throw new ArgumentException("Vehicle does not belong to selected official pilot", nameof(vehicleId));
+            PlayerPrefs.SetString(key, vehicleId);
+            PlayerPrefs.Save();
+        }
+
         public static void StoreSelection(string key, string id, string[] officialIds)
         {
             if (officialIds == null || Array.IndexOf(officialIds, id) < 0)

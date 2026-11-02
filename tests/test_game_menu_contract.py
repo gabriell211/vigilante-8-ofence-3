@@ -41,7 +41,25 @@ class InGameMenuWiringTests(unittest.TestCase):
         self.assertIn("IsVehicleReady", self.menu)
         self.assertIn("IsArenaReady", self.menu)
         self.assertIn("spawns.HasValidSpawns(4)", self.menu)
+        self.assertIn("prefab.GetComponent<LegacyVehiclePlaytest>()", self.menu)
+        self.assertIn("renderers.All", self.menu)
+        self.assertIn("hasRealMesh", self.menu)
 
+    def test_dropdown_restore_never_overwrites_saved_choices(self):
+        self.assertIn("restoringSelections = true", self.menu)
+        self.assertIn("if (restoringSelections) return;", self.menu)
+        self.assertIn("RestoreLastOfficialSelections()", self.menu)
+        self.assertIn("StoreVehicleForCharacter", self.menu)
+        self.assertIn("RestoreVehicleForCharacter", self.menu)
+
+    def test_menu_focus_on_navigation(self):
+        self.assertIn("focusTarget.Focus();", self.menu)
+        self.assertIn("focusTarget.panel != null", self.menu)
+
+    def test_each_match_validates_camera_and_cleans_up(self):
+        self.assertIn('BackToMenu();', self.menu)
+        self.assertIn('Camera has no ChaseCamera component.', self.menu)
+        self.assertIn('CleanupMatch();', self.menu)
 
 if __name__ == "__main__":
     unittest.main()
