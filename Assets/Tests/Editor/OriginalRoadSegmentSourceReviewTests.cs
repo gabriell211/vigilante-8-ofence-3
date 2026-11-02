@@ -136,6 +136,42 @@ namespace Vigilante8.EditorTests
         }
 
         [Test]
+        public void OriginalTerrainFixedPointInterpolationUsesBothOriginalTriangles()
+        {
+            var raw = new ushort[4096];
+            raw[65] = 100;
+            raw[129] = 200;
+            raw[66] = 300;
+            raw[130] = 400;
+            var bytes = new byte[raw.Length * 2];
+            Buffer.BlockCopy(raw, 0, bytes, 0, bytes.Length);
+            string yaml = "%YAML 1.1\n--- !u!114 &55\nMonoBehaviour:\n" +
+                "  m_Script: {fileID: 11500000, guid: " +
+                "68fd1e9f11866ba4480d203f972bb9ab, type: 3}\n" +
+                "  vertices: " + BitConverter.ToString(bytes).Replace("-", "") + "\n" +
+                "  chunks: " + new string('0', 4096) + "\n  zoneCount: 1\n";
+            var grid = OriginalVigTerrainSourceGrid.ParseSource(
+                yaml, "68fd1e9f11866ba4480d203f972bb9ab");
+            Assert.That(grid.TrySampleHeight(0x18000, 0x14000, out int a), Is.True);
+            Assert.That(a, Is.EqualTo(200 * 2048));
+            Assert.That(grid.TrySampleHeight(0x1C000, 0x1C000, out int b), Is.True);
+            Assert.That(b, Is.EqualTo(325 * 2048));
+            Assert.That(grid.TrySampleHeight(0, 0x14000, out int outer), Is.True);
+            Assert.That(outer, Is.Zero);
+            Assert.Throws<InvalidDataException>(() => OriginalVigTerrainSourceGrid.ParseSource(
+                yaml.Replace("  zoneCount: 1", "  zoneCount: 2"),
+                "68fd1e9f11866ba4480d203f972bb9ab"));
+        }
+
+        [Test]
+        public void SteelMillOriginalJunctionMatchesExactSerializedVigTerrainHeight()
+        {
+            var original = OriginalVigTerrainSourceGrid.LoadVerified("v82_steel_mill");
+            Assert.That(original.TrySampleHeight(59919356, 90376320, out int y), Is.True);
+            Assert.That(y, Is.EqualTo(3006532));
+        }
+
+        [Test]
         public void OriginalEightScenesStaySourceVerifiedAndUnconvertedToReleaseRoads()
         {
             var catalog = Vigilante8.Content.CatalogRepository.Load();
