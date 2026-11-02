@@ -247,8 +247,11 @@ namespace Vigilante8.Editor
                 finally { UnityEngine.Object.DestroyImmediate(root); }
             }
             AssetDatabase.SaveAssets();
-            Debug.Log("8 real original TMD object banks assembled as source-only inspection prefabs. " +
-                "No original terrain, PS1 materials, collisions, spawns or object placement.");
+            // The matching original XOBF WAV indices become inspectable alongside
+            // genuine source geometry, without assigning any unverified sound role.
+            OriginalAudioBankBinder.AttachToStageInspectionPrefabs();
+            Debug.Log("8 real original TMD object banks and matching source-indexed WAVs assembled. " +
+                "No original terrain, PS1 materials, collision, audio roles, spawns or placement.");
         }
 
         [MenuItem("Vigilante 8/Migração/Gerar galeria 3D dos bancos de objetos das 8 fases V82")]
