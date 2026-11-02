@@ -29,7 +29,7 @@ def native_fixture():
             actors = len(original)
             original.extend(struct.pack("<BBhH", 2, 4, -1, 17))
             text = append_cstring(
-                original, f"Original {character} mission {mission}\\nDESTROY: source scenery")
+                original, f"Original {character} mission {mission}\nDESTROY: source scenery")
             struct.pack_into("<BBHHHII", original, offset + mission * 16,
                              mission, 1, 10, 20, 1, actors, text)
     # Character slot 12 has no original campaign.
