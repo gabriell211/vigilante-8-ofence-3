@@ -142,6 +142,21 @@ namespace Vigilante8.Gameplay
         /// Counts only a fatal projectile hit from a participant in this exact
         /// battle. Environment deaths and external attackers never earn points.
         /// </summary>
+        /// <summary>
+        /// -1 = no credit; 0 = player; 1..3 = original opponent index + 1.
+        /// Attribution is by live object identity, never by displayed vehicle name.
+        /// </summary>
+        public static int CreditedKillerSlot(VehicleDrive victim, VehicleDrive killer,
+            VehicleDrive playerDrive, VehicleDrive[] botDrives)
+        {
+            if (victim == null || killer == null || victim == killer ||
+                playerDrive == null || botDrives == null)
+                return -1;
+            if (killer == playerDrive) return 0;
+            int index = Array.IndexOf(botDrives, killer);
+            return index < 0 ? -1 : index + 1;
+        }
+
         private void OnVehicleEliminated(VehicleDrive victim, VehicleDrive killer)
         {
             if (!ready || victim == null) return;
@@ -150,22 +165,16 @@ namespace Vigilante8.Gameplay
             string victimName = victim == player ? playerName :
                 opponentNames[Array.IndexOf(opponents, victim)];
             string killerName = "SEM AUTOR";
-            if (killer != victim && killer != null)
+            int slot = CreditedKillerSlot(victim, killer, player, opponents);
+            if (slot == 0)
             {
-                if (killer == player)
-                {
-                    playerEliminations++;
-                    killerName = playerName;
-                }
-                else
-                {
-                    int index = Array.IndexOf(opponents, killer);
-                    if (index >= 0)
-                    {
-                        opponentEliminations[index]++;
-                        killerName = opponentNames[index];
-                    }
-                }
+                playerEliminations++;
+                killerName = playerName;
+            }
+            else if (slot > 0)
+            {
+                opponentEliminations[slot - 1]++;
+                killerName = opponentNames[slot - 1];
             }
             lastElimination = killerName + " > " + victimName;
             outcome = EvaluateOutcome(player.IsAlive, RemainingOpponents);
