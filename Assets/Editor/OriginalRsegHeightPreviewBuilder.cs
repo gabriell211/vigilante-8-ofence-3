@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -28,16 +29,20 @@ namespace Vigilante8.Editor
             private readonly OriginalRoadSegmentSourceReviewWindow.SourceRoad[] lines;
             private readonly Material material;
             private readonly Material[] sourceRoadMaterials;
+            private readonly Dictionary<string, OriginalJunctionTransitionSourceReview.Endpoint[]>
+                sourceJunctionTransitions;
 
             internal PreparedSourceLines(string stageId, int factor,
                 OriginalRoadSegmentSourceReviewWindow.SourceRoad[] sourceRoads,
-                Material sourceMaterial, Material[] archivedRoadMaterials)
+                Material sourceMaterial, Material[] archivedRoadMaterials,
+                Dictionary<string, OriginalJunctionTransitionSourceReview.Endpoint[]> transitions)
             {
                 stage = stageId;
                 divisor = factor;
                 lines = sourceRoads;
                 material = sourceMaterial;
                 sourceRoadMaterials = archivedRoadMaterials;
+                sourceJunctionTransitions = transitions;
             }
 
             public int AppendTo(Transform parent)
@@ -112,6 +117,21 @@ namespace Vigilante8.Editor
                             }
                         }
                     }
+                    if (sourceJunctionTransitions.TryGetValue(road.RsegFileId,
+                        out var endpointPlans))
+                    {
+                        for (int end = 0; end < endpointPlans.Length; end++)
+                        {
+                            var source = endpointPlans[end];
+                            if (source.Status !=
+                                OriginalJunctionTransitionSourceReview.JunctionStatus.NeedsUnportedFun6604)
+                                continue;
+                            Vector3Int center = end == 0
+                                ? road.OriginalFirstJunctionXYZ : road.OriginalLastJunctionXYZ;
+                            AppendSourceTrimRadius(item.transform, center,
+                                source.SourceRadiusFixed, divisor, source.JunctionFileId, material);
+                        }
+                    }
                     item.AddComponent<OriginalRoadSourcePreviewIdentity>().Configure(
                         stage, road.RsegFileId, road.FirstJuncFileId,
                         road.SecondJuncFileId, divisor);
@@ -178,6 +198,38 @@ namespace Vigilante8.Editor
             line.positionCount = positions.Length;
             for (int i = 0; i < positions.Length; i++)
                 line.SetPosition(i, ToSourceReviewPosition(positions[i], divisor));
+        }
+
+        /// <summary>
+        /// The radius of a pending FUN_6604 source edit is displayed around
+        /// the genuine JUNC position; NO clipping, mesh or physics is produced.
+        /// </summary>
+        public static void AppendSourceTrimRadius(Transform parent, Vector3Int centerFixed,
+            int radiusFixed, int divisor, string junctionId, Material material)
+        {
+            if (parent == null || material == null || radiusFixed <= 0 ||
+                divisor <= 0 || string.IsNullOrEmpty(junctionId))
+                throw new InvalidDataException("Invalid original JUNC diagnostic radius");
+            const int sections = 48;
+            var ring = new GameObject("JUNC " + junctionId +
+                " / AUTHENTIC FUN_719C RADIUS / FUN_6604 NOT PORTED");
+            ring.transform.SetParent(parent, false);
+            var line = ring.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
+            line.sharedMaterial = material;
+            line.loop = true;
+            line.widthMultiplier = 0.06f;
+            line.shadowCastingMode = ShadowCastingMode.Off;
+            line.receiveShadows = false;
+            line.positionCount = sections;
+            Vector3 center = ToSourceReviewPosition(centerFixed, divisor);
+            float r = (float)radiusFixed / divisor;
+            for (int i = 0; i < sections; i++)
+            {
+                float angle = 2f * Mathf.PI * i / sections;
+                line.SetPosition(i, center + new Vector3(
+                    r * Mathf.Cos(angle), 0f, r * Mathf.Sin(angle)));
+            }
         }
 
         private static void TryAddSourceEdges(
@@ -327,8 +379,13 @@ namespace Vigilante8.Editor
                     OriginalRoadTextureSourcePreview.PrepareDiagnosticMaterial(
                         originalProfiles[profileId.Value]);
             }
+            // This is only FUN_719C's source transition decision. Because
+            // archived FUN_6604 indexes beyond its declared local array,
+            // never execute that body or present its output as actual geometry.
+            var transitions = OriginalJunctionTransitionSourceReview.ReviewVerified(
+                stageId, originalProfiles);
             return new PreparedSourceLines(stageId, divisor, onlyKnownHeight,
-                material, originalMaterialPreviews);
+                material, originalMaterialPreviews, transitions);
         }
     }
 }
