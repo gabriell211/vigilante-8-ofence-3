@@ -23,6 +23,13 @@ namespace Vigilante8.Gameplay
                 if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) steer += 1f;
                 brake = keyboard.leftShiftKey.isPressed ? 1f : 0f;
                 fire = keyboard.spaceKey.isPressed;
+#if UNITY_EDITOR
+                // Only the genuine original-source test car can use this
+                // diagnostic Rocket/Bastion state; the final game needs its
+                // own certified weapon inventory and binding.
+                if (keyboard.eKey.wasPressedThisFrame)
+                    GetComponent<OriginalBastionRocketLauncher>()?.TryLaunch();
+#endif
             }
 
             Gamepad gamepad = Gamepad.current;
@@ -35,6 +42,10 @@ namespace Vigilante8.Gameplay
                 if (Mathf.Abs(triggers) > 0.1f) gas = triggers;
                 brake = Mathf.Max(brake, gamepad.buttonSouth.isPressed ? 1f : 0f);
                 fire |= gamepad.rightShoulder.isPressed;
+#if UNITY_EDITOR
+                if (gamepad.leftShoulder.wasPressedThisFrame)
+                    GetComponent<OriginalBastionRocketLauncher>()?.TryLaunch();
+#endif
             }
             vehicle.SetControls(gas, steer, brake, fire);
         }
