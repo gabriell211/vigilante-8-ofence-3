@@ -33,7 +33,7 @@ class DenseSourceCurveContract(unittest.TestCase):
             "if (resolved) road.OriginalFixedXYZDense = dense;",
             "line.positionCount = road.OriginalFixedXYZDense.Length;",
             "ToSourceReviewPosition(road.OriginalFixedXYZDense[i], divisor)",
-            "road.OriginalFixedXYZ != null &&",
+            "x.OriginalFixedXYZ != null &&",
             "x.OriginalFixedXYZDense != null",
             "GetComponentsInChildren<Collider>(true)",
         ):
