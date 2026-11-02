@@ -26,6 +26,25 @@ namespace Vigilante8.Gameplay
             lockedTarget = target != vehicle && target != null && target.IsAlive ? target : null;
         }
 
+        /// <summary>
+        /// Archived MissileL 0x442: one charge only if maxHalfHealth > 1.
+        /// This does not modify the normal missile's unverified ammo rules.
+        /// </summary>
+        public bool TryLaunchHalo()
+        {
+            if (!Application.isPlaying || Time.timeScale <= 0f ||
+                vehicle == null || !vehicle.IsAlive ||
+                GetComponent<LegacyVehiclePlaytest>() == null ||
+                !vehicle.HasWeapon)
+                return false;
+            var ammo = GetComponent<OriginalMissileSourceInventory>();
+            if (ammo == null || !ammo.CanFireHalo ||
+                !vehicle.LaunchHaloSourceMissile() || !ammo.TrySpendHalo())
+                return false;
+            launches++;
+            return true;
+        }
+
         public bool TryLaunch()
         {
             if (!Application.isPlaying || Time.timeScale <= 0f ||
