@@ -16,7 +16,7 @@ namespace Vigilante8.Editor
     /// <summary>
     /// Reconstructs eight ORIGINAL TMD object banks, not terrains or complete arenas.
     /// The neutral diagnostic inspection material is NOT an original PS1 texture.
-    /// No generated preview can enter Resources/Arenas or the PC release.
+    /// No generated preview can enter official arena assets or the PC release.
     /// </summary>
     public static class OriginalStageObjectReviewBuilder
     {
