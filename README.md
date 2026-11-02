@@ -205,3 +205,13 @@ e as posições dos vértices contra as fontes arquivadas.
 terreno completo, texturas, colisão, eventos, posicionamento de objetos
 nem os quatro spawns. Não são arenas jogáveis e não entram em
 `Assets/Resources/Arenas` nem no build Windows até migração e teste.
+
+
+### Inspeção visual Unity dos oito bancos de objetos V82
+
+Novo menu **Vigilante 8 > Migração > Gerar galeria 3D dos bancos de objetos das 8 fases V82**.
+Os oito arquivos OBJ autênticos agora podem gerar malhas e prefabs de inspeção
+no Unity, separados dos recursos do jogo. A conversão é fiel à geometria extraída,
+mas **não é uma migração completa das arenas**. O build e o jogo impedem o uso
+de `OriginalStageObjectPreviewIdentity` no lugar dos prefabs oficiais.
+Leia `docs/UNITY_ASSET_REVIEW.md`.

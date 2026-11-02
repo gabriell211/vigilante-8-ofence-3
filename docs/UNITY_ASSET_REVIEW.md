@@ -45,3 +45,21 @@ O contrato de origem é conferido no CI por
 grupos, UVs, MTL, BMPs, IDs e integridade da geometria TMD. Testes de
 importação e renderização no Unity Editor continuam obrigatórios antes
 de tratar qualquer modelo como utilizável na versão Windows.
+
+
+## Galeria 3D dos oito bancos de objetos originais do 2nd Offense
+
+O comando Unity **Vigilante 8 > Migração > Gerar galeria 3D dos bancos de objetos das 8 fases V82**
+converte os arquivos OBJ TMD de `Assets/GameContent/ExtractedStageObjectsV82/` em malhas reais
+por peça e prefabs de inspeção (`Assets/GameContent/PreviewStageObjectsV82/`).
+A galeria aparece em `Assets/Scenes/OriginalStageObjectReview.unity`.
+
+O importador exige a correspondência exata dos IDs de oito fases, nomes dos
+grupos TMD, vértices, faces e contagens do manifesto. Não gera terreno, obstáculos
+fictícios, colisões ou spawns. Um material URP neutro é usado **somente para
+inspeção de geometria**, pois os shaders/texturas PS1 das fases ainda não estão
+integrados. O marcador `OriginalStageObjectPreviewIdentity` impede sua
+utilização como arena jogável e como asset de release.
+
+O CI regular valida integridade e sintaxe; os testes Unity EditMode de importação,
+geometria e galeria ainda exigem o Editor/licença real.
