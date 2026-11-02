@@ -11,11 +11,16 @@ namespace Vigilante8.Gameplay
     [RequireComponent(typeof(UIDocument))]
     public sealed class MatchBootstrap : MonoBehaviour
     {
-        private enum ScreenPage { Home, Garage, Options, Controls, About, Playing, Pause, Results }
+        private enum ScreenPage { Home, Garage, Catalog, Options, Controls, About, Playing, Pause, Results }
         private ScreenPage activePage;
         private ScreenPage optionsReturn = ScreenPage.Home;
         private readonly GameMenuSettings preferences = new GameMenuSettings();
-        private VisualElement homePage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage;
+        private VisualElement homePage, catalogPage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage;
+        private ScrollView garagePage;
+        private VisualElement catalogEntries;
+        private DropdownField catalogCategory;
+        private DropdownField catalogOrigin;
+        private Label garageSummary;
         private Label readinessLabel, resultsTitle, resultsDetails;
         private Button startCombat;
         private bool finished;
@@ -63,6 +68,7 @@ namespace Vigilante8.Gameplay
             UpdateAvailability();
             BuildHud();
             BuildMainMenu();
+            BuildCatalogBrowser();
             BuildOptionsMenu();
             BuildControlsMenu();
             BuildAboutMenu();
@@ -88,7 +94,10 @@ namespace Vigilante8.Gameplay
             menu.style.borderTopRightRadius = 16;
             menu.style.borderBottomLeftRadius = 16;
             menu.style.borderBottomRightRadius = 16;
-            root.Add(menu);
+            garagePage = new ScrollView(ScrollViewMode.Vertical);
+            garagePage.style.flexGrow = 1;
+            root.Add(garagePage);
+            garagePage.Add(menu);
             AddHeading(menu, "VIGILANTE 8", 34);
             AddHeading(menu, "OFFENCE 3  /  UNIFIED PC EDITION", 13);
 
@@ -134,6 +143,13 @@ namespace Vigilante8.Gameplay
                 UpdateAvailability();
             });
 
+            garageSummary = new Label();
+            garageSummary.style.color = Muted;
+            garageSummary.style.whiteSpace = WhiteSpace.Normal;
+            garageSummary.style.marginTop = 7;
+            garageSummary.style.marginBottom = 8;
+            menu.Add(garageSummary);
+
             readinessLabel = new Label();
             readinessLabel.style.color = new Color(1f, 0.72f, 0.42f);
             readinessLabel.style.whiteSpace = WhiteSpace.Normal;
@@ -141,6 +157,7 @@ namespace Vigilante8.Gameplay
             menu.Add(readinessLabel);
             startCombat = CreateButton("INICIAR COMBATE", StartMatch, true);
             menu.Add(startCombat);
+            menu.Add(CreateButton("VER TODO O ACERVO", () => Show(ScreenPage.Catalog)));
             menu.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
             AddHeading(menu, "WASD / SETAS: dirigir   ·   SHIFT: freio   ·   ESPAÇO: disparar", 12);
             UpdateAvailability();
@@ -314,6 +331,7 @@ namespace Vigilante8.Gameplay
                     case ScreenPage.Pause: ResumeGame(); return;
                     case ScreenPage.Options: Show(optionsReturn); return;
                     case ScreenPage.Garage:
+                    case ScreenPage.Catalog:
                     case ScreenPage.Controls:
                     case ScreenPage.About: Show(ScreenPage.Home); return;
                 }
@@ -469,10 +487,130 @@ namespace Vigilante8.Gameplay
             collection.style.marginBottom = 25;
             panel.Add(collection);
             panel.Add(CreateButton("JOGAR  /  SELECIONAR VEÍCULO", () => Show(ScreenPage.Garage), true));
+            panel.Add(CreateButton("CATÁLOGO OFICIAL  /  31 CARROS E 19 ARENAS",
+                () => Show(ScreenPage.Catalog)));
             panel.Add(CreateButton("OPÇÕES GRÁFICAS E ÁUDIO", () => OpenOptions(ScreenPage.Home)));
             panel.Add(CreateButton("CONTROLES", () => Show(ScreenPage.Controls)));
             panel.Add(CreateButton("SOBRE O ACERVO", () => Show(ScreenPage.About)));
             panel.Add(CreateButton("SAIR DO JOGO", ExitGame));
+        }
+
+        private void BuildCatalogBrowser()
+        {
+            catalogPage = CreateScreen("CATÁLOGO OFICIAL",
+                "Consulte e selecione todos os pilotos, carros e arenas, mesmo aqueles que ainda não estão jogáveis.",
+                out var panel);
+            catalogOrigin = new DropdownField("VERSÃO", new List<string> {
+                "TODAS AS VERSÕES", "VIGILANTE 8", "2ND OFFENSE"
+            }, 0);
+            StyleDropdown(catalogOrigin);
+            panel.Add(catalogOrigin);
+            catalogCategory = new DropdownField("MOSTRAR", new List<string> {
+                "CARROS", "PILOTOS", "ARENAS"
+            }, 0);
+            StyleDropdown(catalogCategory);
+            panel.Add(catalogCategory);
+            catalogEntries = new VisualElement();
+            catalogEntries.style.marginTop = 14;
+            panel.Add(catalogEntries);
+            panel.Add(CreateButton("VOLTAR AO MENU", () => Show(ScreenPage.Home)));
+            catalogOrigin.RegisterValueChangedCallback(_ => RefreshCatalogBrowser());
+            catalogCategory.RegisterValueChangedCallback(_ => RefreshCatalogBrowser());
+            RefreshCatalogBrowser();
+        }
+
+        private void RefreshCatalogBrowser()
+        {
+            if (catalogEntries == null || catalogCategory == null || catalogOrigin == null)
+                return;
+            catalogEntries.Clear();
+            string game = catalogOrigin.index switch
+            {
+                1 => "v8",
+                2 => "v82",
+                _ => null
+            };
+            int count = 0;
+            switch (catalogCategory.index)
+            {
+                case 0:
+                    foreach (VehicleEntry car in catalog.vehicles
+                        .Where(v => game == null || v.game == game)
+                        .OrderBy(v => v.officialName, StringComparer.Ordinal))
+                    {
+                        CharacterEntry pilot = catalog.characters.First(c => c.id == car.characterId);
+                        string status = IsVehicleReady(car) ? "DISPONÍVEL" : "MIGRAÇÃO PENDENTE";
+                        catalogEntries.Add(CreateButton(
+                            car.officialName + "   /   " + pilot.name + "   /   " + status,
+                            () => SelectPilotFromCatalog(car.characterId, car.id)));
+                        count++;
+                    }
+                    break;
+                case 1:
+                    foreach (CharacterEntry pilot in catalog.characters
+                        .Where(c => game == null || c.appearances.Contains(game))
+                        .OrderBy(c => c.name, StringComparer.Ordinal))
+                    {
+                        int vehicleCount = catalog.vehicles.Count(v => v.characterId == pilot.id &&
+                            (game == null || v.game == game));
+                        catalogEntries.Add(CreateButton(pilot.name + "   /   " +
+                            vehicleCount + (vehicleCount == 1 ? " VEÍCULO" : " VEÍCULOS"),
+                            () => SelectPilotFromCatalog(pilot.id, null)));
+                        count++;
+                    }
+                    break;
+                case 2:
+                    foreach (ArenaEntry arena in catalog.arenas
+                        .Where(a => game == null || a.game == game)
+                        .OrderBy(a => a.name, StringComparer.Ordinal))
+                    {
+                        string status = IsArenaReady(arena) ? "DISPONÍVEL" : "MIGRAÇÃO PENDENTE";
+                        catalogEntries.Add(CreateButton(arena.name +
+                            (arena.bonus ? "   /   EXCLUSIVA N64" : "") +
+                            "   /   " + status, () => SelectArenaFromCatalog(arena.id)));
+                        count++;
+                    }
+                    break;
+            }
+            var info = new Label(count + " entradas oficiais desta categoria e versão.");
+            info.style.color = Muted;
+            info.style.marginBottom = 14;
+            catalogEntries.Insert(0, info);
+        }
+
+        private void SelectPilotFromCatalog(string pilotId, string requestedVehicleId)
+        {
+            int index = Array.IndexOf(characterIds, pilotId);
+            if (index < 0) throw new InvalidOperationException("Piloto não encontrado no catálogo oficial");
+            bool previous = restoringSelections;
+            restoringSelections = true;
+            try
+            {
+                characterSelector.index = index;
+                RefreshVehicles();
+                int selected = Array.IndexOf(vehicleIds, requestedVehicleId);
+                if (selected >= 0) vehicleSelector.index = selected;
+            }
+            finally { restoringSelections = previous; }
+            SaveOfficialChoice(GameMenuSettings.CharacterKey, characterIds, characterSelector.index);
+            SaveOfficialChoice(GameMenuSettings.VehicleKey, vehicleIds, vehicleSelector.index);
+            if (vehicleIds != null && vehicleSelector.index >= 0 &&
+                vehicleSelector.index < vehicleIds.Length)
+                GameMenuSettings.StoreVehicleForCharacter(pilotId,
+                    vehicleIds[vehicleSelector.index], characterIds, vehicleIds);
+            Show(ScreenPage.Garage);
+        }
+
+        private void SelectArenaFromCatalog(string officialArenaId)
+        {
+            int index = Array.IndexOf(arenaIds, officialArenaId);
+            if (index < 0) throw new InvalidOperationException("Arena não encontrada no catálogo oficial");
+            bool previous = restoringSelections;
+            restoringSelections = true;
+            try { arenaSelector.index = index; }
+            finally { restoringSelections = previous; }
+            SaveOfficialChoice(GameMenuSettings.ArenaKey, arenaIds, index);
+            Show(ScreenPage.Garage);
         }
 
         private void BuildOptionsMenu()
@@ -544,6 +682,8 @@ namespace Vigilante8.Gameplay
             note.style.whiteSpace = WhiteSpace.Normal;
             note.style.marginBottom = 18;
             panel.Add(note);
+            panel.Add(CreateButton("CONSULTAR TODOS OS CARROS E FASES",
+                () => Show(ScreenPage.Catalog)));
             panel.Add(CreateButton("MENU PRINCIPAL", () => Show(ScreenPage.Home), true));
         }
 
@@ -584,15 +724,15 @@ namespace Vigilante8.Gameplay
         {
             activePage = target;
             if (target == ScreenPage.Garage) UpdateAvailability();
-            if (menu != null) menu.style.display = target == ScreenPage.Garage ?
+            if (garagePage != null) garagePage.style.display = target == ScreenPage.Garage ?
                 DisplayStyle.Flex : DisplayStyle.None;
             if (hud != null) hud.style.display = target == ScreenPage.Playing ?
                 DisplayStyle.Flex : DisplayStyle.None;
             var pages = new[] {
-                homePage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage
+                homePage, catalogPage, optionsPage, controlsPage, aboutPage, pausePage, resultsPage
             };
             var ids = new[] {
-                ScreenPage.Home, ScreenPage.Options, ScreenPage.Controls,
+                ScreenPage.Home, ScreenPage.Catalog, ScreenPage.Options, ScreenPage.Controls,
                 ScreenPage.About, ScreenPage.Pause, ScreenPage.Results
             };
             for (int i = 0; i < pages.Length; i++)
@@ -605,6 +745,7 @@ namespace Vigilante8.Gameplay
             {
                 ScreenPage.Home => homePage?.Q<Button>(),
                 ScreenPage.Garage => characterSelector,
+                ScreenPage.Catalog => catalogPage?.Q<Button>(),
                 ScreenPage.Options => optionsPage?.Q<Slider>() ?? (VisualElement)optionsPage?.Q<Button>(),
                 ScreenPage.Controls => controlsPage?.Q<Button>(),
                 ScreenPage.About => aboutPage?.Q<Button>(),
@@ -698,6 +839,26 @@ namespace Vigilante8.Gameplay
         private void UpdateAvailability()
         {
             if (readinessLabel == null || startCombat == null) return;
+            if (garageSummary != null)
+            {
+                string vehicleId = vehicleIds != null && vehicleSelector != null &&
+                    vehicleSelector.index >= 0 && vehicleSelector.index < vehicleIds.Length ?
+                    vehicleIds[vehicleSelector.index] : null;
+                string arenaId = arenaIds != null && arenaSelector != null &&
+                    arenaSelector.index >= 0 && arenaSelector.index < arenaIds.Length ?
+                    arenaIds[arenaSelector.index] : null;
+                VehicleEntry chosen = catalog.vehicles.FirstOrDefault(v => v.id == vehicleId);
+                ArenaEntry selectedArena = catalog.arenas.FirstOrDefault(a => a.id == arenaId);
+                if (chosen != null && selectedArena != null)
+                {
+                    CharacterEntry pilot = catalog.characters.FirstOrDefault(c => c.id == chosen.characterId);
+                    string game = chosen.game == "v82" ? "2ND OFFENSE" : "VIGILANTE 8";
+                    garageSummary.text = "PILOTO: " + (pilot?.name ?? chosen.characterId) +
+                        "    |    CARRO: " + chosen.officialName + " (" + game + ")" +
+                        "\nARENA: " + selectedArena.name +
+                        "    |    PLATAFORMAS: " + string.Join(", ", selectedArena.platforms ?? Array.Empty<string>());
+                }
+            }
             bool available = IsMatchAvailable(out string reason);
             readinessLabel.text = reason;
             readinessLabel.style.color = available ? new Color(0.40f, 0.85f, 0.62f) :
